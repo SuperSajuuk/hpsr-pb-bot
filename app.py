@@ -122,46 +122,6 @@ multiruns = [
 
 # Games utilising custom variables require individual treatment
 
-
-def get_leaderboard_place(game_id, category_id, player_id, player_name, var_id=None, var_value=None):
-    """Fetch the actual leaderboard (optionally filtered by subcategory variable)
-    and return the player's true place. The personal-bests endpoint returns placement
-    across the entire category, ignoring subcategory variables, so this is needed
-    whenever subcategories are involved.
-
-    player_id: the resolved SRC user ID (8-char string)
-    player_name: the username string, used as fallback for guest matching
-    """
-    endpoint = "leaderboards/{}/category/{}".format(game_id, category_id)
-    if var_id and var_value:
-        endpoint += "?var-{}={}".format(var_id, var_value)
-    lb_data = api.get(endpoint)
-    # api.get returns the 'data' object directly, which is the leaderboard dict
-    runs = lb_data.get('runs', []) if isinstance(lb_data, dict) else []
-    for entry in runs:
-        run = entry.get('run', {})
-        players = run.get('players', [])
-        for p in players:
-            if p.get('rel') == 'user':
-                if player_id and p.get('id') == player_id:
-                    return entry.get('place')
-            elif p.get('rel') == 'guest':
-                if p.get('name', '').lower() == player_name.lower():
-                    return entry.get('place')
-    return None
-
-
-def resolve_player_id(player_name):
-    """Resolve a player username to their speedrun.com user ID."""
-    try:
-        user_data = api.get("users/{}".format(player_name))
-        if isinstance(user_data, dict):
-            return user_data.get('id')
-        return None
-    except Exception:
-        return None
-
-
 # Route created by StreamElements command using pathescape
 
 
@@ -171,11 +131,11 @@ def personal_best(game, cat, player="artfulinfo"):
     game = game.lower()
     cat = cat.lower()
     if game_map.get(game) and not category_map.get(cat):
-        return "Category is invalid, check which ones are supported here: https://artfulinfo.net/pb-options"
+        return "Category is invalid, check which ones are supported here: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
     elif not game_map.get(game) and category_map.get(cat):
-        return "Game is invalid, check which ones are supported here: https://artfulinfo.net/pb-options"
+        return "Game is invalid, check which ones are supported here: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
     elif not game_map.get(game) and not category_map.get(cat):
-        return "Game and category invalid, check which ones are supported here: https://artfulinfo.net/pb-options"
+        return "Game and category invalid, check which ones are supported here: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
     # Validate inputs are alphanumeric or underscores
     if re.match(r'[A-Za-z0-9_]', game) and re.match(r'[a-zA-Z0-9_]', cat) and re.match(r'[A-Za-z0-9_]', player):
 
@@ -187,8 +147,6 @@ def personal_best(game, cat, player="artfulinfo"):
         # Get personal bests for user & game combination
         pbs = api.get(
             "users/{}/personal-bests?game={}&embed=variables".format(player, game_code.id))
-        # Resolve player username to internal user ID for leaderboard lookups
-        player_id = resolve_player_id(player)
         # Locate category specified by user
         for c in range(len(game_code.categories)):
             if str(game_code.categories[c]) == category:
@@ -213,12 +171,8 @@ def personal_best(game, cat, player="artfulinfo"):
                                 # Limit to single player only
                                 if str(pbs[r]['run']['values']['dlo3pjrl']) == "5lerwd5q":
                                     run = pbs[r]['run']
-                                    # Get true place from subcategory leaderboard
-                                    place = get_leaderboard_place(
-                                        game_code.id, category.id, player_id, player,
-                                        var_id='dlo3pjrl', var_value='5lerwd5q')
-                                    if place is None:
-                                        place = pbs[r]['place']  # fallback
+                                    # Get PB info
+                                    place = pbs[r]['place']
                                     seconds_input = run['times']["primary_t"]
                                     time = str(datetime.timedelta(
                                         seconds=seconds_input))
@@ -234,12 +188,8 @@ def personal_best(game, cat, player="artfulinfo"):
                                 if str(pbs[r]['run']['category']) == category.id:
                                     if str(pbs[r]['run']['values']['789k439l']) == "4qyn2371":  # Any%
                                         run_a = pbs[r]['run']
-                                        # Get true place from subcategory leaderboard
-                                        place_a = get_leaderboard_place(
-                                            game_code.id, category.id, player_id, player,
-                                            var_id='789k439l', var_value='4qyn2371')
-                                        if place_a is None:
-                                            place_a = pbs[r]['place']  # fallback
+                                        # Get PB info
+                                        place_a = pbs[r]['place']
                                         seconds_input = run_a['times']["primary_t"]
                                         time_a = str(datetime.timedelta(
                                             seconds=seconds_input))
@@ -247,12 +197,8 @@ def personal_best(game, cat, player="artfulinfo"):
                                         any_exists = 1
                                     elif str(pbs[r]['run']['values']['789k439l']) == "810xn351":  # 100%
                                         run_h = pbs[r]['run']
-                                        # Get true place from subcategory leaderboard
-                                        place_h = get_leaderboard_place(
-                                            game_code.id, category.id, player_id, player,
-                                            var_id='789k439l', var_value='810xn351')
-                                        if place_h is None:
-                                            place_h = pbs[r]['place']  # fallback
+                                        # Get PB info
+                                        place_h = pbs[r]['place']
                                         seconds_input = run_h['times']["primary_t"]
                                         time_h = str(datetime.timedelta(
                                             seconds=seconds_input))
@@ -275,12 +221,8 @@ def personal_best(game, cat, player="artfulinfo"):
                                 # filter using the category code
                                 if str(pbs[r]['run']['values']['2lg3d4on']) == category_map[cat]['cecode']:
                                     run = pbs[r]['run']
-                                    # Get true place from subcategory leaderboard
-                                    place = get_leaderboard_place(
-                                        game_code.id, category.id, player_id, player,
-                                        var_id='2lg3d4on', var_value=category_map[cat]['cecode'])
-                                    if place is None:
-                                        place = pbs[r]['place']  # fallback
+                                    # Get PB info
+                                    place = pbs[r]['place']
                                     seconds_input = run['times']["primary_t"]
                                     time = str(datetime.timedelta(seconds=seconds_input))[:-3] if str(datetime.timedelta(
                                         seconds=seconds_input))[-7] == '.' else str(datetime.timedelta(seconds=seconds_input))
@@ -290,7 +232,7 @@ def personal_best(game, cat, player="artfulinfo"):
 
     else:
         # Failed character validation
-        return "Invalid entry, check the docs for supported inputs: https://artfulinfo.net/tech/docs/twitch-pb-bot/"
+        return "Invalid entry, check the docs for supported inputs: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
 
 
 # Routes defined for users who want to host the bot on their channel (reconfigures default if no player provided)
@@ -306,30 +248,30 @@ def personal_best_custom(cowner, cgame, ccat, cplayer="usechannel"):
 @app.route("/custom/<cowner>+help")
 @app.route("/help")
 def help(cowner='usechannel'):
-    return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://artfulinfo.net/pbbot/"
+    return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
 
 
 @app.route("/custom/<cowner>+options")
 @app.route("/options")
 def options(cowner='usechannel'):
-    return "Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://artfulinfo.net/pb-options"
+    return "Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
 
 
 # Common error handlers
 @app.route("/custom/<cowner>+<game>")
 def missing_game_c(cowner, game):
     if len(game) > 1:
-        return "Make sure to specify both a game and a category. Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://artfulinfo.net/pb-options"
+        return "Make sure to specify both a game and a category. Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
     else:
-        return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://artfulinfo.net/pbbot/"
+        return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
 
 
 @app.route("/<game>")
 def missing_game(game):
     if len(game) > 1:
-        return "Make sure to specify both a game and a category. Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://artfulinfo.net/pb-options"
+        return "Make sure to specify both a game and a category. Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
     else:
-        return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://artfulinfo.net/pbbot/"
+        return "Search for Harry Potter Speedrun PBs using this format '!pb gamecode categorycode srdcusername', use '!pb options' to see the list of supported types. For more info or if you want the command on your channel: https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
 
 
 @app.errorhandler(500)
