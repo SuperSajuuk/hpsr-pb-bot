@@ -122,6 +122,46 @@ multiruns = [
 
 # Games utilising custom variables require individual treatment
 
+
+def get_leaderboard_place(game_id, category_id, player_id, player_name, var_id=None, var_value=None):
+    """Fetch the actual leaderboard (optionally filtered by subcategory variable)
+    and return the player's true place. The personal-bests endpoint returns placement
+    across the entire category, ignoring subcategory variables, so this is needed
+    whenever subcategories are involved.
+
+    player_id: the resolved SRC user ID (8-char string)
+    player_name: the username string, used as fallback for guest matching
+    """
+    endpoint = "leaderboards/{}/category/{}".format(game_id, category_id)
+    if var_id and var_value:
+        endpoint += "?var-{}={}".format(var_id, var_value)
+    lb_data = api.get(endpoint)
+    # api.get returns the 'data' object directly, which is the leaderboard dict
+    runs = lb_data.get('runs', []) if isinstance(lb_data, dict) else []
+    for entry in runs:
+        run = entry.get('run', {})
+        players = run.get('players', [])
+        for p in players:
+            if p.get('rel') == 'user':
+                if player_id and p.get('id') == player_id:
+                    return entry.get('place')
+            elif p.get('rel') == 'guest':
+                if p.get('name', '').lower() == player_name.lower():
+                    return entry.get('place')
+    return None
+
+
+def resolve_player_id(player_name):
+    """Resolve a player username to their speedrun.com user ID."""
+    try:
+        user_data = api.get("users/{}".format(player_name))
+        if isinstance(user_data, dict):
+            return user_data.get('id')
+        return None
+    except Exception:
+        return None
+
+
 # Route created by StreamElements command using pathescape
 
 
@@ -147,6 +187,8 @@ def personal_best(game, cat, player="artfulinfo"):
         # Get personal bests for user & game combination
         pbs = api.get(
             "users/{}/personal-bests?game={}&embed=variables".format(player, game_code.id))
+        # Resolve player username to internal user ID for leaderboard lookups
+        player_id = resolve_player_id(player)
         # Locate category specified by user
         for c in range(len(game_code.categories)):
             if str(game_code.categories[c]) == category:
@@ -171,8 +213,12 @@ def personal_best(game, cat, player="artfulinfo"):
                                 # Limit to single player only
                                 if str(pbs[r]['run']['values']['dlo3pjrl']) == "5lerwd5q":
                                     run = pbs[r]['run']
-                                    # Get PB info
-                                    place = pbs[r]['place']
+                                    # Get true place from subcategory leaderboard
+                                    place = get_leaderboard_place(
+                                        game_code.id, category.id, player_id, player,
+                                        var_id='dlo3pjrl', var_value='5lerwd5q')
+                                    if place is None:
+                                        place = pbs[r]['place']  # fallback
                                     seconds_input = run['times']["primary_t"]
                                     time = str(datetime.timedelta(
                                         seconds=seconds_input))
@@ -188,8 +234,12 @@ def personal_best(game, cat, player="artfulinfo"):
                                 if str(pbs[r]['run']['category']) == category.id:
                                     if str(pbs[r]['run']['values']['789k439l']) == "4qyn2371":  # Any%
                                         run_a = pbs[r]['run']
-                                        # Get PB info
-                                        place_a = pbs[r]['place']
+                                        # Get true place from subcategory leaderboard
+                                        place_a = get_leaderboard_place(
+                                            game_code.id, category.id, player_id, player,
+                                            var_id='789k439l', var_value='4qyn2371')
+                                        if place_a is None:
+                                            place_a = pbs[r]['place']  # fallback
                                         seconds_input = run_a['times']["primary_t"]
                                         time_a = str(datetime.timedelta(
                                             seconds=seconds_input))
@@ -197,8 +247,12 @@ def personal_best(game, cat, player="artfulinfo"):
                                         any_exists = 1
                                     elif str(pbs[r]['run']['values']['789k439l']) == "810xn351":  # 100%
                                         run_h = pbs[r]['run']
-                                        # Get PB info
-                                        place_h = pbs[r]['place']
+                                        # Get true place from subcategory leaderboard
+                                        place_h = get_leaderboard_place(
+                                            game_code.id, category.id, player_id, player,
+                                            var_id='789k439l', var_value='810xn351')
+                                        if place_h is None:
+                                            place_h = pbs[r]['place']  # fallback
                                         seconds_input = run_h['times']["primary_t"]
                                         time_h = str(datetime.timedelta(
                                             seconds=seconds_input))
@@ -221,8 +275,12 @@ def personal_best(game, cat, player="artfulinfo"):
                                 # filter using the category code
                                 if str(pbs[r]['run']['values']['2lg3d4on']) == category_map[cat]['cecode']:
                                     run = pbs[r]['run']
-                                    # Get PB info
-                                    place = pbs[r]['place']
+                                    # Get true place from subcategory leaderboard
+                                    place = get_leaderboard_place(
+                                        game_code.id, category.id, player_id, player,
+                                        var_id='2lg3d4on', var_value=category_map[cat]['cecode'])
+                                    if place is None:
+                                        place = pbs[r]['place']  # fallback
                                     seconds_input = run['times']["primary_t"]
                                     time = str(datetime.timedelta(seconds=seconds_input))[:-3] if str(datetime.timedelta(
                                         seconds=seconds_input))[-7] == '.' else str(datetime.timedelta(seconds=seconds_input))
