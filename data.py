@@ -1,0 +1,346 @@
+# Data Class
+#
+# This combines various pieces of app.py into a more reusable class
+# A class is far simpler to understand and avoids repetition of the code
+# while placing it in a defined structure.
+from dataclasses import dataclass
+import datetime
+from typing import Dict
+import srcomapi
+import srcomapi.datatypes as dt
+
+
+# Create a SpeedRun model.
+# We use this to represent a run, whether it's a PB or not.
+# Note that a PB has a place, but searching a run may not
+# yield that data.
+@dataclass
+class SpeedRun:
+	player: str
+	game: str
+	category: str
+	time: str
+	place: int | None
+	link: str
+
+
+# SRDCRuns
+# This handles the logic of querying the SRDC
+# API and then returning results.
+#
+# Currently just supports PBs, but will add
+# support for just finding a run. One negative
+# to only searching PBs is the amount of filtering
+# needed, whereas just finding the latest run on a board
+# is quicker and more efficient.
+class SRDCRuns:
+	def __init__(self, game_map: dict, category_map: dict):
+		# Instantiate the Speedrun.com API
+		# We'll cache all game codes in-memory to avoid
+		# hammering SRDC with requests.
+		self.api = srcomapi.SpeedrunCom()
+		self.api.debug = 0
+		self.game_map = game_map
+		self.category_map = category_map
+		self.game_code_cache = {}
+
+	# ---------------------------------------------------------
+	# GAME LOOKUP (Lazy Cached)
+	# ---------------------------------------------------------
+	def get_game_code(self, game_key: str):
+		"""
+		Return the srcomapi Game object for a given game code.
+		Returns a game object that is then cached. If the game
+		is already cached, return that automatically and do not
+		query SRDC.
+		"""
+		if game_key in self.game_code_cache:
+			return self.game_code_cache[game_key]
+
+		# Query SRDC. If nothing found, return a ValueError
+		game_name = self.game_map[game_key]
+		result = self.api.search(dt.Game, {"name": game_name})
+		if not result:
+			raise ValueError(f"Game not found on SRDC: {game_name}")
+
+		# Cache the result and return it.
+		game_obj = result[0]
+		self.game_code_cache[game_key] = game_obj
+		return game_obj
+
+	# ---------------------------------------------------------
+	# USER ID LOOKUP
+	# ---------------------------------------------------------
+	def get_user_id(self, username: str) -> str:
+		"""Resolve a Speedrun.com username to a user ID."""
+		result = self.api.search(dt.User, {"name": username})
+		if not result:
+			raise ValueError(f"User not found on SRDC: {username}")
+		return result[0].id
+
+	# ---------------------------------------------------------
+	# LEADERBOARD LOOKUP
+	# ---------------------------------------------------------
+	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None):
+		"""
+		Fetch leaderboard for a game/category.
+		If max_runs is provided, only that many runs are returned.
+		"""
+		url = f"leaderboards/{game_id}/category/{category_id}?embed=players"
+		if max_runs is not None:
+			url += f"&max={max_runs}"
+
+		return self.api.get(url)
+
+	# ---------------------------------------------------------
+	# LEADERBOARD RUN PLACEMENT
+	# ---------------------------------------------------------
+	def _lookup_run_place(self, game_id, category_id, run_id):
+		# Try partial leaderboard first
+		lb_partial = self.get_leaderboard(game_id, category_id, max_runs=100)
+		place = self.find_run_placement(lb_partial, run_id)
+
+		# Fallback to full leaderboard
+		if place is None:
+			lb_full = self.get_leaderboard(game_id, category_id, max_runs=None)
+			place = self.find_run_placement(lb_full, run_id)
+
+		return place
+
+	# ---------------------------------------------------------
+	# FIND RUN PLACEMENT
+	# ---------------------------------------------------------
+	@staticmethod
+	def find_run_placement(leaderboard, run_id: str) -> int | None:
+		"""Return the leaderboard placement for a given run ID."""
+		for entry in leaderboard["runs"]:
+			if entry["run"]["id"] == run_id:
+				return entry["place"]
+		return None
+
+	# ---------------------------------------------------------
+	# RUN FETCH
+	# ---------------------------------------------------------
+	def search_runs(self, game_id: str, category_id: str, user_id: str):
+		"""Search SRDC for runs matching game/category/user."""
+		return self.api.search(
+			dt.Run,
+			{
+				"game": game_id,
+				"category": category_id,
+				"user": user_id,
+				"status": "verified"
+			}
+		)
+
+	# ---------------------------------------------------------
+	# RUN EXTRACTION
+	# ---------------------------------------------------------
+	@staticmethod
+	def extract_run(run_obj) -> SpeedRun:
+		"""Convert a srcomapi Run object into a SpeedRun dataclass."""
+		seconds = run_obj.times["primary_t"]
+		time = str(datetime.timedelta(seconds=seconds))
+		return SpeedRun(
+			player=run_obj.players[0].name,
+			game=str(run_obj.game),
+			category=str(run_obj.category),
+			time=time,
+			place=None,  # run search does not include leaderboard place
+			link=run_obj.weblink,
+		)
+
+	# ---------------------------------------------------------
+	# LOOKUP RUN
+	# ---------------------------------------------------------
+	def lookup_run(self, game_key: str, cat_key: str, player: str) -> Speedrun | dict[str, SpeedRun] | None:
+		"""
+		Look up the fastest verified run for a player in a specific game/category.
+		While looking through PBs works well enough, it's a lot more efficient to
+		just look for the most recent verified run, which is almost always PB.
+
+		It also supports multi-runs automatically, if variables are provided for it.
+		"""
+		# Resolve game + category
+		game_obj = self.get_game_code(game_key)
+		category_meta = self.category_map[cat_key]
+
+		# Find category object
+		category_obj = None
+		for cat in game_obj.categories:
+			if str(cat) == category_meta["name"]:
+				category_obj = cat
+				break
+
+		# Raise ValueError if no category was found for the game.
+		if not category_obj:
+			raise ValueError("Category not found in game")
+
+		# Resolve user ID, then search for their runs in the game category.
+		# Return "None" if there was nothing found.
+		user_id = self.get_user_id(player)
+		runs = self.search_runs(game_obj.id, category_obj.id, user_id)
+		if not runs:
+			return None
+
+		# In some games, there might be a multi-run: check for those first.
+		if "variables" in category_meta:
+			var_id = list(category_meta["variables"].keys())[0]
+			var_values = category_meta["variables"][var_id]
+			results = {}
+
+			# Any%
+			any_runs = [r for r in runs if r.values.get(var_id) == var_values["any"]]
+			if any_runs:
+				any_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+				best_any = any_runs[0]
+				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any.id)
+				results["any"] = SpeedRun(
+					player=best_any.players[0].name,
+					game=str(best_any.game),
+					category=str(best_any.category),
+					time=str(datetime.timedelta(seconds=best_any.times["primary_t"])),
+					place=place_any,
+					link=best_any.weblink,
+				)
+
+			# 100%
+			hundo_runs = [r for r in runs if r.values.get(var_id) == var_values["100"]]
+			if hundo_runs:
+				hundo_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+				best_hundo = hundo_runs[0]
+				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo.id)
+				results["100"] = SpeedRun(
+					player=best_hundo.players[0].name,
+					game=str(best_hundo.game),
+					category=str(best_hundo.category),
+					time=str(datetime.timedelta(seconds=best_hundo.times["primary_t"])),
+					place=place_hundo,
+					link=best_hundo.weblink,
+				)
+
+			return results
+
+		# Sort the runs by the most recently verified run (newest at the top)
+		# The run at the top of the index will then be used to get its placement
+		# in the leaderboard. To avoid duplication, leaderboard placement is
+		# parsed by a helper function.
+		runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+		best_run = runs[0]
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run.id)
+		return SpeedRun(
+			player=best_run.players[0].name,
+			game=str(best_run.game),
+			category=str(best_run.category),
+			time=str(datetime.timedelta(seconds=best_run.times["primary_t"])),
+			place=place,
+			link=best_run.weblink,
+		)
+
+	# ---------------------------------------------------------
+	# PB FETCH
+	# ---------------------------------------------------------
+	def search_pbs(self, player: str, game_id: str):
+		"""Fetch PBs for a player/game combination."""
+		return self.api.get(f"users/{player}/personal-bests?game={game_id}&embed=variables")
+
+	# ---------------------------------------------------------
+	# PB EXTRACTION
+	# ---------------------------------------------------------
+	@staticmethod
+	def extract_pb(entry) -> PBResult:
+		"""Convert a PB entry into a structured dataclass."""
+		run = entry["run"]
+		place = entry["place"]
+		seconds = run["times"]["primary_t"]
+		time = str(datetime.timedelta(seconds=seconds))
+		link = run["weblink"]
+		return SpeedRun(
+			player=run["players"][0]["name"],
+			game=str(run["game"]),
+			category=str(run["category"]),
+			time=time,
+			place=place,
+			link=link,
+		)
+
+	# ---------------------------------------------------------
+	# PB FILTERING
+	# ---------------------------------------------------------
+	def find_pbs(self, pbs: list, category_id: str, variable_filter=None):
+		"""
+		Find PBs matching a category and optional variable filter.
+		variable_filter = ("variable_id", "expected_value")
+		"""
+		results = []
+		for entry in pbs:
+			# Check for a category match: if none, continue.
+			run = entry["run"]
+			if str(run["category"]) != category_id:
+				continue
+
+			# Optional variable match (CE, multiruns)
+			if variable_filter is not None:
+				var_id, expected = variable_filter
+				if run["values"].get(var_id) != expected:
+					continue
+
+			# Append the PB result to the list.
+			results.append(self.extract_pb(entry))
+
+		return results
+
+	# ---------------------------------------------------------
+	# HIGH-LEVEL PB LOOKUP
+	# ---------------------------------------------------------
+	def lookup_pb(self, game_key: str, cat_key: str, player: str) -> list[SpeedRun] | dict[str, SpeedRun] | None:
+		"""
+		High-level PB lookup:
+		- Resolve game
+		- Resolve category
+		- Fetch PBs
+		- Filter PBs
+		- Return SpeedRun objects
+		Supports multiruns (Any% + 100%) automatically.
+		"""
+		game_obj = self.get_game_code(game_key)
+		category_meta = self.category_map[cat_key]
+
+		# Find the actual category object inside the game
+		category_obj = None
+		for cat in game_obj.categories:
+			if str(cat) == category_meta["name"]:
+				category_obj = cat
+				break
+
+		# Raise ValueError if the category object does not exist for this game.
+		if not category_obj:
+			raise ValueError("Category not found in game")
+
+		# Fetch PBs for this player based on this game ID.
+		pbs = self.search_pbs(player, game_obj.id)
+
+		# Some categories might include multi-run metadata.
+		# If that is the case, search for a PB in those.
+		if "variables" in category_meta:
+			var_id = list(category_meta["variables"].keys())[0]
+			var_values = category_meta["variables"][var_id]
+			results = {}
+
+			# Any%
+			any_pbs = self.find_pbs(pbs, category_obj.id, (var_id, var_values["any"]))
+			if any_pbs:
+				results["any"] = any_pbs[0]
+
+			# 100%
+			hundo_pbs = self.find_pbs(pbs, category_obj.id, (var_id, var_values["100"]))
+			if hundo_pbs:
+				results["100"] = hundo_pbs[0]
+
+			# Return all SpeedRun objects that have been found.
+			return results
+
+		# Optional variable filtering (for CE categories)
+		# Written using an in-line expression for tidiness.
+		variable_filter = ("2lg3d4on", category_meta["cecode"]) if "cecode" in category_meta else None
+		return self.find_pbs(pbs, category_obj.id, variable_filter)
