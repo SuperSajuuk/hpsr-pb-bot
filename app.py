@@ -119,9 +119,15 @@ def latest_run(args):
 # have a LOT of submitted PBs in their name.
 # Recommend that daily use should be to use the !run
 # command instead.
-@app.route('/pb/<owner>+<game>+<cat>', defaults={'player': None})
-@app.route('/pb/<owner>+<game>+<cat>+<player>')
-def personal_best(owner, game, cat, player):
+@app.route('/pb/<path:args>')
+def personal_best(args):
+	# Parse out the arguments.
+	owner = parts[0]
+	game = parts[1]
+	cat = parts[2]
+	platform = parts[3] if len(parts) > 3 else None
+	player = parts[4] if len(parts) > 4 else None
+
 	# Validate game/category exist in the mapping.
 	# At some point, the game check should be removed, so
 	# that this can be used to find a PB for any game by the

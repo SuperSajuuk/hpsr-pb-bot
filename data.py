@@ -219,8 +219,8 @@ class SRDCRuns:
 			any_runs = [
 				r for r in runs
 				if r["values"].get(var_id) == var_values["any"] and (platform is None or (
-					cfg is not None and
-					r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+						cfg is not None and
+						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
 				))
 			]
 			if any_runs:
@@ -255,8 +255,8 @@ class SRDCRuns:
 			hundo_runs = [
 				r for r in runs
 				if r["values"].get(var_id) == var_values["100"] and (platform is None or (
-					cfg is not None and
-					r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+						cfg is not None and
+						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
 				))
 			]
 			if hundo_runs:
@@ -379,7 +379,7 @@ class SRDCRuns:
 	# ---------------------------------------------------------
 	# HIGH-LEVEL PB LOOKUP
 	# ---------------------------------------------------------
-	def lookup_pb(self, game_key: str, cat_key: str, player: str) -> list[SpeedRun] | dict[str, SpeedRun] | None:
+	def lookup_pb(self, game_key: str, cat_key: str, player: str, platform: str = None) -> list[SpeedRun] | dict[str, SpeedRun] | None:
 		"""
 		High-level PB lookup:
 		- Resolve game
@@ -404,7 +404,19 @@ class SRDCRuns:
 			raise ValueError("Category not found in game")
 
 		# Fetch PBs for this player based on this game ID.
+		# Also, load unified leaderboard config for this game (if present)
 		pbs = self.search_pbs(player, game_obj.id)
+		cfg = config.LEADERBOARD_CONFIG.get(game_key, None)
+
+		# Optional platform filtering (console/emulator)
+		if platform is not None and cfg is not None:
+			plat_cfg = cfg["platform"]
+			plat_var_id = plat_cfg["var_id"]
+			plat_value = plat_cfg["values"][platform]
+
+			pbs = [pb for pb in pbs if pb.values.get(plat_var_id) == plat_value]
+			if not pbs:
+				return None
 
 		# Some categories might include multi-run metadata.
 		# If that is the case, search for a PB in those.
@@ -416,17 +428,88 @@ class SRDCRuns:
 			# Any%
 			any_pbs = self.find_pbs(player, pbs, category_obj.id, (var_id, var_values["any"]))
 			if any_pbs:
-				results["any"] = any_pbs[0]
+				# Build variable set for leaderboard lookup
+				best_any = any_pbs[0]
+				variables_any = {}
+				if cfg is not None:
+					cat_cfg = cfg["categories"][cat_key]
+					cat_var_id = cat_cfg["var_id"]
+					if cat_var_id in best_any.values:
+						variables_any[cat_var_id] = best_any.values[cat_var_id]
+
+					# Always include platform variable if present
+					plat_cfg = cfg["platform"]
+					plat_var_id = plat_cfg["var_id"]
+					if plat_var_id in best_any.values:
+						variables_any[plat_var_id] = best_any.values[plat_var_id]
+				else:
+					# Fallback: use only the category variable
+					if var_id in best_any.values:
+						variables_any[var_id] = best_any.values[var_id]
+
+				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any.id, variables_any)
+				best_any.place = place_any
+				results["any"] = best_any
 
 			# 100%
 			hundo_pbs = self.find_pbs(player, pbs, category_obj.id, (var_id, var_values["100"]))
 			if hundo_pbs:
-				results["100"] = hundo_pbs[0]
+				# Build variable set for leaderboard lookup
+				best_hundo = hundo_pbs[0]
+				variables_hundo = {}
+				if cfg is not None:
+					cat_cfg = cfg["categories"][cat_key]
+					cat_var_id = cat_cfg["var_id"]
+					if cat_var_id in best_hundo.values:
+						variables_hundo[cat_var_id] = best_hundo.values[cat_var_id]
+
+					# Always include platform variable if present
+					plat_cfg = cfg["platform"]
+					plat_var_id = plat_cfg["var_id"]
+					if plat_var_id in best_hundo.values:
+						variables_hundo[plat_var_id] = best_hundo.values[plat_var_id]
+				else:
+					# Fallback: use only the category variable
+					if var_id in best_hundo.values:
+						variables_hundo[var_id] = best_hundo.values[var_id]
+
+				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo.id, variables_hundo)
+				best_hundo.place = place_hundo
+				results["100"] = best_hundo
 
 			# Return all SpeedRun objects that have been found.
 			return results
 
 		# Optional variable filtering (for CE categories)
 		# Written using an in-line expression for tidiness.
+		# If no PB found, return None.
 		variable_filter = ("2lg3d4on", category_meta["cecode"]) if "cecode" in category_meta else None
-		return self.find_pbs(player, pbs, category_obj.id, variable_filter)
+		result = self.find_pbs(player, pbs, category_obj.id, variable_filter)
+		if not result:
+			return None
+
+		# Build variable set for leaderboard lookup for single PB
+		best_pb = result[0]
+		variables = {}
+		if cfg is not None:
+			cat_cfg = cfg["categories"][cat_key]
+			cat_var_id = cat_cfg["var_id"]
+			if cat_var_id in best_pb.values:
+				variables[cat_var_id] = best_pb.values[cat_var_id]
+
+			# Always include platform variable if present
+			plat_cfg = cfg["platform"]
+			plat_var_id = plat_cfg["var_id"]
+			if plat_var_id in best_pb.values:
+				variables[plat_var_id] = best_pb.values[plat_var_id]
+		else:
+			# Fallback: only include category variable
+			if variable_filter:
+				var_id, var_val = variable_filter
+				if var_id in best_pb.values:
+					variables[var_id] = best_pb.values[var_id]
+
+		# Find the place number and return this PB run.
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_pb.id, variables)
+		best_pb.place = place
+		return result
