@@ -195,17 +195,14 @@ class SRDCRuns:
 
 		# Optional platform filtering (console/emulator)
 		if platform is not None:
-
 			if cfg is not None:
 				# Unified config path (preferred)
 				plat_cfg = cfg["platform"]
 				plat_var_id = plat_cfg["var_id"]
 				plat_value = plat_cfg["values"][platform]
-
 				runs = [r for r in runs if r["values"].get(plat_var_id) == plat_value]
 				if not runs:
 					return None
-
 			else:
 				# Fallback path for games without unified config:
 				# No platform filtering is possible, so we simply do nothing.
@@ -248,9 +245,8 @@ class SRDCRuns:
 					if var_id in best_any["values"]:
 						variables_any[var_id] = best_any["values"][var_id]
 
-				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
-
 				# Extract the run details and store it in the dictionary.
+				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
 				sr_any = self.extract_run(best_any, player)
 				sr_any.place = place_any
 				results["any"] = sr_any
@@ -285,9 +281,8 @@ class SRDCRuns:
 					if var_id in best_hundo["values"]:
 						variables_hundo[var_id] = best_hundo["values"][var_id]
 
-				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
-
 				# Extract the run details and store it in the dictionary.
+				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
 				sr_hundo = self.extract_run(best_hundo, player)
 				sr_hundo.place = place_hundo
 				results["100"] = sr_hundo
@@ -304,23 +299,25 @@ class SRDCRuns:
 		# Build variable set for leaderboard lookup
 		variables = {}
 		if cfg is not None:
+			# Always include category variable if present
 			cat_cfg = cfg["categories"][cat_key]
 			cat_var_id = cat_cfg["var_id"]
 			if cat_var_id in best_run["values"]:
 				variables[cat_var_id] = best_run["values"][cat_var_id]
-			if platform is not None:
-				plat_cfg = cfg["platform"]
-				plat_var_id = plat_cfg["var_id"]
-				if plat_var_id in best_run["values"]:
-					variables[plat_var_id] = best_run["values"][plat_var_id]
+
+			# Always include platform variable if present — even if user didn't specify platform
+			plat_cfg = cfg["platform"]
+			plat_var_id = plat_cfg["var_id"]
+			if plat_var_id in best_run["values"]:
+				variables[plat_var_id] = best_run["values"][plat_var_id]
 		else:
 			# Fallback: only include category variable
 			var_id = list(category_meta["variables"].keys())[0]
-			variables[var_id] = best_run["values"][var_id]
-
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
+			if var_id in best_run["values"]:
+				variables[var_id] = best_run["values"][var_id]
 
 		# Extract the run, store the place and return it.
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 		sr = self.extract_run(best_run, player)
 		sr.place = place
 		return sr
