@@ -25,7 +25,7 @@ import data
 
 # Instantiate the Flask and SRDC classes for use the code.
 app = flask.Flask(__name__)
-srdc = data.SRDCRuns(config.game_map, config.category_map)
+srdc = data.SRDCRuns(config.PER_GAME_MAP, config.CATEGORY_MAPPING)
 
 
 # Our two routes to get latest run or a PB might return
@@ -70,9 +70,9 @@ def latest_run(game, cat, player):
 	player = resolve_player(owner, player)
 	game = game.lower()
 	cat = cat.lower()
-	if game not in game_map:
+	if game not in config.PER_GAME_MAP.keys():
 		return f"Invalid game. See supported options: {config.COMMAND_USAGE_DOC}"
-	if cat not in category_map:
+	if cat not in config.CATEGORY_MAPPING.keys():
 		return f"Invalid category. See supported options: {config.COMMAND_USAGE_DOC}"
 
 	# Query SRDC to find the latest run submitted by the player for this game/category.
