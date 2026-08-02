@@ -254,12 +254,27 @@ class SRDCRuns:
 		# parsed by a helper function.
 		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
-		all_vars = best_run["values"]
-		allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
-		variables = {vid: all_vars[vid] for vid in allowlist if vid in all_vars} if allowlist is not None else all_vars
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
+
+		# Check for variables and set them up.
+		variables = {}
+		allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, {})
+		category_var_id = allowlist.get("category")
+		if category_var_id and category_var_id in best_run["values"]:
+			variables[category_var_id] = best_run["values"][category_var_id]
+
+		# Include platform variable ONLY if user requested platform
+		if platform is not None:
+			platform_var_id = allowlist.get("platform")
+			if platform_var_id and platform_var_id in best_run["values"]:
+				variables[platform_var_id] = best_run["values"][platform_var_id]
+
+		# all_vars = best_run["values"]
+		# allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
+		# variables = {vid: all_vars[vid] for vid in allowlist if vid in all_vars} if allowlist is not None else all_vars
+		# place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 
 		# Extract the run, store the place and return it.
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 		sr = self.extract_run(best_run, player)
 		sr.place = place
 		return sr
