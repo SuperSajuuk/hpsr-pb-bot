@@ -133,28 +133,27 @@ class SRDCRuns:
 	def search_runs(self, game_id: str, category_id: str, user_id: str):
 		"""
 		Search SRDC for runs matching game/category/user.
-		To keep this compatible with the existing code, we will convert the
-		response into Run objects.
 		"""
-		raw = self.api.get(f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players")
-		return [dt.Run(r) for r in raw]
+		return self.api.get(f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players")
 
 	# ---------------------------------------------------------
 	# RUN EXTRACTION
 	# ---------------------------------------------------------
 	@staticmethod
 	def extract_run(run_obj) -> SpeedRun:
-		"""Convert a srcomapi Run object into a SpeedRun dataclass."""
-		seconds = run_obj.times["primary_t"]
+		"""
+		Convert a srcomapi Run object into a SpeedRun dataclass.
+		"""
+		seconds = run_obj["times"]["primary_t"]
 		time = str(datetime.timedelta(seconds=seconds))
 		return SpeedRun(
-			player=run_obj.players[0].name,
-			game=str(run_obj.game),
-			category=str(run_obj.category),
+			player=run_obj["players"][0]["name"],
+			game=str(run_obj["game"]),
+			category=str(run_obj["category"]),
 			time=time,
-			emulator=run_obj.system["emulated"],
+			emulator=run_obj["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
-			link=run_obj.weblink,
+			link=run_obj["weblink"]
 		)
 
 	# ---------------------------------------------------------
@@ -197,13 +196,13 @@ class SRDCRuns:
 			results = {}
 
 			# Any%
-			any_runs = [r for r in runs if r.values.get(var_id) == var_values["any"]]
+			any_runs = [r for r in runs if r["values"].get(var_id) == var_values["any"]]
 			if any_runs:
 				# Sort the Any% runs by verification date, and find its place in the list
-				any_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+				any_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 				best_any = any_runs[0]
-				variables_any = best_any.values
-				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any.id, variables_any)
+				variables_any = best_any["values"]
+				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
 
 				# Extract the run details and store it in the dictionary.
 				sr_any = self.extract_run(best_any)
@@ -211,13 +210,13 @@ class SRDCRuns:
 				results["any"] = sr_any
 
 			# 100%
-			hundo_runs = [r for r in runs if r.values.get(var_id) == var_values["100"]]
+			hundo_runs = [r for r in runs if r["values"].get(var_id) == var_values["100"]]
 			if hundo_runs:
 				# Sort the 100% runs by verification date, and find its place in the list.
-				hundo_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+				hundo_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 				best_hundo = hundo_runs[0]
-				variables_hundo = best_hundo.values
-				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo.id, variables_hundo)
+				variables_hundo = best_hundo["values"]
+				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
 
 				# Extract the run details and store it in the dictionary.
 				sr_hundo = self.extract_run(best_hundo)
@@ -230,10 +229,10 @@ class SRDCRuns:
 		# The run at the top of the index will then be used to get its placement
 		# in the leaderboard. To avoid duplication, leaderboard placement is
 		# parsed by a helper function.
-		runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
+		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
-		variables = best_run.values
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run.id, variables)
+		variables = best_run["values"]
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 
 		# Extract the run, store the place and return it.
 		sr = self.extract_run(best_run)
