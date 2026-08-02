@@ -191,6 +191,8 @@ class SRDCRuns:
 			return None
 
 		# Check if we've defined the platform in this request.
+		platform_var_id = None
+		desired_value = None
 		if platform is not None:
 			allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
 			if allowlist is not None:
@@ -211,7 +213,10 @@ class SRDCRuns:
 			results = {}
 
 			# Any%
-			any_runs = [r for r in runs if r["values"].get(var_id) == var_values["any"]]
+			any_runs = [
+				r for r in runs
+				if r["values"].get(var_id) == var_values["any"] and (platform_var_id is None or r["values"].get(platform_var_id) == desired_value)
+			]
 			if any_runs:
 				# Sort the Any% runs by verification date, and find its place in the list
 				any_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
@@ -225,7 +230,10 @@ class SRDCRuns:
 				results["any"] = sr_any
 
 			# 100%
-			hundo_runs = [r for r in runs if r["values"].get(var_id) == var_values["100"]]
+			hundo_runs = [
+				r for r in runs
+				if r["values"].get(var_id) == var_values["100"] and (platform_var_id is None or r["values"].get(platform_var_id) == desired_value)
+			]
 			if hundo_runs:
 				# Sort the 100% runs by verification date, and find its place in the list.
 				hundo_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
