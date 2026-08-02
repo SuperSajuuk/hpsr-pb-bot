@@ -121,7 +121,12 @@ def latest_run(args):
 # command instead.
 @app.route('/pb/<path:args>')
 def personal_best(args):
-	# Parse out the arguments.
+	# Parse the arguments and check we have 3.
+	parts = args.split("+")
+	if len(parts) < 3:
+		return "Error: this route requires owner+game+cat to be provided", 400
+
+	# Set vars based on the parts (order must be consistent)
 	owner = parts[0]
 	game = parts[1]
 	cat = parts[2]
@@ -142,7 +147,7 @@ def personal_best(args):
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
 	try:
-		result = srdc.lookup_pb(game, cat, player)
+		result = srdc.lookup_pb(game, cat, player, platform)
 	except ValueError:
 		return "No PB found for this criteria."
 

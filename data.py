@@ -413,8 +413,7 @@ class SRDCRuns:
 			plat_cfg = cfg["platform"]
 			plat_var_id = plat_cfg["var_id"]
 			plat_value = plat_cfg["values"][platform]
-
-			pbs = [pb for pb in pbs if pb.values.get(plat_var_id) == plat_value]
+			pbs = [pb for pb in pbs if pb["values"].get(plat_var_id) == plat_value]
 			if not pbs:
 				return None
 
