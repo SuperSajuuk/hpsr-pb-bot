@@ -81,7 +81,7 @@ class SRDCRuns:
 	# ---------------------------------------------------------
 	# LEADERBOARD LOOKUP
 	# ---------------------------------------------------------
-	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None):
+	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: dict | None = None):
 		"""
 		Fetch leaderboard for a game/category.
 		If max_runs is provided, only that many runs are returned.
@@ -89,20 +89,28 @@ class SRDCRuns:
 		url = f"leaderboards/{game_id}/category/{category_id}?embed=players"
 		if max_runs is not None:
 			url += f"&max={max_runs}"
+		if variables:
+			for var_id, var_value in variables.items():
+				url += f"&var-{var_id}={var_value}"
 
 		return self.api.get(url)
 
 	# ---------------------------------------------------------
 	# LEADERBOARD RUN PLACEMENT
 	# ---------------------------------------------------------
-	def _lookup_run_place(self, game_id, category_id, run_id):
+	def _lookup_run_place(self, game_id, category_id, run_id, variables: dict | None):
+		"""
+		Looks up the leaderboard for a game and returns the
+		place number representing the provided run.
+		"""
 		# Try partial leaderboard first
-		lb_partial = self.get_leaderboard(game_id, category_id, max_runs=100)
+		lb_partial = self.get_leaderboard(game_id, category_id, max_runs=100, variables=variables)
 		place = self.find_run_placement(lb_partial, run_id)
 
-		# Fallback to full leaderboard
+		# If place is None here, the run wasn't in the top 100.
+		# Return all runs and then find it.
 		if place is None:
-			lb_full = self.get_leaderboard(game_id, category_id, max_runs=None)
+			lb_full = self.get_leaderboard(game_id, category_id, max_runs=None, variables=variables)
 			place = self.find_run_placement(lb_full, run_id)
 
 		return place
@@ -192,32 +200,30 @@ class SRDCRuns:
 			# Any%
 			any_runs = [r for r in runs if r.values.get(var_id) == var_values["any"]]
 			if any_runs:
+				# Sort the Any% runs by verification date, and find its place in the list
 				any_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
 				best_any = any_runs[0]
-				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any.id)
-				results["any"] = SpeedRun(
-					player=best_any.players[0].name,
-					game=str(best_any.game),
-					category=str(best_any.category),
-					time=str(datetime.timedelta(seconds=best_any.times["primary_t"])),
-					place=place_any,
-					link=best_any.weblink,
-				)
+				variables_any = best_any.values
+				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any.id, variables_any)
+
+				# Extract the run details and store it in the dictionary.
+				sr_any = self.extract_run(best_any)
+				sr_any.place = place_any
+				results["any"] = sr_any
 
 			# 100%
 			hundo_runs = [r for r in runs if r.values.get(var_id) == var_values["100"]]
 			if hundo_runs:
+				# Sort the 100% runs by verification date, and find its place in the list.
 				hundo_runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
 				best_hundo = hundo_runs[0]
-				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo.id)
-				results["100"] = SpeedRun(
-					player=best_hundo.players[0].name,
-					game=str(best_hundo.game),
-					category=str(best_hundo.category),
-					time=str(datetime.timedelta(seconds=best_hundo.times["primary_t"])),
-					place=place_hundo,
-					link=best_hundo.weblink,
-				)
+				variables_hundo = best_hundo.values
+				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo.id, variables_hundo)
+
+				# Extract the run details and store it in the dictionary.
+				sr_hundo = self.extract_run(best_hundo)
+				sr_hundo.place = place_hundo
+				results["100"] = sr_hundo
 
 			return results
 
@@ -227,15 +233,13 @@ class SRDCRuns:
 		# parsed by a helper function.
 		runs.sort(key=lambda r: r.status["verify-date"], reverse=True)
 		best_run = runs[0]
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run.id)
-		return SpeedRun(
-			player=best_run.players[0].name,
-			game=str(best_run.game),
-			category=str(best_run.category),
-			time=str(datetime.timedelta(seconds=best_run.times["primary_t"])),
-			place=place,
-			link=best_run.weblink,
-		)
+		variables = best_run.values
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run.id, variables)
+
+		# Extract the run, store the place and return it.
+		sr = self.extract_run(best_run)
+		sr.place = place
+		return sr
 
 	# ---------------------------------------------------------
 	# PB FETCH

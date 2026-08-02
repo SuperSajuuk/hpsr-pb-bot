@@ -44,7 +44,6 @@ PER_GAME_MAP = {
 
 	# Category extensions
 	"hpce": "Harry Potter Category Extensions"
-
 }
 
 # Map abbreviations for category to full API names
