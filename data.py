@@ -132,7 +132,7 @@ class SRDCRuns:
 	# ---------------------------------------------------------
 	def search_runs(self, game_id: str, category_id: str, user_id: str):
 		"""Search SRDC for runs matching game/category/user."""
-		return self.api.get(f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players")["data"]
+		return self.api.get(f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players")
 
 	# ---------------------------------------------------------
 	# RUN EXTRACTION
