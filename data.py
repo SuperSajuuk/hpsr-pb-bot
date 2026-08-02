@@ -5,6 +5,7 @@
 # while placing it in a defined structure.
 from dataclasses import dataclass
 import datetime
+import config
 from typing import Dict
 import srcomapi
 import srcomapi.datatypes as dt
@@ -231,7 +232,9 @@ class SRDCRuns:
 		# parsed by a helper function.
 		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
-		variables = best_run["values"]
+		all_vars = best_run["values"]
+		allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
+		variables = {vid: all_vars[vid] for vid in allowlist if vid in all_vars} if allowlist is not None else all_vars
 		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 
 		# Extract the run, store the place and return it.

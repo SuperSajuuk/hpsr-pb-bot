@@ -118,13 +118,12 @@ CATEGORY_MAPPING = {
 	'chungus': {'name': '<Category "2PC">', 'clean': 'Chungus%', 'cecode': 'rqv2jkw1'}
 }
 
-# Solo games that require standard processing
-STANDARD_GAME_CODES = [
-	"hp1pc", "hp2pc", "hp3pc", "hp5", "hp6", "hp7p1", "hp7p2",
-	"hp1ps1", "hp2ps1", "hp1_6th_gen", "hp2_6th_gen", "hp2ps2", "hp3ps2xboxgcn",
-	"hp1gba", "hp2gba", "hp3gba", "hp1gbc", "hp2gbc",
-	"disneys_brother_bear"
-]
+# Variable allowlist.
+# This is needed because some categories include additional metadata that
+# we don't require (eg HP2PS2).
+CATEGORY_VARIABLE_ALLOWLIST = {
+	"hp2ps2": ["w209e9z2", "yn20gk2l"]
+}
 
 # Point to the docs if there is an error.
 # Putting it as a constant means we don't need multiple
