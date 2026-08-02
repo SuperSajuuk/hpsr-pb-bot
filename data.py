@@ -154,9 +154,11 @@ class SRDCRuns:
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
 			time=time,
+			raw=None,
 			emulator=run_obj["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
-			link=run_obj["weblink"]
+			link=run_obj["weblink"],
+			id=None
 		)
 
 	# ---------------------------------------------------------
