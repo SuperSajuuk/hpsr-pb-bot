@@ -41,7 +41,7 @@ class SRDCRuns:
 		# We'll cache all game codes in-memory to avoid
 		# hammering SRDC with requests.
 		self.api = srcomapi.SpeedrunCom()
-		self.api.debug = 1
+		self.api.debug = 0
 		self.game_map = game_map
 		self.category_map = category_map
 		self.game_code_cache = {}
