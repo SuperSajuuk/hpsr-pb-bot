@@ -34,15 +34,11 @@ PER_GAME_MAP = {
 	"hp2gba": "Harry Potter and the Chamber of Secrets (GBA)",
 	"hp3gba": "Harry Potter and the Prisoner of Azkaban (GBA)",
 
-	# Other Games
+	# Other Games (non-HP, extend this as appropriate)
 	"dbb": "Disney's Brother Bear",
 
-	# Multiruns
+	# Others
 	"multi": "Harry Potter Multiruns",
-	"hpmulti": "Harry Potter Multiruns",
-	"hp123pc": "Harry Potter Multiruns",
-
-	# Category extensions
 	"hpce": "Harry Potter Category Extensions"
 }
 
@@ -71,45 +67,41 @@ CATEGORY_MAPPING = {
 	'allcrests': {'name': '<Category "All Crests">', 'clean': 'All Crests'},
 
 	# Multirun Categories
-	'trifecta': {
-		'name': '<Category "PC Trifecta">', 'clean': 'Trifecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+	'pctri': {
+		'name': '<Category "PC Trifecta">', 'clean': 'PC Trifecta',
+		'variables': {'0nw0e0kl': {'any': 'p12099kl', '100': '81p5eekl', 'awc': 'p120927l'}}
 	},
-	'octofecta': {
-		'name': '<Category "PC Octofecta">', 'clean': 'Octofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+	'pcocto': {
+		'name': '<Category "PC Octofecta">', 'clean': 'PC Octofecta',
+		'variables': {'wl3dqd98': {'any': 'klr2xx21', '100': '21de6vjl'}}
 	},
 	'7duo': {
 		'name': '<Category "7PC Duofecta">', 'clean': '7PC Duofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'789dqd6n': {'any': 'xqknooyq', '100': 'gq7x22yl'}}
 	},
 	'ps1duo': {
 		'name': '<Category "PS1 Duofecta">', 'clean': 'PS1 Duofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'wlek5kkl': {'any': '5q8942k1', '100': '4qyw7571', 'nms': 'p120957l'}}
 	},
-	'6gentrifecta': {
+	'6gentri': {
 		'name': '<Category "6th Gen Trifecta">', 'clean': '6th Gen Trifecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'68k737yl': {'any': 'mlnoeddq', '1001': '9qj82wg1'}}
 	},
 	'fs': {
 		'name': '<Category "Full Series">', 'clean': 'Full Series',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'38dm1m18': {'any': '5lexn3zq', '100': '0q534xn1'}}
 	},
 	'gbcduo': {
 		'name': '<Category "GBC Duofecta">', 'clean': 'GBC Duofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'j84d0dj8': {'any': 'jq6evy7l', '100': '5lmm284l'}}
 	},
 	'gbapenta': {
 		'name': '<Category "GBA Pentafecta">', 'clean': 'GBA Pentafecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'rn1jqjkn': {'any': '81w07e5l', '100': 'zqovjm21'}}
 	},
-	'handheldocto': {
+	'hhocto': {
 		'name': '<Category "Handheld Octofecta">', 'clean': 'Handheld Octofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
-	},
-	'handheldoctofecta': {
-		'name': '<Category "Handheld Octofecta">', 'clean': 'Handheld Octofecta',
-		'variables': {'789k439l': {'any': '4qyn2371', '100': '810xn351'}}
+		'variables': {'p855j508': {'any': '0136xw31', '100': 'rqvyx6wq'}}
 	},
 
 	# Category Extensions
@@ -144,7 +136,113 @@ LEADERBOARD_CONFIG = {
 			"var_id": "yn20gk2l",
 			"values": {"console": "139v60r1", "emulator": "qvv4y7rq"}
 		}
-	}
+	},
+	"hpmulti": {
+		"categories": {
+			"pc_trifecta_any": {
+				"var_id": "0nw0e0kl",
+				"value": "p12099kl",
+				"h": "PC_Trifecta-Any"
+			},
+			"pc_trifecta_100": {
+				"var_id": "0nw0e0kl",
+				"value": "81p5eekl",
+				"h": "PC_Trifecta-100"
+			},
+			"pc_trifecta_awc": {
+				"var_id": "0nw0e0kl",
+				"value": "p120927l",
+				"h": "PC_Trifecta-AWC"
+			},
+			"pc_octofecta_any": {
+				"var_id": "wl3dqd98",
+				"value": "klr2xx21",
+				"h": "PC_Octofecta-Any"
+			},
+			"pc_octofecta_100": {
+				"var_id": "wl3dqd98",
+				"value": "21de6vjl",
+				"h": "PC_Octofecta-100"
+			},
+			"7pc_duofecta_any": {
+				"var_id": "789dqd6n",
+				"value": "xqknooyq",
+				"h": "7PC_Duofecta-Any"
+			},
+			"7pc_duofecta_100": {
+				"var_id": "789dqd6n",
+				"value": "gq7x22yl",
+				"h": "7PC_Duofecta-100"
+			},
+			"ps1_duofecta_any": {
+				"var_id": "wlek5kkl",
+				"value": "5q8942k1",
+				"h": "PS1_Duofecta-Any"
+			},
+			"ps1_duofecta_100": {
+				"var_id": "wlek5kkl",
+				"value": "4qyw7571",
+				"h": "PS1_Duofecta-100"
+			},
+			"ps1_duofecta_nms": {
+				"var_id": "wlek5kkl",
+				"value": "p120957l",
+				"h": "PS1_Duofecta-NMS"
+			},
+			"6th_gen_trifecta_any": {
+				"var_id": "68k737yl",
+				"value": "mlnoeddq",
+				"h": "6th_Gen_Trifecta-Any"
+			},
+			"6th_gen_trifecta_1001": {
+				"var_id": "68k737yl",
+				"value": "9qj82wg1",
+				"h": "6th_Gen_Trifecta-1001"
+			},
+			"full_series_any": {
+				"var_id": "38dm1m18",
+				"value": "5lexn3zq",
+				"h": "Full_Series-Any"
+			},
+			"full_series_100": {
+				"var_id": "38dm1m18",
+				"value": "0q534xn1",
+				"h": "Full_Series-100"
+			},
+			"gbc_duofecta_any": {
+				"var_id": "j84d0dj8",
+				"value": "jq6evy7l",
+				"h": "GBC_Duofecta-Any"
+			},
+			"gbc_duofecta_100": {
+				"var_id": "j84d0dj8",
+				"value": "5lmm284l",
+				"h": "GBC_Duofecta-100"
+			},
+			"gba_pentafecta_any": {
+				"var_id": "rn1jqjkn",
+				"value": "81w07e5l",
+				"h": "GBA_Pentafecta-Any"
+			},
+			"gba_pentafecta_100": {
+				"var_id": "rn1jqjkn",
+				"value": "zqovjm21",
+				"h": "GBA_Pentafecta-100"
+			},
+			"handheld_octofecta_any": {
+				"var_id": "p855j508",
+				"value": "0136xw31",
+				"h": "Handheld_Octofecta-Any"
+			},
+			"handheld_octofecta_100": {
+				"var_id": "p855j508",
+				"value": "rqvyx6wq",
+				"h": "Handheld_Octofecta-100"
+			}
+		},
+		"platform": None  # No platform variable is required for these multirun categories.
+	},
+
 }
 
 # Point to the docs if there is an error.
