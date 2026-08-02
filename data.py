@@ -512,6 +512,6 @@ class SRDCRuns:
 					variables[var_id] = best_pb.raw["values"][var_id]
 
 		# Find the place number and return this PB run.
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_pb.id, variables)
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_pb["id"], variables)
 		best_pb.place = place
 		return result
