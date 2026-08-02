@@ -25,6 +25,7 @@ class SpeedRun:
 	emulator: bool
 	place: int | None
 	link: str
+	id: int | None
 
 
 # SRDCRuns
@@ -153,7 +154,6 @@ class SRDCRuns:
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
 			time=time,
-			raw=None,
 			emulator=run_obj["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
 			link=run_obj["weblink"]
@@ -350,7 +350,8 @@ class SRDCRuns:
 			raw=run,
 			emulator=run["system"]["emulated"],
 			place=place,
-			link=link
+			link=link,
+			id=run["id"]
 		)
 
 	# ---------------------------------------------------------
@@ -512,6 +513,6 @@ class SRDCRuns:
 					variables[var_id] = best_pb.raw["values"][var_id]
 
 		# Find the place number and return this PB run.
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_pb["id"], variables)
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_pb.id, variables)
 		best_pb.place = place
 		return result
