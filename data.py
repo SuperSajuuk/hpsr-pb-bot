@@ -20,6 +20,7 @@ class SpeedRun:
 	game: str
 	category: str
 	time: str
+	emulator: bool
 	place: int | None
 	link: str
 
@@ -39,7 +40,7 @@ class SRDCRuns:
 		# We'll cache all game codes in-memory to avoid
 		# hammering SRDC with requests.
 		self.api = srcomapi.SpeedrunCom()
-		self.api.debug = 0
+		self.api.debug = 1
 		self.game_map = game_map
 		self.category_map = category_map
 		self.game_code_cache = {}
@@ -154,6 +155,7 @@ class SRDCRuns:
 			game=str(run_obj.game),
 			category=str(run_obj.category),
 			time=time,
+			emulator=run["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
 			link=run_obj.weblink,
 		)
@@ -264,6 +266,7 @@ class SRDCRuns:
 			game=str(run["game"]),
 			category=str(run["category"]),
 			time=time,
+			emulator=run["system"]["emulated"],
 			place=place,
 			link=link,
 		)

@@ -93,7 +93,8 @@ def latest_run(owner, game, cat, player):
 		return f"{player.capitalize()} most recent verified runs in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}: {joined}"
 
 	# Just a regular run, so print the standard text supporting the latest run.
-	return f"{player.capitalize()} most recent verified run in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']} is {result.time} (#{result.place}): {result.link}"
+	is_emulator = " (Emulator) " if result.emulator else " "
+	return f"{player.capitalize()} most recent verified run in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}{is_emulator}is {result.time} (#{result.place}): {result.link}"
 
 
 # Find a PB for the given player and category.
@@ -134,7 +135,8 @@ def personal_best(owner, game, cat, player):
 
 	# Print the standard string to represent this PB.
 	pb = result[0]
-	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}: {pb.link}"
+	is_emulator = " (Emulator)" if pb.emulator else ""
+	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}{is_emulator}: {pb.link}"
 
 
 # Provide help and support to users calling the routes.
