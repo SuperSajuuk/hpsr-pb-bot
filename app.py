@@ -60,9 +60,25 @@ def resolve_player(channel_owner: str, player: str | None) -> str:
 # This code is much more efficient than parsing out every PB
 # the user has submitted, particularly if you just want to look
 # at one game.
-@app.route('/run/<owner>+<game>+<cat>', defaults={'player': None})
-@app.route('/run/<owner>+<game>+<cat>+<player>')
-def latest_run(owner, game, cat, player):
+@app.route('/run/<path:args>')
+def latest_run(args):
+	# Parse the arguments and check we have 3.
+	parts = args.split("+")
+	if len(parts) < 3:
+		return "Error: this route requires owner+game+cat to be provided", 400
+
+	# Set the variables on argument order
+	owner = parts[0]
+	game = parts[1]
+	cat = parts[2]
+	platform = None
+	player = None
+	for p in parts[3:]:
+		if p.lower() in ["console", "emulator"]:
+			platform = p.lower()
+		else:
+			player = p
+
 	# Validate game/category exist in the mapping.
 	# At some point, the game check should be removed, so
 	# that this can be used to find a PB for any game by the
@@ -77,7 +93,7 @@ def latest_run(owner, game, cat, player):
 
 	# Query SRDC to find the latest run submitted by the player for this game/category.
 	try:
-		result = srdc.lookup_run(game, cat, player)
+		result = srdc.lookup_run(game, cat, player, platform)
 	except ValueError:
 		return "No run found for this criteria."
 

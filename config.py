@@ -125,6 +125,12 @@ CATEGORY_VARIABLE_ALLOWLIST = {
 	"hp2ps2": ["w209e9z2", "yn20gk2l"]
 }
 
+# Platform variable values.
+# This allows us to query runs more specifically.
+PLATFORM_VALUES = {
+	"hp2ps2": {"emulator": "qvv4y7rq", "console": "139v60r1"}
+}
+
 # Point to the docs if there is an error.
 # Putting it as a constant means we don't need multiple
 # references to it, and updating it just requires changing

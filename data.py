@@ -160,7 +160,7 @@ class SRDCRuns:
 	# ---------------------------------------------------------
 	# LOOKUP RUN
 	# ---------------------------------------------------------
-	def lookup_run(self, game_key: str, cat_key: str, player: str) -> Speedrun | dict[str, SpeedRun] | None:
+	def lookup_run(self, game_key: str, cat_key: str, player: str, platform: str = None) -> Speedrun | dict[str, SpeedRun] | None:
 		"""
 		Look up the fastest verified run for a player in a specific game/category.
 		While looking through PBs works well enough, it's a lot more efficient to
@@ -189,6 +189,20 @@ class SRDCRuns:
 		runs = self.search_runs(game_obj.id, category_obj.id, user_id)
 		if not runs:
 			return None
+
+		# Check if we've defined the platform in this request.
+		if platform is not None:
+			allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
+			if allowlist is not None:
+				# Get the platform ID from the first value of the allow list.
+				# Then, filter it to see if runs are provided.
+				platform_var_id = allowlist[0]
+				desired_value = config.PLATFORM_VALUES[game_key][platform]
+				runs = [r for r in runs if r["values"].get(platform_var_id) == desired_value]
+
+			# If filtering removed all runs, return None
+			if not runs:
+				return None
 
 		# In some games, there might be a multi-run: check for those first.
 		if "variables" in category_meta:
