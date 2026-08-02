@@ -248,7 +248,7 @@ class SRDCRuns:
 	# PB EXTRACTION
 	# ---------------------------------------------------------
 	@staticmethod
-	def extract_pb(entry) -> SpeedRun:
+	def extract_pb(entry, player_name) -> SpeedRun:
 		"""Convert a PB entry into a structured dataclass."""
 		run = entry["run"]
 		place = entry["place"]
@@ -256,7 +256,7 @@ class SRDCRuns:
 		time = str(datetime.timedelta(seconds=seconds))
 		link = run["weblink"]
 		return SpeedRun(
-			player=entry["player"]["name"],
+			player=player_name,
 			game=str(run["game"]),
 			category=str(run["category"]),
 			time=time,
@@ -267,7 +267,7 @@ class SRDCRuns:
 	# ---------------------------------------------------------
 	# PB FILTERING
 	# ---------------------------------------------------------
-	def find_pbs(self, pbs: list, category_id: str, variable_filter=None):
+	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None):
 		"""
 		Find PBs matching a category and optional variable filter.
 		variable_filter = ("variable_id", "expected_value")
@@ -286,7 +286,7 @@ class SRDCRuns:
 					continue
 
 			# Append the PB result to the list.
-			results.append(self.extract_pb(entry))
+			results.append(self.extract_pb(entry, player))
 
 		return results
 
@@ -328,12 +328,12 @@ class SRDCRuns:
 			results = {}
 
 			# Any%
-			any_pbs = self.find_pbs(pbs, category_obj.id, (var_id, var_values["any"]))
+			any_pbs = self.find_pbs(player, pbs, category_obj.id, (var_id, var_values["any"]))
 			if any_pbs:
 				results["any"] = any_pbs[0]
 
 			# 100%
-			hundo_pbs = self.find_pbs(pbs, category_obj.id, (var_id, var_values["100"]))
+			hundo_pbs = self.find_pbs(player, pbs, category_obj.id, (var_id, var_values["100"]))
 			if hundo_pbs:
 				results["100"] = hundo_pbs[0]
 
@@ -343,4 +343,4 @@ class SRDCRuns:
 		# Optional variable filtering (for CE categories)
 		# Written using an in-line expression for tidiness.
 		variable_filter = ("2lg3d4on", category_meta["cecode"]) if "cecode" in category_meta else None
-		return self.find_pbs(pbs, category_obj.id, variable_filter)
+		return self.find_pbs(player, pbs, category_obj.id, variable_filter)
