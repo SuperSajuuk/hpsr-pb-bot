@@ -190,21 +190,27 @@ class SRDCRuns:
 		if not runs:
 			return None
 
-		# Check if we've defined the platform in this request.
-		platform_var_id = None
-		desired_value = None
-		if platform is not None:
-			# Get the platform ID from the first value of the allow list.
-			# Then, filter it to see if runs are provided.
-			allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, {})
-			platform_var_id = allowlist.get("platform")
-			if platform_var_id:
-				desired_value = config.PLATFORM_VALUES[game_key][platform]
-				runs = [r for r in runs if r["values"].get(platform_var_id) == desired_value]
+		# Load unified leaderboard config for this game (if present)
+		cfg = config.LEADERBOARD_CONFIG.get(game_key, None)
 
-				# If filtering removed all runs, return None
+		# Optional platform filtering (console/emulator)
+		if platform is not None:
+
+			if cfg is not None:
+				# Unified config path (preferred)
+				plat_cfg = cfg["platform"]
+				plat_var_id = plat_cfg["var_id"]
+				plat_value = plat_cfg["values"][platform]
+
+				runs = [r for r in runs if r["values"].get(plat_var_id) == plat_value]
 				if not runs:
 					return None
+
+			else:
+				# Fallback path for games without unified config:
+				# No platform filtering is possible, so we simply do nothing.
+				# This ensures games without config still work normally.
+				pass
 
 		# In some games, there might be a multi-run: check for those first.
 		if "variables" in category_meta:
@@ -215,13 +221,30 @@ class SRDCRuns:
 			# Any%
 			any_runs = [
 				r for r in runs
-				if r["values"].get(var_id) == var_values["any"] and (platform_var_id is None or r["values"].get(platform_var_id) == desired_value)
+				if r["values"].get(var_id) == var_values["any"]
+				   and (platform is None or (
+						cfg is not None and
+						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+				))
 			]
 			if any_runs:
 				# Sort the Any% runs by verification date, and find its place in the list
 				any_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 				best_any = any_runs[0]
-				variables_any = best_any["values"]
+
+				# Build variable set for leaderboard lookup
+				variables_any = {}
+				if cfg is not None:
+					cat_cfg = cfg["categories"][cat_key]
+					variables_any[cat_cfg["var_id"]] = best_any["values"][cat_cfg["var_id"]]
+
+					if platform is not None:
+						plat_cfg = cfg["platform"]
+						variables_any[plat_cfg["var_id"]] = best_any["values"][plat_cfg["var_id"]]
+				else:
+					# Fallback: use only the category variable
+					variables_any[var_id] = best_any["values"][var_id]
+
 				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
 
 				# Extract the run details and store it in the dictionary.
@@ -232,13 +255,30 @@ class SRDCRuns:
 			# 100%
 			hundo_runs = [
 				r for r in runs
-				if r["values"].get(var_id) == var_values["100"] and (platform_var_id is None or r["values"].get(platform_var_id) == desired_value)
+				if r["values"].get(var_id) == var_values["100"]
+				   and (platform is None or (
+						cfg is not None and
+						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+				))
 			]
 			if hundo_runs:
 				# Sort the 100% runs by verification date, and find its place in the list.
 				hundo_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 				best_hundo = hundo_runs[0]
-				variables_hundo = best_hundo["values"]
+
+				# Build variable set for leaderboard lookup
+				variables_hundo = {}
+				if cfg is not None:
+					cat_cfg = cfg["categories"][cat_key]
+					variables_hundo[cat_cfg["var_id"]] = best_hundo["values"][cat_cfg["var_id"]]
+
+					if platform is not None:
+						plat_cfg = cfg["platform"]
+						variables_hundo[plat_cfg["var_id"]] = best_hundo["values"][plat_cfg["var_id"]]
+				else:
+					# Fallback: use only the category variable
+					variables_hundo[var_id] = best_hundo["values"][var_id]
+
 				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
 
 				# Extract the run details and store it in the dictionary.
@@ -255,26 +295,22 @@ class SRDCRuns:
 		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
 
-		# Check for variables and set them up.
+		# Build variable set for leaderboard lookup
 		variables = {}
-		allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, {})
-		category_var_id = allowlist.get("category")
-		if category_var_id and category_var_id in best_run["values"]:
-			variables[category_var_id] = best_run["values"][category_var_id]
+		if cfg is not None:
+			cat_cfg = cfg["categories"][cat_key]
+			variables[cat_cfg["var_id"]] = best_run["values"][cat_cfg["var_id"]]
+			if platform is not None:
+				plat_cfg = cfg["platform"]
+				variables[plat_cfg["var_id"]] = best_run["values"][plat_cfg["var_id"]]
+		else:
+			# Fallback: only include category variable
+			var_id = list(category_meta["variables"].keys())[0]
+			variables[var_id] = best_run["values"][var_id]
 
-		# Include platform variable ONLY if user requested platform
-		if platform is not None:
-			platform_var_id = allowlist.get("platform")
-			if platform_var_id and platform_var_id in best_run["values"]:
-				variables[platform_var_id] = best_run["values"][platform_var_id]
-
-		# all_vars = best_run["values"]
-		# allowlist = config.CATEGORY_VARIABLE_ALLOWLIST.get(game_key, None)
-		# variables = {vid: all_vars[vid] for vid in allowlist if vid in all_vars} if allowlist is not None else all_vars
-		# place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 
 		# Extract the run, store the place and return it.
-		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 		sr = self.extract_run(best_run, player)
 		sr.place = place
 		return sr

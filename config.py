@@ -118,17 +118,33 @@ CATEGORY_MAPPING = {
 	'chungus': {'name': '<Category "2PC">', 'clean': 'Chungus%', 'cecode': 'rqv2jkw1'}
 }
 
-# Variable allowlist.
-# This is needed because some categories include additional metadata that
-# we don't require (eg HP2PS2).
-CATEGORY_VARIABLE_ALLOWLIST = {
-	"hp2ps2": {"category": "w209e9z2", "platform": "yn20gk2l"}
-}
-
-# Platform variable values.
-# This allows us to query runs more specifically.
-PLATFORM_VALUES = {
-	"hp2ps2": {"emulator": "qox5j42q", "console": "139v60r1"}
+# Leaderboard configuration
+# Sometimes, a board may contain sub-boards or sub-categories.
+# We handle them here so that they can be detected and processed properly.
+LEADERBOARD_CONFIG = {
+	"hp2ps2": {
+		"categories": {
+			"any": {
+				"var_id": "rklo0owk",
+				"value": "any",
+				"h": "any"
+			},
+			"100": {
+				"var_id": "ndxvrvj2",
+				"value": "100",
+				"h": "100"
+			},
+			"noeds": {
+				"var_id": "w209e9z2",
+				"value": "no-major-skips",
+				"h": "no-major-skips"
+			},
+		},
+		"platform": {
+			"var_id": "yn20gk2l",
+			"values": {"console": "139v60r1", "emulator": "qvv4y7rq"}
+		}
+	}
 }
 
 # Point to the docs if there is an error.
