@@ -133,7 +133,7 @@ def personal_best(owner, game, cat, player):
 		return f"{player.capitalize()} PBs for {game.upper()} {category_map[cat]['clean']}: {joined}"
 
 	# Print the standard string to represent this PB.
-	pb = results[0]
+	pb = result[0]
 	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {category_map[cat]['clean']}: {pb.link}"
 
 
