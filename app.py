@@ -62,7 +62,7 @@ def resolve_player(channel_owner: str, player: str | None) -> str:
 # at one game.
 @app.route('/run/<owner>+<game>+<cat>', defaults={'player': None})
 @app.route('/run/<owner>+<game>+<cat>+<player>')
-def latest_run(game, cat, player):
+def latest_run(owner, game, cat, player):
 	# Validate game/category exist in the mapping.
 	# At some point, the game check should be removed, so
 	# that this can be used to find a PB for any game by the
@@ -104,7 +104,7 @@ def latest_run(game, cat, player):
 # command instead.
 @app.route('/pb/<owner>+<game>+<cat>', defaults={'player': None})
 @app.route('/pb/<owner>+<game>+<cat>+<player>')
-def personal_best(game, cat, player):
+def personal_best(owner, game, cat, player):
 	# Validate game/category exist in the mapping.
 	# At some point, the game check should be removed, so
 	# that this can be used to find a PB for any game by the
@@ -112,9 +112,9 @@ def personal_best(game, cat, player):
 	player = resolve_player(owner, player)
 	game = game.lower()
 	cat = cat.lower()
-	if game not in game_map:
+	if game not in config.PER_GAME_MAP.keys():
 		return f"Invalid game. See supported options: {config.COMMAND_USAGE_DOC}"
-	if cat not in category_map:
+	if cat not in config.CATEGORY_MAPPING.keys():
 		return f"Invalid category. See supported options: {config.COMMAND_USAGE_DOC}"
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
@@ -163,12 +163,12 @@ def missing_game(game):
 
 # Common error handlers
 @app.errorhandler(500)
-def internal_error():
+def internal_error(error):
 	return "Encountered an error in your request, or could not find a run."
 
 
 @app.errorhandler(408)
-def timeout_error():
+def timeout_error(error):
 	# Return timeout error
 	return "Request timed out, please try typing the command again."
 
