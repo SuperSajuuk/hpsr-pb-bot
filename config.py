@@ -23,7 +23,7 @@ PER_GAME_MAP = {
 	"hp1_6gen": "Harry Potter and the Philosopher's Stone (PS2,GCN,Xbox)",
 	"hp2_6gen": "Harry Potter and the Chamber of Secrets (GCN/Xbox)",
 	"hp2ps2": "Harry Potter and the Chamber of Secrets (PS2)",
-	"hp3_6": "Harry Potter and the Prisoner of Azkaban (PS2,Xbox,GCN)",
+	"hp3_6gen": "Harry Potter and the Prisoner of Azkaban (PS2,Xbox,GCN)",
 
 	# GBC
 	"hp1gbc": "Harry Potter and the Philosopher's Stone (GBC)",
