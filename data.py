@@ -147,7 +147,7 @@ class SRDCRuns:
 		seconds = run_obj["times"]["primary_t"]
 		time = str(datetime.timedelta(seconds=seconds))
 		return SpeedRun(
-			player=run_obj["players"][0]["name"],
+			player=run_obj["players"]["name"],
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
 			time=time,
