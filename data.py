@@ -221,10 +221,9 @@ class SRDCRuns:
 			# Any%
 			any_runs = [
 				r for r in runs
-				if r["values"].get(var_id) == var_values["any"]
-				   and (platform is None or (
-						cfg is not None and
-						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+				if r["values"].get(var_id) == var_values["any"] and (platform is None or (
+					cfg is not None and
+					r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
 				))
 			]
 			if any_runs:
@@ -236,14 +235,18 @@ class SRDCRuns:
 				variables_any = {}
 				if cfg is not None:
 					cat_cfg = cfg["categories"][cat_key]
-					variables_any[cat_cfg["var_id"]] = best_any["values"][cat_cfg["var_id"]]
-
+					cat_var_id = cat_cfg["var_id"]
+					if cat_var_id in best_any["values"]:
+						variables_any[cat_var_id] = best_any["values"][cat_var_id]
 					if platform is not None:
 						plat_cfg = cfg["platform"]
-						variables_any[plat_cfg["var_id"]] = best_any["values"][plat_cfg["var_id"]]
+						plat_var_id = plat_cfg["var_id"]
+						if plat_var_id in best_any["values"]:
+							variables_any[plat_var_id] = best_any["values"][plat_var_id]
 				else:
 					# Fallback: use only the category variable
-					variables_any[var_id] = best_any["values"][var_id]
+					if var_id in best_any["values"]:
+						variables_any[var_id] = best_any["values"][var_id]
 
 				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
 
@@ -255,10 +258,9 @@ class SRDCRuns:
 			# 100%
 			hundo_runs = [
 				r for r in runs
-				if r["values"].get(var_id) == var_values["100"]
-				   and (platform is None or (
-						cfg is not None and
-						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
+				if r["values"].get(var_id) == var_values["100"] and (platform is None or (
+					cfg is not None and
+					r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
 				))
 			]
 			if hundo_runs:
@@ -270,14 +272,18 @@ class SRDCRuns:
 				variables_hundo = {}
 				if cfg is not None:
 					cat_cfg = cfg["categories"][cat_key]
-					variables_hundo[cat_cfg["var_id"]] = best_hundo["values"][cat_cfg["var_id"]]
-
+					cat_var_id = cat_cfg["var_id"]
+					if cat_var_id in best_hundo["values"]:
+						variables_hundo[cat_var_id] = best_hundo["values"][cat_var_id]
 					if platform is not None:
 						plat_cfg = cfg["platform"]
-						variables_hundo[plat_cfg["var_id"]] = best_hundo["values"][plat_cfg["var_id"]]
+						plat_var_id = plat_cfg["var_id"]
+						if plat_var_id in best_hundo["values"]:
+							variables_hundo[plat_var_id] = best_hundo["values"][plat_var_id]
 				else:
 					# Fallback: use only the category variable
-					variables_hundo[var_id] = best_hundo["values"][var_id]
+					if var_id in best_hundo["values"]:
+						variables_hundo[var_id] = best_hundo["values"][var_id]
 
 				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
 
@@ -299,10 +305,14 @@ class SRDCRuns:
 		variables = {}
 		if cfg is not None:
 			cat_cfg = cfg["categories"][cat_key]
-			variables[cat_cfg["var_id"]] = best_run["values"][cat_cfg["var_id"]]
+			cat_var_id = cat_cfg["var_id"]
+			if cat_var_id in best_run["values"]:
+				variables[cat_var_id] = best_run["values"][cat_var_id]
 			if platform is not None:
 				plat_cfg = cfg["platform"]
-				variables[plat_cfg["var_id"]] = best_run["values"][plat_cfg["var_id"]]
+				plat_var_id = plat_cfg["var_id"]
+				if plat_var_id in best_run["values"]:
+					variables[plat_var_id] = best_run["values"][plat_var_id]
 		else:
 			# Fallback: only include category variable
 			var_id = list(category_meta["variables"].keys())[0]
