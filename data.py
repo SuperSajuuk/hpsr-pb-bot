@@ -248,7 +248,7 @@ class SRDCRuns:
 	# PB EXTRACTION
 	# ---------------------------------------------------------
 	@staticmethod
-	def extract_pb(entry) -> PBResult:
+	def extract_pb(entry) -> SpeedRun:
 		"""Convert a PB entry into a structured dataclass."""
 		run = entry["run"]
 		place = entry["place"]
@@ -256,7 +256,7 @@ class SRDCRuns:
 		time = str(datetime.timedelta(seconds=seconds))
 		link = run["weblink"]
 		return SpeedRun(
-			player=run["players"][0]["name"],
+			player=entry["player"]["name"],
 			game=str(run["game"]),
 			category=str(run["category"]),
 			time=time,
