@@ -140,14 +140,14 @@ class SRDCRuns:
 	# RUN EXTRACTION
 	# ---------------------------------------------------------
 	@staticmethod
-	def extract_run(run_obj) -> SpeedRun:
+	def extract_run(run_obj, player_name) -> SpeedRun:
 		"""
 		Convert a srcomapi Run object into a SpeedRun dataclass.
 		"""
 		seconds = run_obj["times"]["primary_t"]
 		time = str(datetime.timedelta(seconds=seconds))
 		return SpeedRun(
-			player=run_obj["players"]["name"],
+			player=player_name,
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
 			time=time,
@@ -205,7 +205,7 @@ class SRDCRuns:
 				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
 
 				# Extract the run details and store it in the dictionary.
-				sr_any = self.extract_run(best_any)
+				sr_any = self.extract_run(best_any, player)
 				sr_any.place = place_any
 				results["any"] = sr_any
 
@@ -219,7 +219,7 @@ class SRDCRuns:
 				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
 
 				# Extract the run details and store it in the dictionary.
-				sr_hundo = self.extract_run(best_hundo)
+				sr_hundo = self.extract_run(best_hundo, player)
 				sr_hundo.place = place_hundo
 				results["100"] = sr_hundo
 
@@ -235,7 +235,7 @@ class SRDCRuns:
 		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 
 		# Extract the run, store the place and return it.
-		sr = self.extract_run(best_run)
+		sr = self.extract_run(best_run, player)
 		sr.place = place
 		return sr
 
