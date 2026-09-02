@@ -312,42 +312,45 @@ class SRDCRuns:
 				category_obj = cat
 				break
 
+		# If there is no category object, raise an error because it doesn't exist.
 		if not category_obj:
 			raise ValueError("Category not found in game")
 
-		# Resolve user ID
+		# Resolve user ID and then search the runs to find something.
 		user_id = self.get_user_id(player)
-
-		# Search runs
 		runs = self.search_runs(game_obj.id, category_obj.id, user_id)
 		if not runs:
 			return None
 
-		# Unified config
+		# Sort the runs by the most recently verified run (newest at the top)
+		# The run at the top of the index will then be used to get its placement
+		# in the leaderboard. To avoid duplication, leaderboard placement is
+		# parsed by a helper function.
 		cfg = config.LEADERBOARD_CONFIG.get(internal_key, None)
-
-		# Sort by verification date
 		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
 
 		# Build variable set
 		variables = {}
 		if cfg is not None:
+			# Always include category variable if present
 			cat_cfg = cfg["categories"][cat_key]
 			cat_var_id = cat_cfg["var_id"]
 			if cat_var_id in best_run["values"]:
 				variables[cat_var_id] = best_run["values"][cat_var_id]
 
+			# Always include platform variable if present — even if user didn't specify platform
 			plat_cfg = cfg["platform"]
 			plat_var_id = plat_cfg["var_id"]
 			if plat_var_id in best_run["values"]:
 				variables[plat_var_id] = best_run["values"][plat_var_id]
 		else:
+			# Only include the category variable as a fallback.
 			var_id = list(category_meta["variables"].keys())[0]
 			if var_id in best_run["values"]:
 				variables[var_id] = best_run["values"][var_id]
 
-		# Placement
+		# Extract the run, store the place and return it.
 		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 		sr = self.extract_run(best_run, player)
 		sr.place = place
