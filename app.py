@@ -73,6 +73,9 @@ def latest_run(owner, args):
 				player = p
 
 	# Resolve the player, then check for whether we wanted a Category Extension.
+	print(f"Platform: {platform}")
+	print(f"Game: {game}")
+	print(f"Category: {cat}")
 	player = resolve_player(owner, player)
 	if ce_mode:
 		# Validate CE arguments
