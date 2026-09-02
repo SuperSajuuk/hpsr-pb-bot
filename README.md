@@ -1,7 +1,21 @@
-# HPSR PB Bot
+# speedrun.com Run Finder web app
 
-A Twitch chat command for looking up speedrun PBs from speedrun.com. Currently, this only supports Harry Potter
-leaderboards, but support for searching up other games may be possible in the future
+This is a web app that is used by Twitch bots, such as StreamElements, to provide command-based functionality for 
+users to find runs and Personal Bests (PBs) from speedrun.com. The web app parses the users' input in the bot 
+command and returns the run matching the search parameters, allowing the streamer to know on-the-fly what their last 
+PB submission was.
+
+Currently, this only supports Harry Potter leaderboards: support for searching up other games will be implemented in 
+the future, please refer to the [games section below](#Games) for the list of supported games.
+
+An upcoming update will improve the functionality of these commands, such as:
+* Game names will lose the inclusion of platforms, simplifying it to just "hp1".
+* Platforms will become a required parameter where you set the platform (eg "pc", "ps1", "ps2", "xbox").
+* Full Series will be handled behind the scenes transparently, without requiring new commands just to handle it (you 
+  would tell the bot that you are looking for full series by just setting platform to "fs" and the rest is taken 
+  care of for you).
+
+I don't have a timeline for inclusion of this functionality, but keep an eye on the repository for more information!
 
 ## Usage
 
@@ -27,14 +41,14 @@ some cases, such as HP2 PS2, it may be ideal to provide this parameter to get th
 To support PB lookups, add the following custom command:
 
 ```
-!command add !pb ${customapi.https://hpsr-pb-bot.onrender.com/pb/${channel}+${queryescape ${1:|' '}}}
+!command add !pb ${customapi.https://srdc-run-finder.onrender.com/pb/${channel}+${queryescape ${1:|' '}}}
 ```
 
 To support looking up the latest run, add the following custom command (recommended to add this as its more
 efficient than parsing PBs):
 
 ```
-!command add !pb ${customapi.https://hpsr-pb-bot.onrender.com/run/${channel}+${queryescape ${1:|' '}}}
+!command add !run ${customapi.https://srdc-run-finder.onrender.com/run/${channel}+${queryescape ${1:|' '}}}
 ```
 
 The bot will automatically provide the channel name for you, so no need to include that. However, `${channel}` is 
