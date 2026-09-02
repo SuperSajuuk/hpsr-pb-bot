@@ -3,43 +3,236 @@
 # Since these won't change without a reload, we should use constant
 # variable formatting, ie the variables should be ALL CAPS.
 #
-# Map abbreviations to full game names
-PER_GAME_MAP = {
-	# PC
-	"hp1pc": "Harry Potter and the Philosopher's Stone (PC)",
-	"hp2pc": "Harry Potter and the Chamber of Secrets (PC)",
-	"hp3pc": "Harry Potter and the Prisoner of Azkaban (PC)",
+# Platform mapping. This is used to provide more control and flexibility over
+# bot commands.
+PLATFORM_MAP = {
+	"pc": "pc",
+	"ps1": "ps1",
+	"ps2": "ps2",
+	"ps3": "ps3",
+	"psp": "psp",
+	"gba": "gba",
+	"gbc": "gbc",
+	"ds": "ds",
+	"xbox": "6thgen",
+	"gcn": "6thgen"
+}
+
+# Game mapping. This is used to define all known games that exist in the bot.
+# This assumes base games, do not use this for category extensions. CE boards
+# need to be defined in their own constants.
+GAME_MAP = {
+	# Harry Potter
+	"hp1": "Harry Potter and the Philosopher's Stone",
+	"hp2": "Harry Potter and the Chamber of Secrets",
+	"hp3": "Harry Potter and the Prisoner of Azkaban",
 	"hp4": "Harry Potter and the Goblet of Fire",
 	"hp5": "Harry Potter and the Order of the Phoenix",
 	"hp6": "Harry Potter and the Half Blood Prince",
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
-
-	# PS1
-	"hp1ps1": "Harry Potter and the Philosopher's Stone (PS1)",
-	"hp2ps1": "Harry Potter and the Chamber of Secrets (PS1)",
-
-	# 6th Gen
-	"hp1_6gen": "Harry Potter and the Philosopher's Stone (PS2,GCN,Xbox)",
-	"hp2_6gen": "Harry Potter and the Chamber of Secrets (GCN/Xbox)",
-	"hp2ps2": "Harry Potter and the Chamber of Secrets (PS2)",
-	"hp3_6gen": "Harry Potter and the Prisoner of Azkaban (PS2,Xbox,GCN)",
-
-	# GBC
-	"hp1gbc": "Harry Potter and the Philosopher's Stone (GBC)",
-	"hp2gbc": "Harry Potter and the Chamber of Secrets (GBC)",
-
-	# GBA
-	"hp1gba": "Harry Potter and the Philosopher's Stone (GBA)",
-	"hp2gba": "Harry Potter and the Chamber of Secrets (GBA)",
-	"hp3gba": "Harry Potter and the Prisoner of Azkaban (GBA)",
-
-	# Other Games (non-HP, extend this as appropriate)
-	"dbb": "Disney's Brother Bear",
-
-	# Others
+	"hpce": "Harry Potter Category Extensions",
 	"multi": "Harry Potter Multiruns",
-	"hpce": "Harry Potter Category Extensions"
+
+	# Selection of other games. Extend appropriately.
+	"dbb": "Disney's Brother Bear"
+}
+
+# Category extension game mapping.
+# Here we will map all the different game maps for the category extensions
+# boards on SRDC. Currently only supports hpce, but will expand in the future.
+CE_GAME_MAP = {
+	"hp1_pc": "1PC",
+	"hp2_pc": "2PC",
+	"hp3_pc": "3PC",
+	"hp4_pc": "4PC",
+	"hp5_pc": "5PC",
+	"hp6_pc": "6PC",
+	"hp1_ps1": "1PS1",
+	"hp2_ps1": "2PS1",
+	"hp4_psp": "4PSP",
+	"hp5_psp": "5PSP"
+}
+CE_GAME_MAP_INSANE = {
+	"hp1_pc": "Insane",
+	"hp2_pc": "Insane",
+	"hp3_pc": "Insane",
+	"hp4_pc": "Insane",
+	"hp5_pc": "Insane",
+	"hp6_pc": "Insane",
+	"hp7.1_pc": "Insane",
+	"hp7.2_pc": "Insane",
+	"qwc_pc": "Insane",
+	"hp1_ps1": "Insane",
+	"hp2_ps1": "Insane",
+	"hp2_6thgen": "Insane",
+	"hp3_6thgen": "Insane",
+	"hp1_gba": "Insane",
+	"hp2_gba": "Insane",
+	"hp3_gba": "Insane",
+	"qwc_gba": "Insane",
+	"hp6_ds": "Insane",
+	"hp7.1_ds": "Insane",
+	"hp7.2_ds": "Insane"
+}
+CE_GAME_MAP_MULTIRUNS = {
+	"multiruns_pc": "Multiruns",
+	"multiruns_rpg": "Multiruns"
+}
+CE_GAME_MAP_SINGLE_YEAR = {
+	"hp1": "Single_Year",
+	"hp2": "Single_Year",
+	"hp3": "Single_Year",
+	"hp4": "Single_Year",
+	"hp5": "Single_Year",
+	"hp6": "Single_Year",
+	"hp7.1": "Single_Year",
+	"hp7.2": "Single_Year"
+}
+
+# Board slug mapping. This is used to map the values produced by
+# concatenating platform and game in the code. The ordering of the
+# keys is to ensure they are grouped by platform commonalities for
+# easier reading.
+BOARD_GAME_SLUG = {
+	"hp1_ps1": "hp1ps1",
+	"hp2_ps1": "hp2ps1",
+	"hp1_pc": "hp1pc",
+	"hp2_pc": "hp2pc",
+	"hp3_pc": "hp3pc",
+	"hp4_pc": "hp4",
+	"hp5_pc": "hp5",
+	"hp6_pc": "hp6",
+	"hp7.1_pc": "hp7p1",
+	"hp7.2_pc": "hp7p2",
+	"hp1_ps2": "hp1_6th_gen",
+	"hp2_ps2": "hp2ps2",
+	"hp3_ps2": "hp3_6th_gen",
+	"hp4_ps2": "hp4",
+	"hp5_ps2": "hp5",
+	"hp6_ps2": "hp6",
+	"hp1_xbox": "hp1_6th_gen",
+	"hp2_xbox": "hp2_6th_gen",
+	"hp3_xbox": "hp3_6th_gen",
+	"hp4_xbox": "hp4",
+	"hp5_xbox": "hp5",
+	"hp6_xbox": "hp6",
+	"hp7.1_xbox": "hp7p1",
+	"hp7.2_xbox": "hp7p2",
+	"hp1_gcn": "hp1_6th_gen",
+	"hp2_gcn": "hp2_6th_gen",
+	"hp3_gcn": "hp3_6th_gen",
+	"hp4_gcn": "hp4",
+	"hp1_gba": "hp1gba",
+	"hp2_gba": "hp2gba",
+	"hp3_gba": "hp3gba",
+	"hp4_gba": "hp4gba",
+	"hp5_gba": "hp5gbads",
+	"hp1_gbc": "hp1gbc",
+	"hp2_gbc": "hp2gbc",
+	"hp4_ds": "hp4gba",
+	"hp5_ds": "hp5gbads",
+	"hp6_ds": "hp6ds",
+	"hp7.1_ds": "hp7p1ds",
+	"hp7.2_ds": "hp7p2ds"
+}
+
+# This just sets a constant for the hpmulti game board.
+MULTIRUN_SLUG = "hpmulti"
+
+# Category extension mapping. This is needed to map
+# all the sub-boards and variables correctly to the CE_GAME_MAP
+# constants above.
+CATEGORY_EXT_MAP_STANDARD = {
+	"100gless": {
+		"h_suffix": "100-glitchless",
+		"var_ids": {"xd1j7vwd-789x9o08": "9qj95y0l"}
+	},
+	"allchests": {
+		"h_suffix": "all-chests",
+		"var_ids": {"xd1j7vwd-789x9o08": "qj7o0j3q"}
+	},
+	"boostless": {
+		"h_suffix": "boostless",
+		"var_ids": {"xd1j7vwd-789x9o08": "810prejl"}
+	},
+	"highjump": {
+		"h_suffix": "high-jump",
+		"var_ids": {"xd1j7vwd-789x9o08": "qvv4doyq"}
+	},
+	"lowcast": {
+		"h_suffix": "lowcast",
+		"var_ids": {"xd1j7vwd-789x9o08": "rqvj9v5q"}
+	}
+}
+
+# Due to a quirk of the insane% boards, things are very consistent
+# The dynamic parts will be filled in by other code in data.py
+CATEGORY_EXT_MAP_INSANE = {
+	"insane": {
+		"h_suffix": None,
+		"var_ids": {"9d83xr72-7896d298": None}
+	}
+}
+CATEGORY_EXT_MAP_MULTIRUNS = {
+	"glitchlessduo": {
+		"h_suffix": "pc-glitchless-duofecta",
+		"var_ids": {"ndx314vd-p85rz75n": "810prjjl"}
+	},
+	"rpgtrifecta": {
+		"h_suffix": "rpg-trifecta",
+		"var_ids": {"ndx314vd-p85rz75n": "9qj95n0l"}
+	}
+}
+CATEGORY_EXT_MAP_SINGLE_YEAR = {
+	"any": {
+		"h_suffix": "any",
+		"var_ids": {"xd1vl0rd-2lgr1v7n": None, "wl30dmyl": "013erydq"}
+	},
+	"100": {
+		"h_suffix": "100",
+		"var_ids": {"xd1vl0rd-2lgr1v7n": None, "wl30dmyl": "rqvwdn71"}
+	}
+}
+CATEGORY_EXT_MAP = {
+	"standard": CATEGORY_EXT_MAP_STANDARD,
+	"insane": CATEGORY_EXT_MAP_INSANE,
+	"multiruns": CATEGORY_EXT_MAP_MULTIRUNS,
+	"single_year": CATEGORY_EXT_MAP_SINGLE_YEAR
+}
+
+# Value ID mapping. This is needed for category extensions.
+CE_INSANE_VALUE_IDS = {
+	"hp1_pc": "21d7dm41",
+	"hp2_pc": "klrw7rj1",
+	"hp3_pc": "5q87zmgl",
+	"hp4_pc": "5lezyezl",
+	"hp5_pc": "0q5zw2nq",
+	"hp6_pc": "4lxo2yrl",
+	"hp7.1_pc": "814gm2j1",
+	"hp7.2_pc": "z19yezkl",
+	"qwc_pc": "qoxyzp2q",
+	"hp1_ps1": "4qyd206q",
+	"hp2_ps1": "mlnpvxo1",
+	"hp2_6thgen": "013z2zyq",
+	"hp3_6thgen": "5lm0z3j1",
+	"hp1_gba": "jq663o3q",
+	"hp2_gba": "q75dkjd1",
+	"hp3_gba": "rqv025rl",
+	"qwc_gba": "q654y2nl",
+	"hp6_ds": "zqovk7g1",
+	"hp7.1_ds": "1py422g1",
+	"hp7.2_ds": "klrg73oq"
+}
+CE_SINGLE_YEAR_GAME_VALUES = {
+	"hp1": "4qye4641",
+	"hp2": "mln6320q",
+	"hp3": "810e7rwq",
+	"hp4": "9qjyd5eq",
+	"hp5": "jq6k7j3l",
+	"hp6": "5lmjn9jl",
+	"hp7.1": "81ww8ko1",
+	"hp7.2": "zqown7pl"
 }
 
 # Map abbreviations for category to full API names
@@ -242,7 +435,6 @@ LEADERBOARD_CONFIG = {
 		},
 		"platform": None  # No platform variable is required for these multirun categories.
 	},
-
 }
 
 # Point to the docs if there is an error.

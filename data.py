@@ -3,29 +3,12 @@
 # This combines various pieces of app.py into a more reusable class
 # A class is far simpler to understand and avoids repetition of the code
 # while placing it in a defined structure.
-from dataclasses import dataclass
+from model import SpeedRun
 import datetime
 import config
 from typing import Dict
 import srcomapi
 import srcomapi.datatypes as dt
-
-
-# Create a SpeedRun model.
-# We use this to represent a run, whether it's a PB or not.
-# Note that a PB has a place, but searching a run may not
-# yield that data.
-@dataclass
-class SpeedRun:
-	player: str
-	game: str
-	category: str
-	time: str
-	raw: dict | None
-	emulator: bool
-	place: int | None
-	link: str
-	id: int | None
 
 
 # SRDCRuns
@@ -162,9 +145,154 @@ class SRDCRuns:
 		)
 
 	# ---------------------------------------------------------
+	# LOOKUP CATEGORY EXTENSION RUN
+	# ---------------------------------------------------------
+	def lookup_ce_run(self, base_game, platform, ce_type, ce_category, player):
+		"""
+		Resolve and fetch a Category Extensions run.
+		Currently, this only supports the HPCE board, but this will be expanded
+		in the future to include other CE boards, if they exist.
+		"""
+
+		# The CE type needs to be mapped first: do that or return ValueError
+		# if no match exists.
+		match ce_type:
+			case "standard":
+				game_map = CE_GAME_MAP
+			case "insane":
+				game_map = CE_GAME_MAP_INSANE
+			case "multiruns":
+				game_map = CE_GAME_MAP_MULTIRUNS
+			case "single_year":
+				game_map = CE_GAME_MAP_SINGLE_YEAR
+			case _:
+				raise ValueError(f"Unknown CE type: {ce_type}")
+
+		# The lookup key needs to be built: designed for the game_map search.
+		lookup_key = None
+		match ce_type:
+			case "standard" | "insane":
+				lookup_key = f"{base_game}_{platform}"
+			case "multiruns":
+				lookup_key = f"multiruns_{platform}"
+			case "single_year":
+				lookup_key = base_game
+
+		# Raise ValueError if:
+		# - lookup_key is not in the game map.
+		# - ce_type is not in the category extension mapping.
+		# - ce_category is not found in the ce_cat_map.
+		ce_board = game_map[lookup_key]
+		ce_cat_map = CATEGORY_EXT_MAP[ce_type]
+		if lookup_key not in game_map:
+			raise ValueError(f"CE board not found for key: {lookup_key}")
+		if ce_type not in CATEGORY_EXT_MAP:
+			raise ValueError(f"Unknown CE type in category map: {ce_type}")
+		if ce_category not in ce_cat_map:
+			raise ValueError(f"Unknown CE category: {ce_category}")
+
+		# Build the h= parameter
+		cat_info = ce_cat_map[ce_category]
+		h_param = None
+		match ce_type:
+			case "standard":
+				h_param = f"{ce_board}-{cat_info['h_suffix']}"
+			case "insane":
+				# dynamic suffix: "{game}-{platform}"
+				h_param = f"Insane-{base_game}-{platform}"
+			case "multiruns":
+				h_param = f"Multiruns-{cat_info['h_suffix']}"
+			case "single_year":
+				h_param = f"Single_Year-{base_game}-{cat_info['h_suffix']}"
+
+		# Build the x= parameter (variables)
+		var_ids = {}
+		match ce_type:
+			# Standard CE boards: one variable
+			case "standard":
+				var_ids.update(cat_info["var_ids"])
+			# Insane%: one variable, dynamic value_id
+			case "insane":
+				var_id = next(iter(cat_info["var_ids"].keys()))
+				value_id = self.ce_insane_value_id(base_game, platform)
+				var_ids[var_id] = value_id
+			# Multiruns: one variable
+			case "multiruns":
+				var_ids.update(cat_info["var_ids"])
+			# Single Year: two variables (game selector + category selector)
+			case "single_year":
+				# var1: game selector
+				var1 = "xd1vl0rd-2lgr1v7n"
+				value1 = self.ce_single_year_game_value(base_game)
+
+				# var2: category selector (any or 100)
+				var2 = "wl30dmyl"
+				value2 = cat_info["var_ids"][var2]
+
+				var_ids[var1] = value1
+				var_ids[var2] = value2
+
+		# Now fetch a leaderboard entry and only return the entry that matches.
+		lb = self.get_leaderboard(game_id="hpce", category_id=h_param, variables=var_ids)
+		for r in lb:
+			if r.player.lower() == player.lower():
+				return r
+		return None
+
+	# ---------------------------------------------------------
+	# LOOKUP MULTI-RUN
+	# ---------------------------------------------------------
+	def lookup_multirun(self, cat_key: str, player: str) -> Speedrun | None:
+		"""
+		Look up the fastest verified run for a player in a multi-run category.
+		This replaces previously written logic where individual runs were stitched together.
+		While that worked, it made no sense because there's a multi-run board that contains
+		the time needed.
+		"""
+		# Resolve game object (hpmulti)
+		slug = config.MULTIRUN_SLUG
+		category_meta = self.category_map[cat_key]
+		game_obj = self.get_game_code(slug)
+
+		# Find category object
+		category_obj = None
+		for cat in game_obj.categories:
+			if str(cat) == category_meta["name"]:
+				category_obj = cat
+				break
+
+		if not category_obj:
+			raise ValueError("Category not found in multi-run board")
+
+		# Resolve user ID
+		user_id = self.get_user_id(player)
+
+		# Search runs
+		runs = self.search_runs(game_obj.id, category_obj.id, user_id)
+		if not runs:
+			return None
+
+		# Sort by verification date
+		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
+		best_run = runs[0]
+
+		# Build variable set
+		variables = {}
+		var_id = list(category_meta["variables"].keys())[0]
+		var_value = category_meta["variables"][var_id][category_meta["default"]]
+		variables[var_id] = var_value
+
+		# Placement
+		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
+
+		sr = self.extract_run(best_run, player)
+		sr.place = place
+		return sr
+
+	# ---------------------------------------------------------
 	# LOOKUP RUN
 	# ---------------------------------------------------------
-	def lookup_run(self, game_key: str, cat_key: str, player: str, platform: str = None) -> Speedrun | dict[str, SpeedRun] | None:
+	def lookup_run(self, internal_key: str, cat_key: str, player: str) -> Speedrun | dict[str, SpeedRun] | None:
 		"""
 		Look up the fastest verified run for a player in a specific game/category.
 		While looking through PBs works well enough, it's a lot more efficient to
@@ -172,8 +300,9 @@ class SRDCRuns:
 
 		It also supports multi-runs automatically, if variables are provided for it.
 		"""
-		# Resolve game + category
-		game_obj = self.get_game_code(game_key)
+		# Resolve game object
+		slug = config.BOARD_GAME_SLUG[internal_key]
+		game_obj = self.get_game_code(slug)
 		category_meta = self.category_map[cat_key]
 
 		# Find category object
@@ -183,144 +312,42 @@ class SRDCRuns:
 				category_obj = cat
 				break
 
-		# Raise ValueError if no category was found for the game.
 		if not category_obj:
 			raise ValueError("Category not found in game")
 
-		# Resolve user ID, then search for their runs in the game category.
-		# Return "None" if there was nothing found.
+		# Resolve user ID
 		user_id = self.get_user_id(player)
+
+		# Search runs
 		runs = self.search_runs(game_obj.id, category_obj.id, user_id)
 		if not runs:
 			return None
 
-		# Load unified leaderboard config for this game (if present)
-		cfg = config.LEADERBOARD_CONFIG.get(game_key, None)
+		# Unified config
+		cfg = config.LEADERBOARD_CONFIG.get(internal_key, None)
 
-		# Optional platform filtering (console/emulator)
-		if platform is not None:
-			if cfg is not None:
-				# Unified config path (preferred)
-				plat_cfg = cfg["platform"]
-				plat_var_id = plat_cfg["var_id"]
-				plat_value = plat_cfg["values"][platform]
-				runs = [r for r in runs if r["values"].get(plat_var_id) == plat_value]
-				if not runs:
-					return None
-			else:
-				# Fallback path for games without unified config:
-				# No platform filtering is possible, so we simply do nothing.
-				# This ensures games without config still work normally.
-				pass
-
-		# In some games, there might be a multi-run: check for those first.
-		if "variables" in category_meta:
-			var_id = list(category_meta["variables"].keys())[0]
-			var_values = category_meta["variables"][var_id]
-			results = {}
-
-			# Any%
-			any_runs = [
-				r for r in runs
-				if r["values"].get(var_id) == var_values["any"] and (platform is None or (
-						cfg is not None and
-						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
-				))
-			]
-			if any_runs:
-				# Sort the Any% runs by verification date, and find its place in the list
-				any_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
-				best_any = any_runs[0]
-
-				# Build variable set for leaderboard lookup
-				variables_any = {}
-				if cfg is not None:
-					cat_cfg = cfg["categories"][cat_key]
-					cat_var_id = cat_cfg["var_id"]
-					if cat_var_id in best_any["values"]:
-						variables_any[cat_var_id] = best_any["values"][cat_var_id]
-					if platform is not None:
-						plat_cfg = cfg["platform"]
-						plat_var_id = plat_cfg["var_id"]
-						if plat_var_id in best_any["values"]:
-							variables_any[plat_var_id] = best_any["values"][plat_var_id]
-				else:
-					# Fallback: use only the category variable
-					if var_id in best_any["values"]:
-						variables_any[var_id] = best_any["values"][var_id]
-
-				# Extract the run details and store it in the dictionary.
-				place_any = self._lookup_run_place(game_obj.id, category_obj.id, best_any["id"], variables_any)
-				sr_any = self.extract_run(best_any, player)
-				sr_any.place = place_any
-				results["any"] = sr_any
-
-			# 100%
-			hundo_runs = [
-				r for r in runs
-				if r["values"].get(var_id) == var_values["100"] and (platform is None or (
-						cfg is not None and
-						r["values"].get(cfg["platform"]["var_id"]) == cfg["platform"]["values"][platform]
-				))
-			]
-			if hundo_runs:
-				# Sort the 100% runs by verification date, and find its place in the list.
-				hundo_runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
-				best_hundo = hundo_runs[0]
-
-				# Build variable set for leaderboard lookup
-				variables_hundo = {}
-				if cfg is not None:
-					cat_cfg = cfg["categories"][cat_key]
-					cat_var_id = cat_cfg["var_id"]
-					if cat_var_id in best_hundo["values"]:
-						variables_hundo[cat_var_id] = best_hundo["values"][cat_var_id]
-					if platform is not None:
-						plat_cfg = cfg["platform"]
-						plat_var_id = plat_cfg["var_id"]
-						if plat_var_id in best_hundo["values"]:
-							variables_hundo[plat_var_id] = best_hundo["values"][plat_var_id]
-				else:
-					# Fallback: use only the category variable
-					if var_id in best_hundo["values"]:
-						variables_hundo[var_id] = best_hundo["values"][var_id]
-
-				# Extract the run details and store it in the dictionary.
-				place_hundo = self._lookup_run_place(game_obj.id, category_obj.id, best_hundo["id"], variables_hundo)
-				sr_hundo = self.extract_run(best_hundo, player)
-				sr_hundo.place = place_hundo
-				results["100"] = sr_hundo
-
-			return results
-
-		# Sort the runs by the most recently verified run (newest at the top)
-		# The run at the top of the index will then be used to get its placement
-		# in the leaderboard. To avoid duplication, leaderboard placement is
-		# parsed by a helper function.
+		# Sort by verification date
 		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
 		best_run = runs[0]
 
-		# Build variable set for leaderboard lookup
+		# Build variable set
 		variables = {}
 		if cfg is not None:
-			# Always include category variable if present
 			cat_cfg = cfg["categories"][cat_key]
 			cat_var_id = cat_cfg["var_id"]
 			if cat_var_id in best_run["values"]:
 				variables[cat_var_id] = best_run["values"][cat_var_id]
 
-			# Always include platform variable if present — even if user didn't specify platform
 			plat_cfg = cfg["platform"]
 			plat_var_id = plat_cfg["var_id"]
 			if plat_var_id in best_run["values"]:
 				variables[plat_var_id] = best_run["values"][plat_var_id]
 		else:
-			# Fallback: only include category variable
 			var_id = list(category_meta["variables"].keys())[0]
 			if var_id in best_run["values"]:
 				variables[var_id] = best_run["values"][var_id]
 
-		# Extract the run, store the place and return it.
+		# Placement
 		place = self._lookup_run_place(game_obj.id, category_obj.id, best_run["id"], variables)
 		sr = self.extract_run(best_run, player)
 		sr.place = place

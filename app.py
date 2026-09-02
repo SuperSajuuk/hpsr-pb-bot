@@ -28,31 +28,10 @@ app = flask.Flask(__name__)
 srdc = data.SRDCRuns(config.PER_GAME_MAP, config.CATEGORY_MAPPING)
 
 
-# Our two routes to get latest run or a PB might return
-# dictionaries when the run is a multi-run. If that happens,
-# process it here and return the joined up pieces.
-def format_multirun_output(result: dict[str, any]) -> str:
-	"""
-	Convert a multirun dict {'any': SpeedRun, '100': SpeedRun}
-	into a formatted string like:
-	'Any%: 3:44:12 (#5) link | 100%: 5:12:33 (#2) link'
-	"""
-	parts = []
-	if "any" in result:
-		r = result["any"]
-		parts.append(f"Any%: {r.time} (#{r.place}) {r.link}")
-	if "100" in result:
-		r = result["100"]
-		parts.append(f"100%: {r.time} (#{r.place}) {r.link}")
-	return " | ".join(parts)
-
-
 # Resolve the player, in case we just want to check for the channel owner.
 # channel_owner is always provided, but player may not be:
 def resolve_player(channel_owner: str, player: str | None) -> str:
-	if player is None or player.strip() == "":
-		return channel_owner
-	return player
+	return channel_owner if player is None or player.strip() == "" else player
 
 
 # Given a specific player, game and category, return the most
@@ -60,57 +39,101 @@ def resolve_player(channel_owner: str, player: str | None) -> str:
 # This code is much more efficient than parsing out every PB
 # the user has submitted, particularly if you just want to look
 # at one game.
-@app.route('/run/<path:args>')
-def latest_run(args):
-	# Parse the arguments and check we have 3.
-	parts = args.split("+")
-	if len(parts) < 3:
-		return "Error: this route requires owner+game+cat to be provided", 400
-
-	# Set the variables on argument order
-	owner = parts[0]
-	game = parts[1]
-	cat = parts[2]
+@app.route('/run/<owner>/<path:args>')
+def latest_run(owner, args):
+	# Parse the arguments to get the required details.
+	# Player is always owner unless we overwrite it in the args.
+	parts = [p.lower() for p in args.split("+")]
+	ce_mode = False
+	ce_type = None
+	ce_category = None
 	platform = None
-	player = None
-	for p in parts[3:]:
-		if p.lower() in ["console", "emulator"]:
-			platform = p.lower()
-		else:
-			player = p
+	game = None
+	cat = None
+	player = owner
 
-	# Validate game/category exist in the mapping.
-	# At some point, the game check should be removed, so
-	# that this can be used to find a PB for any game by the
-	# user. Category filter would be ideal though.
+	# Parse arguments from the parts variables.
+	# For cleanliness, we will use match so that you can actually
+	# read the control flow.
+	for p in parts:
+		match p:
+			case "ce":  # If the first argument is "ce", we are looking for a category extension.
+				ce_mode = True
+			case _ if ce_mode and p in config.CE_TYPE_MAP:  # check if the argument is in CE_TYPE_MAP
+				ce_type = config.CE_TYPE_MAP[p]
+			case _ if ce_mode and p in config.CE_CATEGORY_MAP:  # check if the argument is in CE_CATEGORY_MAP
+				ce_category = config.CE_CATEGORY_MAP[p]
+			case _ if p in config.CATEGORY_MAP:  # Check if the argument is in CATEGORY_MAP
+				cat = p
+			case _ if p in config.PLATFORM_MAP:  # check if the argument is in PLATFORM_MAP
+				platform = p
+			case _ if p in config.PER_GAME_MAP:  # check if the argument is in PER_GAME_MAP
+				game = p
+			case _:  # The argument wasn't in any of the keys, so it's a player name override.
+				player = p
+
+	# Resolve the player, then check for whether we wanted a Category Extension.
 	player = resolve_player(owner, player)
-	game = game.lower()
-	cat = cat.lower()
-	if game not in config.PER_GAME_MAP.keys():
-		return f"Invalid game. See supported options: {config.COMMAND_USAGE_DOC}"
-	if cat not in config.CATEGORY_MAPPING.keys():
-		return f"Invalid category. See supported options: {config.COMMAND_USAGE_DOC}"
+	if ce_mode:
+		# Validate CE arguments
+		match ce_type:
+			case None:
+				return "Error: CE run requires a CE type", 400
+			case "standard" | "insane" if not platform:
+				return "Error: this CE type requires a platform", 400
 
-	# Query SRDC to find the latest run submitted by the player for this game/category.
-	try:
-		result = srdc.lookup_run(game, cat, player, platform)
-	except ValueError:
-		return "No run found for this criteria."
+		# Return errors if ce_category or game are None
+		if ce_category is None:
+			return "Error: CE run requires a CE category", 400
+		if game is None:
+			return "Error: CE run requires a game", 400
 
-	# Was there any results returned? If none, then it's because the
-	# player did not submit any verified run to the board.
+		# Try looking for a category extension run.
+		# If none is found, return an error.
+		try:
+			result = srdc.lookup_ce_run(game, platform, ce_type, ce_category, player)
+		except ValueError:
+			return "No CE run found for this criteria."
+
+		# result may have returned None, instead of ValueError, check for that
+		if not result:
+			return "No CE run found for this criteria."
+
+		clean_name = f"{ce_type}:{ce_category}"
+		is_emulator = " (Emulator) " if getattr(result, "emulator", False) else " "
+		return f"{player.capitalize()} most recent verified CE run in {clean_name}{is_emulator}is {result.time} (#{result.place}): {result.link}"
+
+	# Now check if we are in multi-run mode (thus looking at hpmulti).
+	is_multirun = cat in config.CATEGORY_MAP and config.CATEGORY_MAPPING[cat].get("multirun", False)
+	if is_multirun:
+		# Try looking up a multi-run entry.
+		try:
+			result = srdc.lookup_multirun(cat, player)
+		except ValueError:
+			return "No run found for this criteria."
+	else:
+		# Just a regular run, try finding it.
+		match (game, platform, cat):
+			case (None, _, _) | (_, None, _) | (_, _, None):
+				return "Error: this route requires platform+game+category", 400
+
+		internal_key = f"{game}_{platform}"
+		if internal_key not in config.BOARD_GAME_SLUG:
+			return "Invalid platform/game combination", 400
+
+		try:
+			result = srdc.lookup_run(internal_key, cat, player)
+		except ValueError:
+			return "No run found for this criteria."
+
+	# If result is returned as False, that means there was no run to be found
 	if not result:
 		return "No run found for this criteria."
 
-	# If this returned a dictionary, it's a multi-run and needs
-	# to be processed differently.
-	if isinstance(result, dict):
-		joined = format_multirun_output(result)
-		return f"{player.capitalize()} most recent verified runs in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}: {joined}"
-
-	# Just a regular run, so print the standard text supporting the latest run.
-	is_emulator = " (Emulator) " if result.emulator else " "
-	return f"{player.capitalize()} most recent verified run in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}{is_emulator}is {result.time} (#{result.place}): {result.link}"
+	# Output the data provided.
+	clean_name = config.CATEGORY_MAPPING[cat]["clean"]
+	is_emulator = " (Emulator) " if getattr(result, "emulator", False) else " "
+	return f"{player.capitalize()} most recent verified run in {clean_name}{is_emulator}is {result.time} (#{result.place}): {result.link}"
 
 
 # Find a PB for the given player and category.
@@ -154,11 +177,6 @@ def personal_best(args):
 	# Was there any results?
 	if not result:
 		return "No PB found for this criteria."
-
-	# This may be a multi-run PB, or a single PB. Check for a multi-run.
-	if isinstance(result, dict):
-		joined = format_multirun_output(result)
-		return f"{player.capitalize()} PBs for {game.upper()} {category_map[cat]['clean']}: {joined}"
 
 	# Print the standard string to represent this PB.
 	pb = result[0]
