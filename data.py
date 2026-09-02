@@ -45,10 +45,10 @@ class SRDCRuns:
 			return self.game_code_cache[game_key]
 
 		# Query SRDC. If nothing found, return a ValueError
-		game_name = self.game_map[game_key]
-		result = self.api.search(dt.Game, {"name": game_name})
+		game_id = self.game_map[game_key]
+		result = self.api.search(dt.Game, {"abbreviation": game_id})
 		if not result:
-			raise ValueError(f"Game not found on SRDC: {game_name}")
+			raise ValueError(f"Game not found on SRDC: {game_id}")
 
 		# Cache the result and return it.
 		game_obj = result[0]
@@ -301,8 +301,7 @@ class SRDCRuns:
 		It also supports multi-runs automatically, if variables are provided for it.
 		"""
 		# Resolve game object
-		slug = config.BOARD_GAME_SLUG[internal_key]
-		game_obj = self.get_game_code(internal_key.split("_")[0])
+		game_obj = self.get_game_code(internal_key)
 		category_meta = self.category_map[cat_key]
 
 		# Find category object
