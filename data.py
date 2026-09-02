@@ -21,13 +21,14 @@ import srcomapi.datatypes as dt
 # needed, whereas just finding the latest run on a board
 # is quicker and more efficient.
 class SRDCRuns:
-	def __init__(self, game_map: dict, category_map: dict):
+	def __init__(self, game_map: dict, platform_map: dict, category_map: dict):
 		# Instantiate the Speedrun.com API
 		# We'll cache all game codes in-memory to avoid
 		# hammering SRDC with requests.
 		self.api = srcomapi.SpeedrunCom()
 		self.api.debug = 1
 		self.game_map = game_map
+		self.platform_map = platform_map
 		self.category_map = category_map
 		self.game_code_cache = {}
 
@@ -42,11 +43,10 @@ class SRDCRuns:
 		query SRDC.
 		"""
 		if game_key in self.game_code_cache:
-			return self.game_code_cache[game_key]
+			return self.game_code_cache[slug]
 
 		# Query SRDC. If nothing found, return a ValueError
-		game_id = self.game_map[game_key]
-		result = self.api.search(dt.Game, {"abbreviation": game_id})
+		result = self.api.search(dt.Game, {"id": slug})
 		if not result:
 			raise ValueError(f"Game not found on SRDC: {game_id}")
 
@@ -301,7 +301,8 @@ class SRDCRuns:
 		It also supports multi-runs automatically, if variables are provided for it.
 		"""
 		# Resolve game object
-		game_obj = self.get_game_code(internal_key)
+		slug = config.BOARD_GAME_SLUG[internal_key]
+		game_obj = self.get_game_code(SLUG)
 		category_meta = self.category_map[cat_key]
 
 		# Find category object

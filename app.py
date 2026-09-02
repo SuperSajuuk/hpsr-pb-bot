@@ -25,7 +25,7 @@ import data
 
 # Instantiate the Flask and SRDC classes for use the code.
 app = flask.Flask(__name__)
-srdc = data.SRDCRuns(config.GAME_MAP, config.CATEGORY_MAP)
+srdc = data.SRDCRuns(config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
