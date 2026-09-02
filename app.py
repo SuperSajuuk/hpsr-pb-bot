@@ -25,7 +25,7 @@ import data
 
 # Instantiate the Flask and SRDC classes for use the code.
 app = flask.Flask(__name__)
-srdc = data.SRDCRuns(config.PER_GAME_MAP, config.CATEGORY_MAPPING)
+srdc = data.SRDCRuns(config.GAME_MAP, config.CATEGORY_MAP)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -67,7 +67,7 @@ def latest_run(owner, args):
 				cat = p
 			case _ if p in config.PLATFORM_MAP:  # check if the argument is in PLATFORM_MAP
 				platform = p
-			case _ if p in config.PER_GAME_MAP:  # check if the argument is in PER_GAME_MAP
+			case _ if p in config.GAME_MAP:  # check if the argument is in GAME_MAP
 				game = p
 			case _:  # The argument wasn't in any of the keys, so it's a player name override.
 				player = p
@@ -104,7 +104,7 @@ def latest_run(owner, args):
 		return f"{player.capitalize()} most recent verified CE run in {clean_name}{is_emulator}is {result.time} (#{result.place}): {result.link}"
 
 	# Now check if we are in multi-run mode (thus looking at hpmulti).
-	is_multirun = cat in config.CATEGORY_MAP and config.CATEGORY_MAPPING[cat].get("multirun", False)
+	is_multirun = cat in config.CATEGORY_MAP and config.CATEGORY_MAP[cat].get("multirun", False)
 	if is_multirun:
 		# Try looking up a multi-run entry.
 		try:
@@ -131,7 +131,7 @@ def latest_run(owner, args):
 		return "No run found for this criteria."
 
 	# Output the data provided.
-	clean_name = config.CATEGORY_MAPPING[cat]["clean"]
+	clean_name = config.CATEGORY_MAP[cat]["clean"]
 	is_emulator = " (Emulator) " if getattr(result, "emulator", False) else " "
 	return f"{player.capitalize()} most recent verified run in {clean_name}{is_emulator}is {result.time} (#{result.place}): {result.link}"
 
@@ -163,9 +163,9 @@ def personal_best(args):
 	player = resolve_player(owner, player)
 	game = game.lower()
 	cat = cat.lower()
-	if game not in config.PER_GAME_MAP.keys():
+	if game not in config.GAME_MAP:
 		return f"Invalid game. See supported options: {config.COMMAND_USAGE_DOC}"
-	if cat not in config.CATEGORY_MAPPING.keys():
+	if cat not in config.CATEGORY_MAP:
 		return f"Invalid category. See supported options: {config.COMMAND_USAGE_DOC}"
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
@@ -181,7 +181,7 @@ def personal_best(args):
 	# Print the standard string to represent this PB.
 	pb = result[0]
 	is_emulator = " (Emulator)" if pb.emulator else ""
-	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {config.CATEGORY_MAPPING[cat]['clean']}{is_emulator}: {pb.link}"
+	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {config.CATEGORY_MAP[cat]['clean']}{is_emulator}: {pb.link}"
 
 
 # Provide help and support to users calling the routes.

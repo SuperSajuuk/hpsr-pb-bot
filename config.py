@@ -38,8 +38,43 @@ GAME_MAP = {
 	"dbb": "Disney's Brother Bear"
 }
 
+# Category type mapping
+# Needed for command parsing
+CE_TYPE_MAP = {
+	"standard": "standard",
+	"std": "standard",
+	"ce": "standard",
+	"hpce": "standard",
+	"insane": "insane",
+	"ins": "insane",
+	"multiruns": "multiruns",
+	"multi": "multiruns",
+	"mr": "multiruns",
+	"singleyear": "single_year",
+	"sy": "single_year",
+	"year": "single_year"
+}
+
+# CE category mapping
+# Needed for the more "simple" category extensions.
+CE_CATEGORY_MAP = {
+	"100gless": "100gless",
+	"gless100": "100gless",
+	"allchests": "allchests",
+	"boostless": "boostless",
+	"highjump": "highjump",
+	"lowcast": "lowcast",
+	"insane": "insane",
+	"glitchlessduo": "glitchlessduo",
+	"duo": "glitchlessduo",
+	"rpgtrifecta": "rpgtrifecta",
+	"trifecta": "rpgtrifecta",
+	"any": "any",
+	"100": "100"
+}
+
 # Category extension game mapping.
-# Here we will map all the different game maps for the category extensions
+# Here we will map all the different games for the category extensions
 # boards on SRDC. Currently only supports hpce, but will expand in the future.
 CE_GAME_MAP = {
 	"hp1_pc": "1PC",
@@ -238,7 +273,7 @@ CE_SINGLE_YEAR_GAME_VALUES = {
 # Map abbreviations for category to full API names
 # % Symbol received by request will appear as "%25"
 # Clean name returned in response for readability
-CATEGORY_MAPPING = {
+CATEGORY_MAP = {
 	# Glitched Categories
 	'any': {'name': '<Category "Any%">', 'clean': 'Any%'},
 	'100': {'name': '<Category "100%">', 'clean': '100%'},
@@ -257,50 +292,7 @@ CATEGORY_MAPPING = {
 	'awc': {'name': '<Category "All Wizard Cards">', 'clean': 'All Wizard Cards'},
 	'allreq': {'name': '<Category "All Requirements">', 'clean': 'All Requirements'},
 	'allshields': {'name': '<Category "All Shields">', 'clean': 'All Shields'},
-	'allcrests': {'name': '<Category "All Crests">', 'clean': 'All Crests'},
-
-	# Multirun Categories
-	'pctri': {
-		'name': '<Category "PC Trifecta">', 'clean': 'PC Trifecta',
-		'variables': {'0nw0e0kl': {'any': 'p12099kl', '100': '81p5eekl', 'awc': 'p120927l'}}
-	},
-	'pcocto': {
-		'name': '<Category "PC Octofecta">', 'clean': 'PC Octofecta',
-		'variables': {'wl3dqd98': {'any': 'klr2xx21', '100': '21de6vjl'}}
-	},
-	'7duo': {
-		'name': '<Category "7PC Duofecta">', 'clean': '7PC Duofecta',
-		'variables': {'789dqd6n': {'any': 'xqknooyq', '100': 'gq7x22yl'}}
-	},
-	'ps1duo': {
-		'name': '<Category "PS1 Duofecta">', 'clean': 'PS1 Duofecta',
-		'variables': {'wlek5kkl': {'any': '5q8942k1', '100': '4qyw7571', 'nms': 'p120957l'}}
-	},
-	'6gentri': {
-		'name': '<Category "6th Gen Trifecta">', 'clean': '6th Gen Trifecta',
-		'variables': {'68k737yl': {'any': 'mlnoeddq', '1001': '9qj82wg1'}}
-	},
-	'fs': {
-		'name': '<Category "Full Series">', 'clean': 'Full Series',
-		'variables': {'38dm1m18': {'any': '5lexn3zq', '100': '0q534xn1'}}
-	},
-	'gbcduo': {
-		'name': '<Category "GBC Duofecta">', 'clean': 'GBC Duofecta',
-		'variables': {'j84d0dj8': {'any': 'jq6evy7l', '100': '5lmm284l'}}
-	},
-	'gbapenta': {
-		'name': '<Category "GBA Pentafecta">', 'clean': 'GBA Pentafecta',
-		'variables': {'rn1jqjkn': {'any': '81w07e5l', '100': 'zqovjm21'}}
-	},
-	'hhocto': {
-		'name': '<Category "Handheld Octofecta">', 'clean': 'Handheld Octofecta',
-		'variables': {'p855j508': {'any': '0136xw31', '100': 'rqvyx6wq'}}
-	},
-
-	# Category Extensions
-	'awcgless': {'name': '<Category "2PC">', 'clean': 'AWC Glitchless', 'cecode': '0q5p0erl'},
-	'awcglitchless': {'name': '<Category "2PC">', 'clean': 'AWC Glitchless', 'cecode': '0q5p0erl'},
-	'chungus': {'name': '<Category "2PC">', 'clean': 'Chungus%', 'cecode': 'rqv2jkw1'}
+	'allcrests': {'name': '<Category "All Crests">', 'clean': 'All Crests'}
 }
 
 # Leaderboard configuration
@@ -441,4 +433,4 @@ LEADERBOARD_CONFIG = {
 # Putting it as a constant means we don't need multiple
 # references to it, and updating it just requires changing
 # this one constant.
-COMMAND_USAGE_DOC = "https://github.com/artfulinfo/hpsr-pb-bot/blob/main/README.md"
+COMMAND_USAGE_DOC = "https://github.com/supersajuuk/hpsr-pb-bot/blob/main/README.md"
