@@ -43,10 +43,10 @@ class SRDCRuns:
 		query SRDC.
 		"""
 		if game_key in self.game_code_cache:
-			return self.game_code_cache[slug]
+			return self.game_code_cache[game_key]
 
 		# Query SRDC. If nothing found, return a ValueError
-		result = self.api.search(dt.Game, {"id": slug})
+		result = self.api.search(dt.Game, {"id": game_key})
 		if not result:
 			raise ValueError(f"Game not found on SRDC: {game_id}")
 
