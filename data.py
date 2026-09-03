@@ -302,7 +302,7 @@ class SRDCRuns:
 		"""
 		# Resolve game object
 		slug = config.BOARD_GAME_SLUG[internal_key]
-		game_obj = self.get_game_code(SLUG)
+		game_obj = self.get_game_code(slug)
 		category_meta = self.category_map[cat_key]
 
 		# Find category object
