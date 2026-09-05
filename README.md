@@ -21,20 +21,54 @@ I don't have a timeline for inclusion of this functionality, but keep an eye on 
 
 To look up a PB of a player:
 ```
-!pb <game> <category> [platform] [player]
+!pb <game> <platform> <category> [flags]
 ```
 
 Note that searching PBs is a slow operation on speedrun.com, because a user can have many hundreds of PBs that have 
-to be returned and then filtered. If you just want to check up a specific run of a user, we recommend using this 
-command for a quicker result (the output should be the same between both commands):
+to be returned and then filtered to find the one that you actually asked for. If you just want to check up a specific 
+run of a user, we recommend using this command for a quicker result (the output should be the same between both 
+commands):
 ```
-!run <game> <category> [platform] [player]
+!run <game> <platform> <category> [flags]
 ```
 
-In both commands, the "player" is optional: it always defaults to the channel owners' name.
+### Game
+The game parameter is used to define what game you are looking for. This should follow the format of the values 
+defined in the games header below (only these values are accepted, anything else will return an error).
 
-"platform" is also optional: this is used where an additional platform filter exists, eg console/emulator splits. In 
-some cases, such as HP2 PS2, it may be ideal to provide this parameter to get the right output.
+If you are trying to look up a run in special boards (eg category extensions, multiruns or ILs), you define the 
+relevant board here (eg `!run ce` tells the system that you are looking for a category extension run): the specific 
+game series, primary board and the extension board are defined after this. See the examples at the end for how this 
+works.
+
+### Platform
+The platform parameter is used as a filter to target the specific game version that is needed. All platforms 
+supported are listed in the [platforms section](#Platforms) below.
+
+If the game parameter was set to CE, then platform should be the specific series you are looking for, rather than a 
+platform. This is because there is usually only one Category Extensions board per game series, so the specific 
+platforms are often defined by the top-level board category instead.
+
+### Category
+The category parameter is used as a filter to target the specific primary category of the game and platform that is 
+defined. All categories supported here are listed in the [categories section](#Categories) below.
+
+If the game parameter was set to CE, then category should be set to the top-level category value (eg 1PC on the 
+Harry Potter Category Extensions board), and NOT the actual sub-category that you are seeking. The specific 
+sub-category/board should be defined in the flags section below.
+
+### Flags
+The flags at the end of the command represent optional arguments that can be provided where additional information is 
+needed. Flags which are supported at the moment include:
+- The sub-board that was requested (this is largely only relevant for Category Extensions due to overflow)
+- Whether a console or emulator run should be looked for.
+- A different players' name (this is for situations where you want to compare the channel owners' run to someone else's)
+
+Anything after the 3rd argument is grouped up with the flags and then processed for these kind of values. Invalid 
+arguments will be ignored, and order of the arguments doesn't matter (eg `emulator nixxo` and `nixxo emulator` are 
+handled in the same way).
+
+Additional flags may be supported in the future, depending on relevant use cases.
 
 ## StreamElements Setup
 
@@ -48,7 +82,8 @@ To support looking up the latest run, add the following custom command (recommen
 efficient than parsing PBs):
 
 ```
-!command add !run ${customapi.https://srdc-run-finder.onrender.com/run/${channel}+${queryescape ${1:|' '}}}
+!command add !run ${customapi.https://srdc-run-finder.onrender.com/run/${channel}/${1|nogameprovided}/$
+{2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
 ```
 
 The bot will automatically provide the channel name for you, so no need to include that. However, `${channel}` is 
@@ -57,30 +92,33 @@ replace `${channel}` with the appropriate SRDC username.
 
 ## Games
 
-| Code       | Game                               |
-|------------|------------------------------------|
-| `hp1pc`    | Philosopher's Stone (PC)           |
-| `hp2pc`    | Chamber of Secrets (PC)            |
-| `hp3pc`    | Prisoner of Azkaban (PC)           |
-| `hp4`      | Goblet of Fire                     |
-| `hp5`      | Order of the Phoenix               |
-| `hp6`      | Half Blood Prince                  |
-| `hp7.1`    | Deathly Hallows Part 1             |
-| `hp7.2`    | Deathly Hallows Part 2             |
-| `hp1ps1`   | Philosopher's Stone (PS1)          |
-| `hp2ps1`   | Chamber of Secrets (PS1)           |
-| `hp1_6gen` | Philosopher's Stone (PS2/GCN/Xbox) |
-| `hp2_6gen` | Chamber of Secrets (GCN/Xbox)      |
-| `hp2ps2`   | Chamber of Secrets PS2             |
-| `hp3_6gen` | Prisoner of Azkaban (PS2/Xbox/GCN) |
-| `hp1gbc`   | Philosopher's Stone (GBC)          |
-| `hp2gbc`   | Chamber of Secrets (GBC)           |
-| `hp1gba`   | Philosopher's Stone (GBA)          |
-| `hp2gba`   | Chamber of Secrets (GBA)           |
-| `hp3gba`   | Prisoner of Azkaban (GBA)          |
-| `dbb`      | Disney's Brother Bear              |
-| `hpce`     | Harry Potter Category Extensions   |
-| `multi`    | Harry Potter Multiruns             |
+| Code    | Game                                        |
+|---------|---------------------------------------------|
+| `hp1`   | Harry Potter and the Philosopher's Stone    |
+| `hp2`   | Harry Potter and the Chamber of Secrets     |
+| `hp3`   | Harry Potter and the Prisoner of Azkaban    |
+| `hp4`   | Harry Potter and the Goblet of Fire         |
+| `hp5`   | Harry Potter and the Order of the Phoenix   |
+| `hp6`   | Harry Potter and the Half Blood Prince      |
+| `hp7.1` | Harry Potter and the Deathly Hallows Part 1 |
+| `hp7.2` | Harry Potter and the Deathly Hallows Part 2 |
+| `dbb`   | Disney's Brother Bear                       |
+| `ce`    | Category Extensions                         |
+| `multi` | Multiruns                                   |
+
+## Platforms
+
+| Code   | Platform             |
+|--------|----------------------|
+| `ps1`  | PlayStation 1        |
+| `ps2`  | PlayStation 2        |
+| `ps3`  | PlayStation 3        |
+| `psp`  | PlayStation Portable |
+| `gba`  | Game Boy Advance     |
+| `gbc`  | Game Boy Colour      |
+| `gcn`  | Nintendo GameCube    |
+| `xbox` | Microsoft XBOX 360   |
+| `pc`   | PC                   |
 
 ## Categories
 

@@ -19,8 +19,7 @@ PLATFORM_MAP = {
 }
 
 # Game mapping. This is used to define all known games that exist in the bot.
-# This assumes base games, do not use this for category extensions. CE boards
-# need to be defined in their own constants.
+# This assumes base games, do not use this for category extensions.
 GAME_MAP = {
 	# Harry Potter
 	"hp1": "Harry Potter and the Philosopher's Stone",
@@ -31,98 +30,108 @@ GAME_MAP = {
 	"hp6": "Harry Potter and the Half Blood Prince",
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
-	"hpce": "Harry Potter Category Extensions",
+	"ce": "Harry Potter Category Extensions",
 	"multi": "Harry Potter Multiruns",
 
 	# Selection of other games. Extend appropriately.
 	"dbb": "Disney's Brother Bear"
 }
 
-# Category type mapping
-# Needed for command parsing
-CE_TYPE_MAP = {
-	"standard": "standard",
-	"std": "standard",
-	"ce": "standard",
-	"hpce": "standard",
+# Category extension game mapping.
+# This section should only be used for category extension boards.
+# Key names must be abbreviations that would be called in !run ce
+# commands: the values of each key are an SRDC URL slug.
+#
+# It's advisable to provide a comment next to each key/value pair
+# so people know what it is.
+CE_GAME_MAP = {
+	"hp": "hpce",  # Harry Potter Category Extensions
+	"rac": "racextras"  # Ratchet & Clank Category Extensions
+}
+
+# Board aliases. More relevant for CEs, but useful if
+# you want multiple user input choices for a category
+# to be found.
+CE_BOARD_ALIASES = {
+	"1pc": "1pc",
+	"2pc": "2pc",
+	"3pc": "3pc",
+	"4pc": "4pc",
+	"5pc": "5pc",
+	"6pc": "6pc",
+	"sy": "sy",
+	"singleyear": "sy",
 	"insane": "insane",
 	"ins": "insane",
-	"multiruns": "multiruns",
-	"multi": "multiruns",
-	"mr": "multiruns",
-	"singleyear": "single_year",
-	"sy": "single_year",
-	"year": "single_year"
+	"mr": "mr",
+	"multiruns": "mr",
+	"1ps1": "1ps1",
+	"2ps1": "2ps1",
+	"4psp": "4psp",
+	"5psp": "5psp",
+	"dvd": "dvd",
+	"dvdgames": "dvd",
 }
 
-# CE category mapping
-# Needed for the more "simple" category extensions.
-CE_CATEGORY_MAP = {
-	"100gless": "100gless",
-	"gless100": "100gless",
-	"allchests": "allchests",
-	"boostless": "boostless",
-	"highjump": "highjump",
-	"lowcast": "lowcast",
-	"insane": "insane",
-	"glitchlessduo": "glitchlessduo",
-	"duo": "glitchlessduo",
-	"rpgtrifecta": "rpgtrifecta",
-	"trifecta": "rpgtrifecta",
-	"any": "any",
-	"100": "100"
-}
-
-# Category extension game mapping.
-# Here we will map all the different games for the category extensions
-# boards on SRDC. Currently only supports hpce, but will expand in the future.
-CE_GAME_MAP = {
-	"hp1_pc": "1PC",
-	"hp2_pc": "2PC",
-	"hp3_pc": "3PC",
-	"hp4_pc": "4PC",
-	"hp5_pc": "5PC",
-	"hp6_pc": "6PC",
-	"hp1_ps1": "1PS1",
-	"hp2_ps1": "2PS1",
-	"hp4_psp": "4PSP",
-	"hp5_psp": "5PSP"
-}
-CE_GAME_MAP_INSANE = {
-	"hp1_pc": "Insane",
-	"hp2_pc": "Insane",
-	"hp3_pc": "Insane",
-	"hp4_pc": "Insane",
-	"hp5_pc": "Insane",
-	"hp6_pc": "Insane",
-	"hp7.1_pc": "Insane",
-	"hp7.2_pc": "Insane",
-	"qwc_pc": "Insane",
-	"hp1_ps1": "Insane",
-	"hp2_ps1": "Insane",
-	"hp2_6thgen": "Insane",
-	"hp3_6thgen": "Insane",
-	"hp1_gba": "Insane",
-	"hp2_gba": "Insane",
-	"hp3_gba": "Insane",
-	"qwc_gba": "Insane",
-	"hp6_ds": "Insane",
-	"hp7.1_ds": "Insane",
-	"hp7.2_ds": "Insane"
-}
-CE_GAME_MAP_MULTIRUNS = {
-	"multiruns_pc": "Multiruns",
-	"multiruns_rpg": "Multiruns"
-}
-CE_GAME_MAP_SINGLE_YEAR = {
-	"hp1": "Single_Year",
-	"hp2": "Single_Year",
-	"hp3": "Single_Year",
-	"hp4": "Single_Year",
-	"hp5": "Single_Year",
-	"hp6": "Single_Year",
-	"hp7.1": "Single_Year",
-	"hp7.2": "Single_Year"
+# Category extension: category aliases/mapping.
+# This is used to map user input to the name that
+# is used internally to reference a specific sub-board
+# for a category extension.
+CE_CATEGORY_ALIASES = {
+	"hpce": {
+		"1pc": {
+			"100gless": "100gless", "allchests": "allchests", "boostless": "boostless", "highjump": "highjump", "lowcast": "lowcast",
+		},
+		"2pc": {
+			"100gless": "100gless", "allchests": "allchests", "awcgless": "awcgless", "boostless": "boostless",	"chungus": "chungus",
+			"cutscene": "cutscene", "hpwc": "hpwc",	"highjump": "highjump",	"jumpless": "jumpless",	"lowcast": "lowcast", "ng": "ng",
+			"nmg": "nmg"
+		},
+		"3pc": {
+			"any": "any"
+		},
+		"4pc": {
+			"avc1p": "avc_1p", "avc2p": "avc_2p", "avc3p": "avc_3p"
+		},
+		"5pc": {
+			"amg": "amg", "allportraits": "allportraits", "allsymbols": "allsymbols", "chess": "chess"
+		},
+		"6pc": {
+			"pr": "pr"
+		},
+		"1ps1": {
+			"awc": "awc", "ss": "ss", "ng": "ng"
+		},
+		"2ps1": {
+			"awc": "awc", "ss": "ss"
+		},
+		"4psp": {
+			"any": "any", "100": "100"
+		},
+		"5psp": {
+			"any": "any", "100": "100"
+		},
+		"mr": {
+			"glessduo": "glessduo", "rpgtri": "rpgtri"
+		},
+		"insane": {
+			"hp1pc": "hp1_pc", "hp2pc": "hp2_pc", "hp3pc": "hp3_pc", "hp4pc": "hp4_pc", "hp5pc": "hp5_pc", "hp6pc": "hp6_pc",
+			"hp71pc": "hp71_pc", "hp72pc": "hp72_pc", "1ps1": "1ps1", "2ps1": "2ps1", "hp2_6th": "hp2_6th_gen",
+			"hp3_6th": "hp3_6th_gen", "hp1gba": "hp1_gba", "hp2gba": "hp2_gba", "hp3gba": "hp3_gba", "qwcgba": "qwc_gba",
+			"hp6ds": "hp6_ds", "hp71ds": "hp71_ds", "hp72ds": "hp72_ds"
+		},
+		"sy": {
+			"hp1any": "hp1_any", "hp2any": "hp2_any", "hp3any": "hp3_any", "hp4any": "hp4_any",	"hp5any": "hp5_any",
+			"hp6any": "hp6_any", "hp71any": "hp71_any",	"hp72any": "hp72_any",
+			"hp1hundo": "hp1_100", "hp2hundo": "hp2_100", "hp3hundo": "hp3_100", "hp4hundo": "hp4_100",
+			"hp5hundo": "hp5_100", "hp6hundo": "hp6_100", "hp71hundo": "hp71_100", "hp72hundo": "hp72_100",
+			"hp1100": "hp1_100", "hp2100": "hp2_100", "hp3100": "hp3_100", "hp4100": "hp4_100",
+			"hp5100": "hp5_100", "hp6100": "hp6_100", "hp7_1100": "hp71_100", "hp7_2100": "hp72_100"
+		},
+		"dvd": {
+			"hc": "hc", "ww": "ww"
+		},
+	}
 }
 
 # Board slug mapping. This is used to map the values produced by
@@ -175,124 +184,30 @@ BOARD_GAME_SLUG = {
 # This just sets a constant for the hpmulti game board.
 MULTIRUN_SLUG = "hpmulti"
 
-# Category extension mapping. This is needed to map
-# all the sub-boards and variables correctly to the CE_GAME_MAP
-# constants above.
-CATEGORY_EXT_MAP_STANDARD = {
-	"100gless": {
-		"h_suffix": "100-glitchless",
-		"var_ids": {"xd1j7vwd-789x9o08": "9qj95y0l"}
-	},
-	"allchests": {
-		"h_suffix": "all-chests",
-		"var_ids": {"xd1j7vwd-789x9o08": "qj7o0j3q"}
-	},
-	"boostless": {
-		"h_suffix": "boostless",
-		"var_ids": {"xd1j7vwd-789x9o08": "810prejl"}
-	},
-	"highjump": {
-		"h_suffix": "high-jump",
-		"var_ids": {"xd1j7vwd-789x9o08": "qvv4doyq"}
-	},
-	"lowcast": {
-		"h_suffix": "lowcast",
-		"var_ids": {"xd1j7vwd-789x9o08": "rqvj9v5q"}
-	}
-}
-
-# Due to a quirk of the insane% boards, things are very consistent
-# The dynamic parts will be filled in by other code in data.py
-CATEGORY_EXT_MAP_INSANE = {
-	"insane": {
-		"h_suffix": None,
-		"var_ids": {"9d83xr72-7896d298": None}
-	}
-}
-CATEGORY_EXT_MAP_MULTIRUNS = {
-	"glitchlessduo": {
-		"h_suffix": "pc-glitchless-duofecta",
-		"var_ids": {"ndx314vd-p85rz75n": "810prjjl"}
-	},
-	"rpgtrifecta": {
-		"h_suffix": "rpg-trifecta",
-		"var_ids": {"ndx314vd-p85rz75n": "9qj95n0l"}
-	}
-}
-CATEGORY_EXT_MAP_SINGLE_YEAR = {
-	"any": {
-		"h_suffix": "any",
-		"var_ids": {"xd1vl0rd-2lgr1v7n": None, "wl30dmyl": "013erydq"}
-	},
-	"100": {
-		"h_suffix": "100",
-		"var_ids": {"xd1vl0rd-2lgr1v7n": None, "wl30dmyl": "rqvwdn71"}
-	}
-}
-CATEGORY_EXT_MAP = {
-	"standard": CATEGORY_EXT_MAP_STANDARD,
-	"insane": CATEGORY_EXT_MAP_INSANE,
-	"multiruns": CATEGORY_EXT_MAP_MULTIRUNS,
-	"single_year": CATEGORY_EXT_MAP_SINGLE_YEAR
-}
-
-# Value ID mapping. This is needed for category extensions.
-CE_INSANE_VALUE_IDS = {
-	"hp1_pc": "21d7dm41",
-	"hp2_pc": "klrw7rj1",
-	"hp3_pc": "5q87zmgl",
-	"hp4_pc": "5lezyezl",
-	"hp5_pc": "0q5zw2nq",
-	"hp6_pc": "4lxo2yrl",
-	"hp7.1_pc": "814gm2j1",
-	"hp7.2_pc": "z19yezkl",
-	"qwc_pc": "qoxyzp2q",
-	"hp1_ps1": "4qyd206q",
-	"hp2_ps1": "mlnpvxo1",
-	"hp2_6thgen": "013z2zyq",
-	"hp3_6thgen": "5lm0z3j1",
-	"hp1_gba": "jq663o3q",
-	"hp2_gba": "q75dkjd1",
-	"hp3_gba": "rqv025rl",
-	"qwc_gba": "q654y2nl",
-	"hp6_ds": "zqovk7g1",
-	"hp7.1_ds": "1py422g1",
-	"hp7.2_ds": "klrg73oq"
-}
-CE_SINGLE_YEAR_GAME_VALUES = {
-	"hp1": "4qye4641",
-	"hp2": "mln6320q",
-	"hp3": "810e7rwq",
-	"hp4": "9qjyd5eq",
-	"hp5": "jq6k7j3l",
-	"hp6": "5lmjn9jl",
-	"hp7.1": "81ww8ko1",
-	"hp7.2": "zqown7pl"
-}
-
-# Map abbreviations for category to full API names
-# % Symbol received by request will appear as "%25"
-# Clean name returned in response for readability
+# Map abbreviations passed by users to human-readable names.
+# This should be used only for 'main' boards: ie not multiruns
+# or category extensions. If someone queries a run that isn't
+# described here, data from SRDC should be used as a fallback.
 CATEGORY_MAP = {
-	# Glitched Categories
-	'any': {'name': '<Category "Any%">', 'clean': 'Any%'},
-	'100': {'name': '<Category "100%">', 'clean': '100%'},
-	'ng': {'name': '<Category "NG+">', 'clean': 'NG+'},
-
-	# Low-glitch / Glitchless Categories
-	'glitchless': {'name': '<Category "Glitchless">', 'clean': 'Glitchless'},
-	'gless': {'name': '<Category "Glitchless">', 'clean': 'Glitchless'},
-	'warpless': {'name': '<Category "Warpless">', 'clean': 'Warpless'},
-	'boostless': {'name': '<Category "Boostless">', 'clean': 'Boostless'},
-	'nms': {'name': '<Category "No Major Skips">', 'clean': 'No Major Skips'},
-	'nmg': {'name': '<Category "No Major Glitches">', 'clean': 'No Major Glitches'},
-	'noeds': {'name': '<Category "Any% No EDS">', 'clean': 'Any% No EDS'},
-
-	# All <blah> Categories
-	'awc': {'name': '<Category "All Wizard Cards">', 'clean': 'All Wizard Cards'},
-	'allreq': {'name': '<Category "All Requirements">', 'clean': 'All Requirements'},
-	'allshields': {'name': '<Category "All Shields">', 'clean': 'All Shields'},
-	'allcrests': {'name': '<Category "All Crests">', 'clean': 'All Crests'}
+	'any': 'Any%',
+	'100': '100%',
+	'glitchless': 'Glitchless',
+	'gless': 'Glitchless',
+	'nms': 'No Major Skips',
+	'noeds': 'Any% No EDS',
+	'awc': 'All Wizard Cards',
+	'warpless': 'Warpless'
+}
+CE_CATEGORY_MAP = {
+	'100gless': '100% Glitchless',
+	'ng': 'NG+',
+	'boostless': 'Boostless',
+	'nmg': 'No Major Glitches',
+	'allreq': 'All Requirements',
+	'allshields': 'All Shields',
+	'allcrests': 'All Crests',
+	'cutscene': 'Cutscene%',
+	'chungus': 'Chungus%'
 }
 
 # Leaderboard configuration
@@ -322,111 +237,654 @@ LEADERBOARD_CONFIG = {
 			"values": {"console": "139v60r1", "emulator": "qvv4y7rq"}
 		}
 	},
-	"hpmulti": {
+	"hpce": {
 		"categories": {
-			"pc_trifecta_any": {
-				"var_id": "0nw0e0kl",
-				"value": "p12099kl",
-				"h": "PC_Trifecta-Any"
+			"1pc_100gless": {
+				"board": "1PC",
+				"subcategory": "100-glitchless",
+				"variables": [
+					{"var_id": "xd1j7vwd-789x9o08", "value_id": "9qj95y0l"}
+				]
 			},
-			"pc_trifecta_100": {
-				"var_id": "0nw0e0kl",
-				"value": "81p5eekl",
-				"h": "PC_Trifecta-100"
+			"1pc_allchests": {
+				"board": "1PC",
+				"subcategory": "all-chests",
+				"variables": [
+					{"var_id": "xd1j7vwd-789x9o08", "value_id": "qj7o0j3q"}
+				]
 			},
-			"pc_trifecta_awc": {
-				"var_id": "0nw0e0kl",
-				"value": "p120927l",
-				"h": "PC_Trifecta-AWC"
+			"1pc_boostless": {
+				"board": "1PC",
+				"subcategory": "boostless",
+				"variables": [
+					{"var_id": "xd1j7vwd-789x9o08", "value_id": "810prejl"}
+				]
 			},
-			"pc_octofecta_any": {
-				"var_id": "wl3dqd98",
-				"value": "klr2xx21",
-				"h": "PC_Octofecta-Any"
+			"1pc_highjump": {
+				"board": "1PC",
+				"subcategory": "high-jump",
+				"variables": [
+					{"var_id": "xd1j7vwd-789x9o08", "value_id": "qvv4doyq"}
+				]
 			},
-			"pc_octofecta_100": {
-				"var_id": "wl3dqd98",
-				"value": "21de6vjl",
-				"h": "PC_Octofecta-100"
+			"1pc_lowcast": {
+				"board": "1PC",
+				"subcategory": "lowcast",
+				"variables": [
+					{"var_id": "xd1j7vwd-789x9o08", "value_id": "rqvj9v5q"}
+				]
 			},
-			"7pc_duofecta_any": {
-				"var_id": "789dqd6n",
-				"value": "xqknooyq",
-				"h": "7PC_Duofecta-Any"
+			"2pc_100gless": {
+				"board": "2PC",
+				"subcategory": "100-glitchless",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "013pyekl"}
+				]
 			},
-			"7pc_duofecta_100": {
-				"var_id": "789dqd6n",
-				"value": "gq7x22yl",
-				"h": "7PC_Duofecta-100"
+			"2pc_allchests": {
+				"board": "2PC",
+				"subcategory": "all-chests",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "le23je6l"}
+				]
 			},
-			"ps1_duofecta_any": {
-				"var_id": "wlek5kkl",
-				"value": "5q8942k1",
-				"h": "PS1_Duofecta-Any"
+			"2pc_awcgless": {
+				"board": "2PC",
+				"subcategory": "awc-glitchless",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "0q5p0erl"}
+				]
 			},
-			"ps1_duofecta_100": {
-				"var_id": "wlek5kkl",
-				"value": "4qyw7571",
-				"h": "PS1_Duofecta-100"
+			"2pc_boostless": {
+				"board": "2PC",
+				"subcategory": "boostless",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "5lmp9jyl"}
+				]
 			},
-			"ps1_duofecta_nms": {
-				"var_id": "wlek5kkl",
-				"value": "p120957l",
-				"h": "PS1_Duofecta-NMS"
+			"2pc_chungus": {
+				"board": "2PC",
+				"subcategory": "chungus",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "rqv2jkw1"}
+				]
 			},
-			"6th_gen_trifecta_any": {
-				"var_id": "68k737yl",
-				"value": "mlnoeddq",
-				"h": "6th_Gen_Trifecta-Any"
+			"2pc_cutscene": {
+				"board": "2PC",
+				"subcategory": "cutscene",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "rqv9nw5l"}
+				]
 			},
-			"6th_gen_trifecta_1001": {
-				"var_id": "68k737yl",
-				"value": "9qj82wg1",
-				"h": "6th_Gen_Trifecta-1001"
+			"2pc_hpwc": {
+				"board": "2PC",
+				"subcategory": "harry-potter-wizard-card",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "4lx9jwjl"}
+				]
 			},
-			"full_series_any": {
-				"var_id": "38dm1m18",
-				"value": "5lexn3zq",
-				"h": "Full_Series-Any"
+			"2pc_highjump": {
+				"board": "2PC",
+				"subcategory": "blah",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "xqkpp04l"}
+				]
 			},
-			"full_series_100": {
-				"var_id": "38dm1m18",
-				"value": "0q534xn1",
-				"h": "Full_Series-100"
+			"2pc_jumpless": {
+				"board": "2PC",
+				"subcategory": "jumpless",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "qyzx9721"}
+				]
 			},
-			"gbc_duofecta_any": {
-				"var_id": "j84d0dj8",
-				"value": "jq6evy7l",
-				"h": "GBC_Duofecta-Any"
+			"2pc_lowcast": {
+				"board": "2PC",
+				"subcategory": "lowcast",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "814pnew1"}
+				]
 			},
-			"gbc_duofecta_100": {
-				"var_id": "j84d0dj8",
-				"value": "5lmm284l",
-				"h": "GBC_Duofecta-100"
+			"2pc_ng": {
+				"board": "2PC",
+				"subcategory": "ng",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "81w9kw9l"}
+				]
 			},
-			"gba_pentafecta_any": {
-				"var_id": "rn1jqjkn",
-				"value": "81w07e5l",
-				"h": "GBA_Pentafecta-Any"
+			"2pc_nmg": {
+				"board": "2PC",
+				"subcategory": "nmg",
+				"variables": [
+					{"var_id": "zd3j7xr2-2lg3d4on", "value_id": "zqo97wgq"}
+				]
 			},
-			"gba_pentafecta_100": {
-				"var_id": "rn1jqjkn",
-				"value": "zqovjm21",
-				"h": "GBA_Pentafecta-100"
+			"3pc_any": {
+				"board": "3PC",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "rn1zmxpl-02qwx172", "value_id": "014g7x21"}
+				]
 			},
-			"handheld_octofecta_any": {
-				"var_id": "p855j508",
-				"value": "0136xw31",
-				"h": "Handheld_Octofecta-Any"
+			"4pc_avc_1p": {
+				"board": "4PC",
+				"subcategory": "All_Vanishing_Cards-1-Player",
+				"variables": [
+					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"var_id": "2lgk0jo8", "value_id": "14oy0mkq"}
+				]
 			},
-			"handheld_octofecta_100": {
-				"var_id": "p855j508",
-				"value": "rqvyx6wq",
-				"h": "Handheld_Octofecta-100"
-			}
+			"4pc_avc_2p": {
+				"board": "4PC",
+				"subcategory": "All_Vanishing_Cards-2-Players",
+				"variables": [
+					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"var_id": "2lgk0jo8", "value_id": "192moe4q"}
+				]
+			},
+			"4pc_avc_3p": {
+				"board": "4PC",
+				"subcategory": "All_Vanishing_Cards-3-Players",
+				"variables": [
+					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"var_id": "2lgk0jo8", "value_id": "12vdyj2q"}
+				]
+			},
+			"5pc_amg": {
+				"board": "5PC",
+				"subcategory": "all-minigames",
+				"variables": [
+					{"var_id": "rkl5jr82-rn1zmxpl", "value_id": "5q8pm8rl"}
+				]
+			},
+			"5pc_allportraits": {
+				"board": "5PC",
+				"subcategory": "all-portraits",
+				"variables": [
+					{"var_id": "rkl5jr82-rn1zmxpl", "value_id": "4qy96o3l"}
+				]
+			},
+			"5pc_allsymbols": {
+				"board": "5PC",
+				"subcategory": "all-symbols",
+				"variables": [
+					{"var_id": "rkl5jr82-rn1zmxpl", "value_id": "1dkow2jl"}
+				]
+			},
+			"5pc_chess": {
+				"board": "5PC",
+				"subcategory": "chess",
+				"variables": [
+					{"var_id": "rkl5jr82-rn1zmxpl", "value_id": "mln92m6q"}
+				]
+			},
+			"6pc_pr": {
+				"board": "6PC",
+				"subcategory": "potions-rush",
+				"variables": [
+					{"var_id": "z27zyz4k-gnx606jn", "value_id": "12v2om4q"}
+				]
+			},
+			"1ps1_awc": {
+				"board": "1PS1",
+				"subcategory": "all-wizard-cards",
+				"variables": [
+					{"var_id": "zd3r5wvd-jlzx03x8", "value_id": "xqkxnyd1"}
+				]
+			},
+			"1ps1_ss": {
+				"board": "1PS1",
+				"subcategory": "superspeed",
+				"variables": [
+					{"var_id": "zd3r5wvd-jlzx03x8", "value_id": "gq76xmpl"}
+				]
+			},
+			"1ps1_ng": {
+				"board": "1PS1",
+				"subcategory": "ng",
+				"variables": [
+					{"var_id": "zd3r5wvd-jlzx03x8", "value_id": "21g3pz6q"}
+				]
+			},
+			"2ps1_awc": {
+				"board": "2PS1",
+				"subcategory": "all-wizard-cards",
+				"variables": [
+					{"var_id": "02qwx172-yn23geel", "value_id": "q8kk0p6q"}
+				]
+			},
+			"2ps1_ss": {
+				"board": "2PS1",
+				"subcategory": "superspeed",
+				"variables": [
+					{"var_id": "02qwx172-yn23geel", "value_id": "qoxkedgq"}
+				]
+			},
+			"4psp_any": {
+				"board": "4PSP",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "9kv3g402-38de521n", "value_id": "qyzzymd1"}
+				]
+			},
+			"4psp_100": {
+				"board": "4PSP",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "9kv3g402-38de521n", "value_id": "ln8807nl"}
+				]
+			},
+			"5psp_any": {
+				"board": "5PSP",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "rklm84wd-r8rewy2l", "value_id": "q655xwol"}
+				]
+			},
+			"5psp_100": {
+				"board": "5PSP",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "rklm84wd-r8rewy2l", "value_id": "lmoo4e01"}
+				]
+			},
+			"mr_glessduo": {
+				"board": "Multiruns",
+				"subcategory": "pc-glitchless-duofecta",
+				"variables": [
+					{"var_id": "ndx314vd-p85rz75n", "value_id": "810prjjl"}
+				]
+			},
+			"mr_rpgtri": {
+				"board": "Multiruns",
+				"subcategory": "rpg-trifecta",
+				"variables": [
+					{"var_id": "ndx314vd-p85rz75n", "value_id": "9qj95n0l"}
+				]
+			},
+			"insane_hp1_pc": {
+				"board": "Insane",
+				"subcategory": "hp1-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "21d7dm41"}
+				]
+			},
+			"insane_hp2_pc": {
+				"board": "Insane",
+				"subcategory": "hp2-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "klrw7rj1"}
+				]
+			},
+			"insane_hp3_pc": {
+				"board": "Insane",
+				"subcategory": "hp3-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "5q87zmgl"}
+				]
+			},
+			"insane_hp4_pc": {
+				"board": "Insane",
+				"subcategory": "hp4-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "5lezyezl"}
+				]
+			},
+			"insane_hp5_pc": {
+				"board": "Insane",
+				"subcategory": "hp5-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "0q5zw2nq"}
+				]
+			},
+			"insane_hp6_pc": {
+				"board": "Insane",
+				"subcategory": "hp6-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "4lxo2yrl"}
+				]
+			},
+			"insane_hp71_pc": {
+				"board": "Insane",
+				"subcategory": "hp7-1-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "814gm2j1"}
+				]
+			},
+			"insane_hp72_pc": {
+				"board": "Insane",
+				"subcategory": "hp7-2-pc",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "z19yezkl"}
+				]
+			},
+			"insane_1ps1": {
+				"board": "Insane",
+				"subcategory": "hp1-ps1",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "4qyd206q"}
+				]
+			},
+			"insane_2ps1": {
+				"board": "Insane",
+				"subcategory": "hp2-ps1",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "mlnpvxo1"}
+				]
+			},
+			"insane_hp2_6th_gen": {
+				"board": "Insane",
+				"subcategory": "hp2-gcn-xbox",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "013z2zyq"}
+				]
+			},
+			"insane_hp3_6th_gen": {
+				"board": "Insane",
+				"subcategory": "hp3-6th-gen",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "5lm0z3j1"}
+				]
+			},
+			"insane_hp1_gba": {
+				"board": "Insane",
+				"subcategory": "hp1-gba",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "jq663o3q"}
+				]
+			},
+			"insane_hp2_gba": {
+				"board": "Insane",
+				"subcategory": "hp2-gba",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "q75dkjd1"}
+				]
+			},
+			"insane_hp3_gba": {
+				"board": "Insane",
+				"subcategory": "hp3-gba",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "rqv025rl"}
+				]
+			},
+			"insane_qwc_gba": {
+				"board": "Insane",
+				"subcategory": "qwc-gba",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "q654y2nl"}
+				]
+			},
+			"insane_hp6_ds": {
+				"board": "Insane",
+				"subcategory": "hp6-ds",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "zqovk7g1"}
+				]
+			},
+			"insane_hp71_ds": {
+				"board": "Insane",
+				"subcategory": "hp7-1-ds",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "1py422g1"}
+				]
+			},
+			"insane_hp72_ds": {
+				"board": "Insane",
+				"subcategory": "hp7-2-ds",
+				"variables": [
+					{"var_id": "9d83xr72-7896d298", "value_id": "klrg73oq"}
+				]
+			},
+			"sy_hp1_any": {
+				"board": "Single_Year",
+				"subcategory": "hp1-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "4qye4641"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp2_any": {
+				"board": "Single_Year",
+				"subcategory": "hp2-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "mln6320q"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp3_any": {
+				"board": "Single_Year",
+				"subcategory": "hp3-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "810e7rwq"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp4_any": {
+				"board": "Single_Year",
+				"subcategory": "hp4-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "9qjyd5eq"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp5_any": {
+				"board": "Single_Year",
+				"subcategory": "hp5-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "jq6k7j3l"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp6_any": {
+				"board": "Single_Year",
+				"subcategory": "hp6-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "5lmjn9jl"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp71_any": {
+				"board": "Single_Year",
+				"subcategory": "hp7-1-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "81ww8ko1"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+			},
+			"sy_hp72_any": {
+				"board": "Single_Year",
+				"subcategory": "hp7-2-any",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "zqown7pl"},
+					{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				]
+
+			},
+			"sy_hp1_100": {
+				"board": "Single_Year",
+				"subcategory": "hp1-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "4qye4641"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp2_100": {
+				"board": "Single_Year",
+				"subcategory": "hp2-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "mln6320q"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp3_100": {
+				"board": "Single_Year",
+				"subcategory": "hp3-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "810e7rwq"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp4_100": {
+				"board": "Single_Year",
+				"subcategory": "hp4-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "9qjyd5eq"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp5_100": {
+				"board": "Single_Year",
+				"subcategory": "hp5-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "jq6k7j3l"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp6_100": {
+				"board": "Single_Year",
+				"subcategory": "hp6-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "5lmjn9jl"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp71_100": {
+				"board": "Single_Year",
+				"subcategory": "hp7-1-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "81ww8ko1"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"sy_hp72_100": {
+				"board": "Single_Year",
+				"subcategory": "hp7-2-100",
+				"variables": [
+					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "zqown7pl"},
+					{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
+				]
+			},
+			"dvd_hc": {
+				"board": "Harry_Potter_DVD_Games",
+				"subcategory": "hogwarts-challenge",
+				"variables": [
+					{"var_id": "jdr966xd-r8r7v77n", "value_id": "jqzd3e4l"}
+				]
+			},
+			"dvd_ww": {
+				"board": "Harry_Potter_DVD_Games",
+				"subcategory": "wizarding-world",
+				"variables": [
+					{"var_id": "jdr966xd-r8r7v77n", "value_id": "klrm240q"}
+				]
+			},
+			"platform": None
 		},
-		"platform": None  # No platform variable is required for these multirun categories.
-	},
+		"hpmulti": {
+			"categories": {
+				"pc_trifecta_any": {
+					"var_id": "0nw0e0kl",
+					"value": "p12099kl",
+					"h": "PC_Trifecta-Any"
+				},
+				"pc_trifecta_100": {
+					"var_id": "0nw0e0kl",
+					"value": "81p5eekl",
+					"h": "PC_Trifecta-100"
+				},
+				"pc_trifecta_awc": {
+					"var_id": "0nw0e0kl",
+					"value": "p120927l",
+					"h": "PC_Trifecta-AWC"
+				},
+				"pc_octofecta_any": {
+					"var_id": "wl3dqd98",
+					"value": "klr2xx21",
+					"h": "PC_Octofecta-Any"
+				},
+				"pc_octofecta_100": {
+					"var_id": "wl3dqd98",
+					"value": "21de6vjl",
+					"h": "PC_Octofecta-100"
+				},
+				"7pc_duofecta_any": {
+					"var_id": "789dqd6n",
+					"value": "xqknooyq",
+					"h": "7PC_Duofecta-Any"
+				},
+				"7pc_duofecta_100": {
+					"var_id": "789dqd6n",
+					"value": "gq7x22yl",
+					"h": "7PC_Duofecta-100"
+				},
+				"ps1_duofecta_any": {
+					"var_id": "wlek5kkl",
+					"value": "5q8942k1",
+					"h": "PS1_Duofecta-Any"
+				},
+				"ps1_duofecta_100": {
+					"var_id": "wlek5kkl",
+					"value": "4qyw7571",
+					"h": "PS1_Duofecta-100"
+				},
+				"ps1_duofecta_nms": {
+					"var_id": "wlek5kkl",
+					"value": "p120957l",
+					"h": "PS1_Duofecta-NMS"
+				},
+				"6th_gen_trifecta_any": {
+					"var_id": "68k737yl",
+					"value": "mlnoeddq",
+					"h": "6th_Gen_Trifecta-Any"
+				},
+				"6th_gen_trifecta_1001": {
+					"var_id": "68k737yl",
+					"value": "9qj82wg1",
+					"h": "6th_Gen_Trifecta-1001"
+				},
+				"full_series_any": {
+					"var_id": "38dm1m18",
+					"value": "5lexn3zq",
+					"h": "Full_Series-Any"
+				},
+				"full_series_100": {
+					"var_id": "38dm1m18",
+					"value": "0q534xn1",
+					"h": "Full_Series-100"
+				},
+				"gbc_duofecta_any": {
+					"var_id": "j84d0dj8",
+					"value": "jq6evy7l",
+					"h": "GBC_Duofecta-Any"
+				},
+				"gbc_duofecta_100": {
+					"var_id": "j84d0dj8",
+					"value": "5lmm284l",
+					"h": "GBC_Duofecta-100"
+				},
+				"gba_pentafecta_any": {
+					"var_id": "rn1jqjkn",
+					"value": "81w07e5l",
+					"h": "GBA_Pentafecta-Any"
+				},
+				"gba_pentafecta_100": {
+					"var_id": "rn1jqjkn",
+					"value": "zqovjm21",
+					"h": "GBA_Pentafecta-100"
+				},
+				"handheld_octofecta_any": {
+					"var_id": "p855j508",
+					"value": "0136xw31",
+					"h": "Handheld_Octofecta-Any"
+				},
+				"handheld_octofecta_100": {
+					"var_id": "p855j508",
+					"value": "rqvyx6wq",
+					"h": "Handheld_Octofecta-100"
+				}
+			},
+			"platform": None  # No platform variable is required for these multirun categories.
+		},
+	}
 }
 
 # Point to the docs if there is an error.
