@@ -99,12 +99,9 @@ class Utilities:
 		secs, ms = divmod(remainder, 1000)
 
 		# Decide whether to show milliseconds
-		if seconds.is_integer():
-			# No millisecond precision → HH:MM:SS
-			time = f"{hours}:{minutes:02d}:{secs:02d}"
-		else:
-			# Millisecond precision → HH:MM:SS.mmm
-			time = f"{hours}:{minutes:02d}:{secs:02d}.{ms:03d}"
+		# If this is an integer, time will be HH:MM:SS.
+		# If its a float, then it'll be HH:MM:SS.mmm
+		time = f"{hours}:{minutes:02d}:{secs:02d}" if seconds.is_integer() else f"{hours}:{minutes:02d}:{secs:02d}.{ms:03d}"
 
 		# Create a SpeedRun model and return it.
 		return SpeedRun(
