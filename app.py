@@ -21,7 +21,7 @@ import srcomapi
 import utils
 import srdc.normal as normal_run
 import srdc.ce as ce_run
-import srdc.pb as data
+import srdc.pb as pb
 from model import SpeedRun
 
 # Instantiate Flask and the SRDC API
@@ -33,7 +33,7 @@ srdc_api.debug = 1
 utils = utils.Utilities(srdc_api)
 normal = normal_run.NormalRun(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP, utils)
 cat_ext = ce_run.CategoryExtension(srdc_api, config.CE_GAME_MAP, config.PLATFORM_MAP, config.CE_BOARD_ALIASES, config.CE_CATEGORY_ALIASES, utils)
-srdc = data.SRDCRuns(config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP)
+srdc = pb.PersonalBest(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP)
 
 
 # Resolve the player, in case we just want to check for the channel owner.

@@ -100,7 +100,7 @@ class Utilities:
 
 		# Decide whether to show milliseconds
 		# If this is an integer, time will be HH:MM:SS.
-		# If its a float, then it'll be HH:MM:SS.mmm
+		# If it's a float, then it'll be HH:MM:SS.mmm
 		time = f"{hours}:{minutes:02d}:{secs:02d}" if seconds.is_integer() else f"{hours}:{minutes:02d}:{secs:02d}.{ms:03d}"
 
 		# Create a SpeedRun model and return it.

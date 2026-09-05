@@ -16,20 +16,13 @@ from typing import Dict
 import srcomapi.datatypes as dt
 
 
-# SRDCRuns
+# PersonalBest
 # This handles the logic of querying the SRDC
-# API and then returning results.
-#
-# Currently just supports PBs, but will add
-# support for just finding a run. One negative
-# to only searching PBs is the amount of filtering
-# needed, whereas just finding the latest run on a board
-# is quicker and more efficient.
-class SRDCRuns:
-	def __init__(self, game_map: dict, platform_map: dict, category_map: dict):
-		# Instantiate the Speedrun.com API
-		# We'll cache all game codes in-memory to avoid
-		# hammering SRDC with requests.
+# API for a Personal Best from a single user.
+# This is used by !pb only.
+class PersonalBest:
+	def __init__(self, srdc_api, game_map: dict, platform_map: dict, category_map: dict):
+		self.api = srdc_api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.category_map = category_map
@@ -49,10 +42,8 @@ class SRDCRuns:
 	def extract_pb(entry, player_name) -> SpeedRun:
 		"""Convert a PB entry into a structured dataclass."""
 		run = entry["run"]
-		place = entry["place"]
 		seconds = run["times"]["primary_t"]
 		time = str(datetime.timedelta(seconds=seconds))
-		link = run["weblink"]
 		return SpeedRun(
 			player=player_name,
 			game=str(run["game"]),
@@ -60,8 +51,8 @@ class SRDCRuns:
 			time=time,
 			raw=run,
 			emulator=run["system"]["emulated"],
-			place=place,
-			link=link,
+			place=entry["place"],
+			link=run["weblink"],
 			id=run["id"]
 		)
 
