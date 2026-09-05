@@ -31,6 +31,7 @@ GAME_MAP = {
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
 	"ce": "Harry Potter Category Extensions",
+	"hpce": "Harry Potter Category Extensions",
 	"multi": "Harry Potter Multiruns",
 
 	# Selection of other games. Extend appropriately.
@@ -213,6 +214,8 @@ CE_CATEGORY_MAP = {
 # Leaderboard configuration
 # Sometimes, a board may contain sub-boards or sub-categories.
 # We handle them here so that they can be detected and processed properly.
+# The aliases sub-key may be required if you have troubles calling for
+# PBs with the !pb command.
 LEADERBOARD_CONFIG = {
 	"hp2ps2": {
 		"categories": {
@@ -238,6 +241,27 @@ LEADERBOARD_CONFIG = {
 		}
 	},
 	"hpce": {
+		"aliases": {
+			"hp1pc": "1PC",
+			"hp2pc": "2PC",
+			"hp3pc": "3PC",
+			"hp4pc": "4PC",
+			"hp5pc": "5PC",
+			"hp6pc": "6PC",
+			"hp1ps1": "1PS1",
+			"hp2ps1": "2PS1",
+			"hp4psp": "4PSP",
+			"hp5psp": "5PSP",
+			"hpcemr": "Multiruns",
+			"hpinsane": "Insane",
+			"insane": "Insane",
+			"sy": "Single_Year",
+			"singleyear": "Single_Year",
+			"hpsy": "Single_Year",
+			"hpsingleyear": "Single_Year",
+			"hpdvd": "Harry_Potter_DVD_Games",
+			"hpdvdgames": "Harry_Potter_DVD_Games"
+		},
 		"categories": {
 			"1pc_100gless": {
 				"board": "1PC",

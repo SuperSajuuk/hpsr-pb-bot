@@ -33,7 +33,7 @@ srdc_api.debug = 1
 utils = utils.Utilities(srdc_api)
 normal = normal_run.NormalRun(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP, utils)
 cat_ext = ce_run.CategoryExtension(srdc_api, config.CE_GAME_MAP, config.PLATFORM_MAP, config.CE_BOARD_ALIASES, config.CE_CATEGORY_ALIASES, utils)
-srdc = pb.PersonalBest(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP)
+per_best = pb.PersonalBest(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP, config.CE_BOARD_ALIASES, config.CE_CATEGORY_MAP, utils)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -285,37 +285,65 @@ def latest_run(owner, game, platform, board, args):
 # This is less efficient than just finding the most
 # recent run in a specific game, because the user may
 # have a LOT of submitted PBs in their name.
-# Recommend that daily use should be to use the !run
-# command instead.
-@app.route('/pb/<path:args>')
-def personal_best(args):
-	# Parse the arguments and check we have 3.
-	parts = args.split("+")
-	if len(parts) < 3:
-		return "Error: this route requires owner+game+cat to be provided", 400
+# Daily/regular use should be to use the !run
+# command, which calls the /run route above.
+@app.route('/pb/<owner>/<game>/<platform>/<board>/', defaults={'args': None})
+@app.route('/pb/<owner>/<game>/<platform>/<board>/<path:args>')
+def personal_best(owner, game, platform, board, args):
+	# I can't imagine that these will be in upper-case,
+	# but just make sure everything is lower-case.
+	owner = owner.strip().lower()
+	game = game.strip().lower()
+	platform = platform.strip().lower()
+	board = board.strip().lower()
+	extras_raw = args
 
-	# Set vars based on the parts (order must be consistent)
-	owner = parts[0]
-	game = parts[1]
-	cat = parts[2]
-	platform = parts[3] if len(parts) > 3 else None
-	player = parts[4] if len(parts) > 4 else None
+	# Parse everything in the arguments, if anything is there.
+	extras = split_extras(extras_raw)
+	remaining, player_override, flags = extract_player_and_flags(extras)
 
-	# Validate game/category exist in the mapping.
-	# At some point, the game check should be removed, so
-	# that this can be used to find a PB for any game by the
-	# user. Category filter would be ideal though.
+	# Resolve the player. This will always be the channel owner,
+	# unless the player_override has been set.
+	player = player_override if player_override else owner
 	player = resolve_player(owner, player)
-	game = game.lower()
-	cat = cat.lower()
-	if game not in config.GAME_MAP:
-		return f"Invalid game. See supported options: {config.COMMAND_USAGE_DOC}"
-	if cat not in config.CATEGORY_MAP:
-		return f"Invalid category. See supported options: {config.COMMAND_USAGE_DOC}"
+
+	# Validate category
+	cat_key = board
+	is_ce_pb = False
+	if extras:
+		# If extras contains a known category, prefer it (first match)
+		for t in extras:
+			if t in config.CATEGORY_MAP:
+				cat_key = t
+				break
+			if t in config.CE_CATEGORY_MAP:
+				cat_key = t
+				is_ce_pb = True
+				break
+
+	# Check if cat_key is in the category map.
+	# If it's not there, then the run is not valid and should return.
+	if cat_key not in config.CATEGORY_MAP and cat_key not in config.CE_CATEGORY_MAP:
+		return f"Unknown category key: {cat_key}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
+
+	# Produce an internal key. If this is a CE, get it from aliases.
+	internal_key = f"{game}_{platform}"
+	board_name = None
+	if is_ce_pb or cat_key in config.CE_CATEGORY_MAP:
+		ce_aliases = config.LEADERBOARD_CONFIG[game].get("aliases", {})
+		if platform not in ce_aliases:
+			return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+
+		# Set board name, then find it in the board list
+		board_name = ce_aliases[platform]
+		for key, data in config.LEADERBOARD_CONFIG[game]["categories"].items():
+			if data["board"] == board_name:
+				internal_key = key
+				break
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
 	try:
-		result = srdc.lookup_pb(game, cat, player, platform)
+		result = per_best.lookup_pb(game, internal_key, board, player, extras, flags)
 	except ValueError:
 		return "No PB found for this criteria."
 
@@ -324,9 +352,12 @@ def personal_best(args):
 		return "No PB found for this criteria."
 
 	# Print the standard string to represent this PB.
-	pb = result[0]
-	is_emulator = " (Emulator)" if pb.emulator else ""
-	return f"{player.capitalize()} has a PB of {pb.time} (#{pb.place}) in {game.upper()} {config.CATEGORY_MAP[cat]['clean']}{is_emulator}: {pb.link}"
+	is_emulator = " (Emulator)" if result.emulator else ""
+	if is_ce_pb or cat_key in config.CE_CATEGORY_MAP:
+		clean_name = f"{config.GAME_MAP[game]} ({board_name} - {config.CE_CATEGORY_MAP[board]})"
+	else:
+		clean_name = f"{config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {config.CATEGORY_MAP[cat_key]}{is_emulator})"
+	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
 
 
 # Provide help and support to users calling the routes.
@@ -335,14 +366,14 @@ def command_help():
 	return f"This bot can search SRDC for the latest run or a personal best. See the docs for commands/usage: {config.COMMAND_USAGE_DOC}"
 
 
-@app.route("/pb-options")
-def pb_command_options():
-	return f"Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
-
-
-@app.route("/run-options")
-def run_command_options():
-	return f"Format: '!run gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
+# @app.route("/pb-options")
+# def pb_command_options():
+# 	return f"Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
+#
+#
+# @app.route("/run-options")
+# def run_command_options():
+# 	return f"Format: '!run gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
 
 
 @app.route("/<game>")

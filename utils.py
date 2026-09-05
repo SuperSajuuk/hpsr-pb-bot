@@ -29,7 +29,7 @@ class Utilities:
 		# Query SRDC. If nothing found, return a ValueError
 		result = self.api.search(dt.Game, {"abbreviation": game_key})
 		if not result:
-			raise ValueError(f"Game not found on SRDC: {game_id}")
+			raise ValueError(f"Game not found on SRDC: {game_key}")
 
 		# Cache the result and return it.
 		game_obj = result[0]
