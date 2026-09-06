@@ -32,8 +32,6 @@ GAME_MAP = {
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
 	"ce": "Category Extensions",
 	"multi": "Multiruns",
-	"hpce": "Harry Potter Category Extensions",
-	"hpmulti": "Harry Potter Multiruns",
 
 	# Selection of other games. Extend appropriately.
 	"dbb": "Disney's Brother Bear"
@@ -43,12 +41,9 @@ GAME_MAP = {
 # This section should only be used for category extension boards.
 # Key names must be abbreviations that would be called in !run ce
 # commands: the values of each key are an SRDC URL slug.
-#
-# It's advisable to provide a comment next to each key/value pair
-# so people know what it is.
 CE_GAME_MAP = {
-	"hp": "hpce",  # Harry Potter Category Extensions
-	"rac": "racextras"  # Ratchet & Clank Category Extensions
+	"hp": {"name": "Harry Potter Category Extensions", "id": "hpce"},
+	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"}
 }
 
 # Board aliases. More relevant for CEs, but useful if

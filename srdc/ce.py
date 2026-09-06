@@ -103,10 +103,16 @@ class CategoryExtension:
 		# Find the required Slug URL for this category extension board,
 		# then resolve the slug to find the game object.
 		ce_slug = self.resolve_ce_game_slug(base_game)
-		game_obj = self.utils.get_game_code(ce_slug)
-		cfg = config.LEADERBOARD_CONFIG.get(ce_slug)
+		slug_id = ce_slug.get("id", None)
+		game_obj = self.utils.get_game_code(slug_id)
+		if game_obj is None:
+			raise ValueError(f"Could not find the game `{base_game}`. Check for typos and try again.")
+
+		# Find the leaderboard config for this category.
+		slug_id = ce_slug.get("id")
+		cfg = config.LEADERBOARD_CONFIG.get(slug_id)
 		if cfg is None:
-			raise ValueError(f"No leaderboard config found for CE game slug: {ce_slug}")
+			raise ValueError(f"No leaderboard config found for CE game slug: {slug_id}")
 
 		# Category metadata is necessary for CEs: if nothing is found, or the
 		# CE category cannot be found in the configuration, return an error.

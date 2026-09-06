@@ -130,8 +130,8 @@ class PersonalBest:
 		slug = config.BOARD_GAME_SLUG.get(internal_key, None)
 		if slug is None:
 			for key, val in config.CE_GAME_MAP.items():
-				if val == game_key:
-					slug = val
+				if val["id"] == game_key:
+					slug = val["id"]
 					break
 
 		# Throw an error here if slug is still None

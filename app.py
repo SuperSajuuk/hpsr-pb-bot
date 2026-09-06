@@ -120,7 +120,7 @@ def process_category_extension(base_game: str, ce_board: str, extras: list[str],
 
 	# Parse the ce_key (which contains the game name) to see
 	# if it exists. If not, there is an error.
-	alias_table = config.CE_CATEGORY_ALIASES.get(ce_key)
+	alias_table = config.CE_CATEGORY_ALIASES.get(ce_key["id"])
 	if not alias_table:
 		return None
 
@@ -234,7 +234,7 @@ def latest_run(owner, game, platform, board, args):
 			# the processor and store the result in a variable.
 			cat_clean_name = config.CE_CATEGORY_MAP[extras[0]]
 			result = process_category_extension(platform, board, extras, player, flags)
-			clean_name = f'{config.GAME_MAP[game]} ({config.CE_BOARD_ALIASES[board].upper()} - {cat_clean_name})'
+			clean_name = f'{config.CE_GAME_MAP[platform]["name"]} ({config.CE_BOARD_ALIASES[board].upper()} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi"):
 			# This is multi-run mode. Pull in the necessary config data and parse it.
 			# As a quirk of the command syntax, if board doesn't look like a multirun key,
@@ -253,7 +253,7 @@ def latest_run(owner, game, platform, board, args):
 				return "Unknown multirun key. Provide a valid multirun (e.g., pctrifecta).", 400
 
 			# Process a multi-run: returns SpeedRun or None.
-			result = process_multi_run(owner, platform, multirun_key, board, extras, player, flags)
+			result = process_multi_run(platform, multirun_key, board, extras, player, flags)
 			clean_name = multirun_key
 		case _:
 			# Normal single-game run
