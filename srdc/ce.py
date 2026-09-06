@@ -6,6 +6,7 @@
 # user provide a game which we do not have a hard-coded value for,
 # the system will look up SRDC and then fail if no board exists.
 from model import SpeedRun
+import srcomapi.datatypes as dt
 import datetime
 import config
 from typing import Any, Dict
@@ -61,7 +62,7 @@ class CategoryExtension:
 	# local config for that code. If it's not there,
 	# query SRDC and ensure it does have the category
 	# extension tag.
-	def resolve_ce_game_slug(self, base_game: str) -> str:
+	def resolve_ce_game_slug(self, base_game: str) -> dt.Game | str:
 		"""
 		Resolve the Game Slug for a Category Extension
 
@@ -80,11 +81,11 @@ class CategoryExtension:
 		# query SRDC for the specific game that is needed. We also have to
 		# query the
 		search = self.api.get(f"games?abbreviation={base_game}&embed=tags")
-		if search is None:
+		if not search:
 			# If not found by the abbreviation, try searching on the name.
 			# If still not found, raise ValueError.
 			search = self.api.get(f"games?name={base_game}&embed=tags")
-			if search is None:
+			if not search:
 				raise ValueError(f"No Category Extension game found for base game: {base_game}")
 
 		# Parse the game object for the relevant tag.
