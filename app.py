@@ -374,13 +374,13 @@ def value_error_handler(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-	return "Encountered an error in your request, or could not find a run."
+	return f"Encountered an error in your request, or could not find a run: {str(error)})."
 
 
 @app.errorhandler(408)
 def timeout_error(error):
 	# Return timeout error
-	return "Request timed out, please try typing the command again."
+	return f"Request timed out, try again later: {str(error)}."
 
 
 if __name__ == "__main__":

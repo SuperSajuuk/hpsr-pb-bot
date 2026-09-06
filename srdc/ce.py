@@ -24,9 +24,6 @@ class CategoryExtension:
 		self.category_map = category_map
 		self.utils = utils
 
-	# ---------------------------------------------------------
-	# SRDC RUN SEARCH (same pattern as normal runs)
-	# ---------------------------------------------------------
 	def search_runs(self, game_id: str, category_id: str, user_id: str, var_filters: Dict[str, str] | None = None) -> list[Dict[str, Any]]:
 		"""
 		Search SRDC for runs matching game/category/user. Also includes variable filters, if any are given.
@@ -59,13 +56,20 @@ class CategoryExtension:
 		# Return the full list.
 		return all_runs
 
-	# ---------------------------------------------------------
-	# CE GAME RESOLUTION (Option C: hardcoded + SRDC tag fallback)
-	# ---------------------------------------------------------
+	# Resolve the Game Slug for a CE
+	# Using just the game code provided, check our
+	# local config for that code. If it's not there,
+	# query SRDC and ensure it does have the category
+	# extension tag.
 	def resolve_ce_game_slug(self, base_game: str) -> str:
 		"""
-		Resolve the CE game slug for a given base game.
-		Uses hardcoded mapping first, then SRDC tag lookup.
+		Resolve the Game Slug for a Category Extension
+
+		If possible, rely on local config data before querying SRDC.
+		If we don't have a config key for this, query SRDC and ensure
+		the game does have the Category Extension game type assigned.
+
+		Raises ValueError if no such game is found.
 		"""
 		# Check if the base game key is already in the game map.
 		# Use it first before querying SRDC.
@@ -73,32 +77,37 @@ class CategoryExtension:
 			return self.game_map[base_game]
 
 		# Couldn't find it in our hard-coded list, so
-		# query SRDC for the specific game that is needed.
+		# query SRDC for the specific game that is needed. We also have to
+		# query the
 		search = self.api.get(f"games?abbreviation={base_game}&embed=tags")
-		for g in search.get("data", []):
-			tags = [t.get("name", "").lower() for t in g.get("tags", [])]
-			if "category extension" in tags:
-				return g["id"]
+		if search is None:
+			# If not found by the abbreviation, try searching on the name.
+			# If still not found, raise ValueError.
+			search = self.api.get(f"games?name={base_game}&embed=tags")
+			if search is None:
+				raise ValueError(f"No Category Extension game found for base game: {base_game}")
 
-		# In some cases, we might need to search the name parameter.
-		# This usually only happens if we haven't found anything.
-		search = self.api.get(f"games?name={base_game}&embed=tags")
-		for g in search.get("data", []):
-			tags = [t.get("name", "").lower() for t in g.get("tags", [])]
-			if "category extension" in tags:
-				return g["id"]
+		# Parse the game object for the relevant tag.
+		# This is hard-coded because category extension is
+		# always the same and doesn't change.
+		game = search[0]
+		is_ce = False
+		for tag in game["gametypes"]:
+			if tag == "53no817x":
+				is_ce = True
+				break
 
-		# No category extension was found, usually means the parameters
-		# were not valid, so raise ValueError.
-		raise ValueError(f"No Category Extension game found for base game: {base_game}")
+		# Error here, because the required tag cannot be found.
+		if not is_ce:
+			raise ValueError(f"No Category Extension game found for base game: {base_game}")
 
-	# ---------------------------------------------------------
-	# LOOKUP CATEGORY EXTENSION RUN (dynamic, SRDC-driven)
-	# ---------------------------------------------------------
+		# Return the game object for this category extension board.
+		return game
+
 	def lookup_ce_run(self, base_game: str,	ce_category: str, player: str, flags: dict) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
-		but with CE-specific variables (category + platform filtering).
+		but with CE-specific variables.
 		"""
 		# Find the required Slug URL for this category extension board,
 		# then resolve the slug to find the game object.
