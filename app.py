@@ -224,6 +224,11 @@ def latest_run(owner, game, platform, board, args):
 	# unless the player_override has been set.
 	player = player_override if player_override else owner
 	player = resolve_player(owner, player)
+	print(game)
+	print(platform)
+	print(board)
+	print(player)
+	print(flags)
 
 	# Process the provided data and match it to value of "game".
 	# This will set the code off to finding a run that matches
