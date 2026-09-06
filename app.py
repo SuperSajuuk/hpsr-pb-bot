@@ -367,6 +367,11 @@ def command_help():
 
 
 # Common error handlers
+@app.errorhandler(ValueError)
+def value_error_handler(error):
+	return str(error)
+
+
 @app.errorhandler(500)
 def internal_error(error):
 	return "Encountered an error in your request, or could not find a run."
