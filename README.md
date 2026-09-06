@@ -100,24 +100,39 @@ Additional flags may be supported in the future, depending on relevant use cases
 > production instance is available for selected individuals: anyone using that production instance will know the 
 > relevant render instance name to use.
 
-To support PB lookups, add the following custom command:
+This command functionality is supported in both StreamElements and FossaBot. The commands to add are separated as 
+each both handles customapi support in different ways.
 
+The bot will automatically provide the channel name for you, so no need to include that. However, `${channel}` is 
+based on the assumption that the Twitch channels' owner is the same as their username on speedrun.com: if it is not, 
+replace `${channel}` with the appropriate SRDC username.
+
+### StreamElements
+!pb:
 ```
 !command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogameprovided}/$
 {2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
 ```
 
-To support looking up the latest run, add the following custom command (recommended to add this as its more
-efficient than parsing PBs):
-
+!run:
 ```
 !command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogameprovided}/$
 {2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
 ```
 
-The bot will automatically provide the channel name for you, so no need to include that. However, `${channel}` is 
-based on the assumption that the Twitch channels' owner is the same as their username on speedrun.com: if it is not, 
-replace `${channel}` with the appropriate SRDC username.
+### Fossabot
+FossaBot commands can be managed from their web interface, simply create two commands with the response being the 
+text that is below:
+
+!pb:
+```
+${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1}/${2}/${3}/${urlencode ${fromindex4}}}
+```
+
+!run:
+```
+${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1}/${2}/${3}/${urlencode ${fromindex4}}}
+```
 
 ## Games
 
