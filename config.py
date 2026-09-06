@@ -30,9 +30,10 @@ GAME_MAP = {
 	"hp6": "Harry Potter and the Half Blood Prince",
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
-	"ce": "Harry Potter Category Extensions",
+	"ce": "Category Extensions",
+	"multi": "Multiruns",
 	"hpce": "Harry Potter Category Extensions",
-	"multi": "Harry Potter Multiruns",
+	"hpmulti": "Harry Potter Multiruns",
 
 	# Selection of other games. Extend appropriately.
 	"dbb": "Disney's Brother Bear"
@@ -84,9 +85,10 @@ CE_CATEGORY_ALIASES = {
 			"100gless": "100gless", "allchests": "allchests", "boostless": "boostless", "highjump": "highjump", "lowcast": "lowcast",
 		},
 		"2pc": {
-			"100gless": "100gless", "allchests": "allchests", "awcgless": "awcgless", "boostless": "boostless",	"chungus": "chungus",
-			"cutscene": "cutscene", "hpwc": "hpwc",	"highjump": "highjump",	"jumpless": "jumpless",	"lowcast": "lowcast", "ng": "ng",
-			"nmg": "nmg"
+			"100gless": "100gless", "hundogless": "100gless", "100glitchless": "100gless", "hundoglitchless": "100gless",
+			"allchests": "allchests", "awcgless": "awcgless", "awcglitchless": "awcgless", "boostless": "boostless", "chungus": "chungus",
+			"cutscene": "cutscene", "hpwc": "hpwc", "highjump": "highjump", "hj": "highjump", "jumpless": "jumpless", "lowcast": "lowcast",
+			"ng": "ng", "nmg": "nmg"
 		},
 		"3pc": {
 			"any": "any"
@@ -190,25 +192,76 @@ MULTIRUN_SLUG = "hpmulti"
 # or category extensions. If someone queries a run that isn't
 # described here, data from SRDC should be used as a fallback.
 CATEGORY_MAP = {
-	'any': 'Any%',
-	'100': '100%',
-	'glitchless': 'Glitchless',
-	'gless': 'Glitchless',
-	'nms': 'No Major Skips',
-	'noeds': 'Any% No EDS',
-	'awc': 'All Wizard Cards',
-	'warpless': 'Warpless'
+	"any": "Any%",
+	"100": "100%",
+	"glitchless": "Glitchless",
+	"gless": "Glitchless",
+	"nms": "No Major Skips",
+	"noeds": "Any% No EDS",
+	"awc": "All Wizard Cards",
+	"warpless": "Warpless"
 }
 CE_CATEGORY_MAP = {
-	'100gless': '100% Glitchless',
-	'ng': 'NG+',
-	'boostless': 'Boostless',
-	'nmg': 'No Major Glitches',
-	'allreq': 'All Requirements',
-	'allshields': 'All Shields',
-	'allcrests': 'All Crests',
-	'cutscene': 'Cutscene%',
-	'chungus': 'Chungus%'
+	"100gless": "100% Glitchless",
+	"hundogless": "100% Glitchless",
+	"100glitchless": "100% Glitchless",
+	"hundoglitchless": "100% Glitchless",
+	"awcgless": "AWC Glitchless",
+	"awcglitchless": "AWC Glitchless",
+	"boostless": "Boostless",
+	"allreq": "All Requirements",
+	"allshields": "All Shields",
+	"allcrests": "All Crests",
+	"cutscene": "Cutscene%",
+	"chungus": "Chungus%",
+	"hpwc": "Harry Potter Wizard Card",
+	"hj": "High Jump",
+	"jl": "Jumpless",
+	"lc": "Lowcast",
+	"ng": "NG+",
+	"nmg": "No Major Glitches",
+	"highjump": "High Jump",
+	"jumpless": "Jumpless",
+	"lowcast": "Lowcast",
+	"ngplus": "NG+",
+	"newgameplus": "NG+",
+	"nomajorglitches": "No Major Glitches",
+	"avc1p": "All Vanishing Cards - 1P",
+	"avc2p": "All Vanishing Cards - 2P",
+	"avc3p": "All Vanishing Cards - 3P",
+	"amg": "All Minigames",
+	"ap": "All Portraits",
+	"as": "All Symbols",
+	"allminigames": "All Minigames",
+	"allportraits": "allportraits",
+	"allsymbols": "allsymbols",
+	"chess": "Chess%",
+	"pr": "Potions Rush",
+	"potionsrush": "Potions Rush",
+	"awc": "All Wizard Cards",
+	"ss": "Superspeed",
+	"superspeed": "Superspeed",
+	"glessduo": "PC Glitchless Duofecta",
+	"rpgtri": "RPG Trifecta",
+	"hp1pc": "HP1 PC",
+	"hp2pc": "HP2 PC",
+	"hp3pc": "HP3 PC",
+	"hp4pc": "HP4 PC",
+	"hp5pc": "HP5 PC",
+	"hp6pc": "HP6 PC",
+	"hp71pc": "HP7.1 PC",
+	"hp72pc": "HP7.2 PC",
+	"1ps1": "HP1 PS1",
+	"2ps1": "HP1 PS1",
+	"hp2_6th": "HP2 6th Gen",
+	"hp3_6th": "HP3 6th Gen",
+	"hp1gba": "HP1 GBA",
+	"hp2gba": "HP2 GBA",
+	"hp3gba": "HP3 GBA",
+	"qwcgba": "QWC GBA",
+	"hp6ds": "HP6 DS",
+	"hp71ds": "HP7.1 DS",
+	"hp72ds": "HP7.2 DS"
 }
 
 # Leaderboard configuration
@@ -458,24 +511,24 @@ LEADERBOARD_CONFIG = {
 				"board": "4PC",
 				"subcategory": "All_Vanishing_Cards-1-Player",
 				"variables": [
-					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
-					{"var_id": "2lgk0jo8", "value_id": "14oy0mkq"}
+					{"name": "board_id", "var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"name": "player_count", "var_id": "2lgk0jo8", "value_id": "14oy0mkq"}
 				]
 			},
 			"4pc_avc_2p": {
 				"board": "4PC",
 				"subcategory": "All_Vanishing_Cards-2-Players",
 				"variables": [
-					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
-					{"var_id": "2lgk0jo8", "value_id": "192moe4q"}
+					{"name": "board_id", "var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"name": "player_count", "var_id": "2lgk0jo8", "value_id": "192moe4q"}
 				]
 			},
 			"4pc_avc_3p": {
 				"board": "4PC",
 				"subcategory": "All_Vanishing_Cards-3-Players",
 				"variables": [
-					{"var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
-					{"var_id": "2lgk0jo8", "value_id": "12vdyj2q"}
+					{"name": "board_id", "var_id": "w20gevvk-5ly156yl", "value_id": "0q5p0zrl"},
+					{"name": "player_count", "var_id": "2lgk0jo8", "value_id": "12vdyj2q"}
 				]
 			},
 			"5pc_amg": {
@@ -591,140 +644,140 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"insane_hp1_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp1-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "21d7dm41"}
 				]
 			},
 			"insane_hp2_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp2-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "klrw7rj1"}
 				]
 			},
 			"insane_hp3_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp3-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "5q87zmgl"}
 				]
 			},
 			"insane_hp4_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp4-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "5lezyezl"}
 				]
 			},
 			"insane_hp5_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp5-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "0q5zw2nq"}
 				]
 			},
 			"insane_hp6_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp6-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "4lxo2yrl"}
 				]
 			},
 			"insane_hp71_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp7-1-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "814gm2j1"}
 				]
 			},
 			"insane_hp72_pc": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp7-2-pc",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "z19yezkl"}
 				]
 			},
 			"insane_1ps1": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp1-ps1",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "4qyd206q"}
 				]
 			},
 			"insane_2ps1": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp2-ps1",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "mlnpvxo1"}
 				]
 			},
 			"insane_hp2_6th_gen": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp2-gcn-xbox",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "013z2zyq"}
 				]
 			},
 			"insane_hp3_6th_gen": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp3-6th-gen",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "5lm0z3j1"}
 				]
 			},
 			"insane_hp1_gba": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp1-gba",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "jq663o3q"}
 				]
 			},
 			"insane_hp2_gba": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp2-gba",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "q75dkjd1"}
 				]
 			},
 			"insane_hp3_gba": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp3-gba",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "rqv025rl"}
 				]
 			},
 			"insane_qwc_gba": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "qwc-gba",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "q654y2nl"}
 				]
 			},
 			"insane_hp6_ds": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp6-ds",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "zqovk7g1"}
 				]
 			},
 			"insane_hp71_ds": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp7-1-ds",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "1py422g1"}
 				]
 			},
 			"insane_hp72_ds": {
-				"board": "Insane",
+				"board": "Insane%",
 				"subcategory": "hp7-2-ds",
 				"variables": [
 					{"var_id": "9d83xr72-7896d298", "value_id": "klrg73oq"}
 				]
 			},
 			"sy_hp1_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp1-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "4qye4641"},
@@ -732,7 +785,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp2_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp2-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "mln6320q"},
@@ -740,7 +793,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp3_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp3-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "810e7rwq"},
@@ -748,7 +801,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp4_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp4-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "9qjyd5eq"},
@@ -756,7 +809,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp5_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp5-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "jq6k7j3l"},
@@ -764,7 +817,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp6_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp6-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "5lmjn9jl"},
@@ -772,7 +825,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp71_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp7-1-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "81ww8ko1"},
@@ -780,7 +833,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp72_any": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp7-2-any",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "zqown7pl"},
@@ -789,7 +842,7 @@ LEADERBOARD_CONFIG = {
 
 			},
 			"sy_hp1_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp1-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "4qye4641"},
@@ -797,7 +850,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp2_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp2-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "mln6320q"},
@@ -805,7 +858,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp3_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp3-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "810e7rwq"},
@@ -813,7 +866,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp4_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp4-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "9qjyd5eq"},
@@ -821,7 +874,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp5_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp5-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "jq6k7j3l"},
@@ -829,7 +882,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp6_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp6-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "5lmjn9jl"},
@@ -837,7 +890,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp71_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp7-1-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "81ww8ko1"},
@@ -845,7 +898,7 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"sy_hp72_100": {
-				"board": "Single_Year",
+				"board": "Single Year",
 				"subcategory": "hp7-2-100",
 				"variables": [
 					{"var_id": "xd1vl0rd-2lgr1v7n", "value_id": "zqown7pl"},
@@ -853,14 +906,14 @@ LEADERBOARD_CONFIG = {
 				]
 			},
 			"dvd_hc": {
-				"board": "Harry_Potter_DVD_Games",
+				"board": "DVD Games",
 				"subcategory": "hogwarts-challenge",
 				"variables": [
 					{"var_id": "jdr966xd-r8r7v77n", "value_id": "jqzd3e4l"}
 				]
 			},
 			"dvd_ww": {
-				"board": "Harry_Potter_DVD_Games",
+				"board": "DVD Games",
 				"subcategory": "wizarding-world",
 				"variables": [
 					{"var_id": "jdr966xd-r8r7v77n", "value_id": "klrm240q"}
