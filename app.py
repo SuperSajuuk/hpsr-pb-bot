@@ -366,24 +366,6 @@ def command_help():
 	return f"This bot can search SRDC for the latest run or a personal best. See the docs for commands/usage: {config.COMMAND_USAGE_DOC}"
 
 
-# @app.route("/pb-options")
-# def pb_command_options():
-# 	return f"Format: '!pb gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
-#
-#
-# @app.route("/run-options")
-# def run_command_options():
-# 	return f"Format: '!run gamecode categorycode srdcusername' | Example: '!pb hp1 any% nixxo' | Full list of options: {config.COMMAND_USAGE_DOC}"
-
-
-@app.route("/<game>")
-def missing_game(game):
-	if len(game) > 1:
-		return f"A game and category must be defined. Please refer to the documentation for how to use the command: {config.COMMAND_USAGE_DOC}"
-	else:
-		return f"To find a PB, use this command: '!pb gamecode categorycode srdcusername'. For more info, check the docs: {config.COMMAND_USAGE_DOC}"
-
-
 # Common error handlers
 @app.errorhandler(500)
 def internal_error(error):

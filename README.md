@@ -18,21 +18,45 @@ An upcoming update will improve the functionality of these commands, such as:
 I don't have a timeline for inclusion of this functionality, but keep an eye on the repository for more information!
 
 ## Usage
-
+### Personal Bests
+> [!WARNING]
+> Searching a users' Personal Bests is a **slow operation**. Unlike looking up a specific run and getting a small 
+> response output that is easily processable, the PB endpoint returns ALL personal bests, which can potentially 
+> result in having thousands of runs, which have to be filtered. If you just want a specific run, we recommend using 
+> the /run/ endpoint, which has much more specific filtering to only return a small number of results.
+> 
 To look up a PB of a player:
 ```
 !pb <game> <platform> <category> [flags]
 ```
+#### Game
+The game parameter is used to define what game you are looking for. For the most part, this should follow the format 
+of the values defined in the games header below, but you can also use the legacy format of defining category 
+extensions by their full URL slugs.
 
-Note that searching PBs is a slow operation on speedrun.com, because a user can have many hundreds of PBs that have 
-to be returned and then filtered to find the one that you actually asked for. If you just want to check up a specific 
-run of a user, we recommend using this command for a quicker result (the output should be the same between both 
-commands):
+#### Platform
+The platform parameter is used as a filter to target the specific game version that is needed. All platforms 
+supported are listed in the [platforms section](#Platforms) below.
+
+When doing this for a CE, you should use the full name: eg `hp1pc`.
+
+#### Category
+The category parameter is used as a filter to target the specific primary category of the game and platform that is 
+defined. All categories supported here are listed in the [categories section](#Categories) below.
+
+When doing this for a CE board, the alias name for the sub-category should be used: eg `100gless`.
+
+At some point, PB will be brought into alignment with the logic for the /run/ endpoint, so that sub-categories can 
+be part of the "flags" optional argument. For now, "flags" in PB is only for setting console/emulator or a player 
+override.
+
+### Individual Runs
+To look up the individual run of a player:
 ```
 !run <game> <platform> <category> [flags]
 ```
 
-### Game
+#### Game
 The game parameter is used to define what game you are looking for. This should follow the format of the values 
 defined in the games header below (only these values are accepted, anything else will return an error).
 
@@ -41,7 +65,7 @@ relevant board here (eg `!run ce` tells the system that you are looking for a ca
 game series, primary board and the extension board are defined after this. See the examples at the end for how this 
 works.
 
-### Platform
+#### Platform
 The platform parameter is used as a filter to target the specific game version that is needed. All platforms 
 supported are listed in the [platforms section](#Platforms) below.
 
@@ -49,7 +73,7 @@ If the game parameter was set to CE, then platform should be the specific series
 platform. This is because there is usually only one Category Extensions board per game series, so the specific 
 platforms are often defined by the top-level board category instead.
 
-### Category
+#### Category
 The category parameter is used as a filter to target the specific primary category of the game and platform that is 
 defined. All categories supported here are listed in the [categories section](#Categories) below.
 
@@ -57,7 +81,7 @@ If the game parameter was set to CE, then category should be set to the top-leve
 Harry Potter Category Extensions board), and NOT the actual sub-category that you are seeking. The specific 
 sub-category/board should be defined in the flags section below.
 
-### Flags
+#### Flags
 The flags at the end of the command represent optional arguments that can be provided where additional information is 
 needed. Flags which are supported at the moment include:
 - The sub-board that was requested (this is largely only relevant for Category Extensions due to overflow)
@@ -70,7 +94,7 @@ handled in the same way).
 
 Additional flags may be supported in the future, depending on relevant use cases.
 
-## StreamElements Setup
+## Setup
 
 To support PB lookups, add the following custom command:
 
@@ -156,30 +180,30 @@ replace `${channel}` with the appropriate SRDC username.
 | `fs`                         | Harry Potter Full Series        |
 
 ## Examples
+### !pb
+Below are some examples of commands to return PBs. Outputs are largely consistent:
+- `!pb hp1 pc any nixxo` -> Looks for the PB in HP1 PC Any% for player "nixxo".
+- `!pb hp1 ps1 100 nixxo` -> Looks for the PB in HP1 PS1 100% for player "nixxo".
+- `!pb hp1 ps1 100` -> Looks for the PB in HP1 PS1 100% for the channel owner.
+- `!pb hpce hp1pc 100gless nixxo` -> Looks for the PB in the HP Category Extensions board for HP1 PC 100% Glitchless 
+  for player "nixxo".
 
-The below examples use the !pb command, however if you want to use !run instead, just replace `!pb` with `!run`. In 
-most cases, !pb and !run will return the same output, but you may want to use `!run` for regular check-ups to avoid 
-the slower PB route.
-
+The output for PBs will look something like this:
 ```
-!pb hp1 any nixxo
-→ Nixxo has a PB of 0:29:45 (#1) in HP1 Any% https://...
-
-!pb hp2 100
-→ (defaults to channel owner's PB)
-
-!pb hp4 any artfulinfo
-→ Artfulinfo has a PB of 1:02:33 (#10) in HP4 Any% https://...
-
-!pb multi trifecta artfulinfo
-→ Artfulinfo has Trifecta PBs of: 2:15:00 (#3) in Any% https://... | 5:30:00 (#2) in 100% https://...
-
-!pb hpce chungus artfulinfo
-→ Artfulinfo has a PB of 0:45:12 (#1) in HPCE Chungus% https://...
+The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}
 ```
+All variables are filled in from the data provided and parsed by the bot.
 
-## Response Format
+### !run
+Below are some examples of commands to return individual runs. Outputs are largely consistent:
+- `!run hp1 pc any nixxo` -> Looks for the most recent run in HP1 PC Any% for player "nixxo".
+- `!run hp1 ps1 100 nixxo` -> Looks for the most recent run in HP1 PS1 100% for player "nixxo".
+- `!run hp1 ps1 100` -> Looks for the most recent run in HP1 PS1 100% for the channel owner.
+- `!run ce hp 1pc 100gless nixxo` -> Looks for the most recent run in the HP Category Extensions board for HP1 PC 100% 
+  Glitchless for player "nixxo".
 
+The output for individual runs will look something like this:
 ```
-<player> has a PB of <time> (#<place>) in <game> <category> <link>
+The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}
 ```
+All variables are filled in from the data provided and parsed by the bot.
