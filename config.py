@@ -223,27 +223,65 @@ LEADERBOARD_CONFIG = {
 				"variables": [
 					{"name": "console", "var_id": "zd3yw82n-9l7ro37n", "value_id": "klr8pkj1"},
 					{"name": "emulator", "var_id": "zd3yw82n-9l7ro37n", "value_id": "21dpz841"},
-				],
+				]
 			},
 			"100": {
 				"variables": [
 					{"name": "console", "var_id": "9d839vw2-9l7ro37n", "value_id": "klr8pkj1"},
 					{"name": "emulator", "var_id": "9d839vw2-9l7ro37n", "value_id": "21dpz841"},
-				],
+				]
 			},
 			"nms": {
 				"variables": [
 					{"name": "console", "var_id": "zdnlom72-9l7ro37n", "value_id": "klr8pkj1"},
 					{"name": "emulator", "var_id": "zdnlom72-9l7ro37n", "value_id": "21dpz841"}
-				],
+				]
 			}
 		}
 	},
 	"hp2_6th_gen": {
-		"categories": {}
+		"categories": {
+			"any": {
+				"variables": [
+					{"name": "console", "var_id": "824x9wgd-kn0vxg0l", "value_id": "5lm72p0l"},
+					{"name": "emulator", "var_id": "824x9wgd-kn0vxg0l", "value_id": "21dpz841"},
+				]
+			},
+			"100": {
+				"variables": [
+					{"name": "console", "var_id": "9d8pnr3k-kn0vxg0l", "value_id": "5lm72p0l"},
+					{"name": "emulator", "var_id": "9d8pnr3k-kn0vxg0l", "value_id": "21dpz841"},
+				]
+			},
+			"nms": {
+				"variables": [
+					{"name": "console", "var_id": "mkelyo9d-kn0vxg0l", "value_id": "5lm72p0l"},
+					{"name": "emulator", "var_id": "mkelyo9d-kn0vxg0l", "value_id": "21dpz841"}
+				]
+			}
+		}
 	},
 	"hp3_6th_gen": {
-		"categories": {}
+		"categories": {
+			"any": {
+				"variables": [
+					{"name": "console", "var_id": "wdmqx52q-yn2wrvjn", "value_id": "5q8n6vgq"},
+					{"name": "emulator", "var_id": "wdmqx52q-yn2wrvjn", "value_id": "4qykp241"},
+				]
+			},
+			"100": {
+				"variables": [
+					{"name": "console", "var_id": "mkerv6nd-yn2wrvjn", "value_id": "5q8n6vgq"},
+					{"name": "emulator", "var_id": "mkerv6nd-yn2wrvjn", "value_id": "4qykp241"},
+				]
+			},
+			"nms": {
+				"variables": [
+					{"name": "console", "var_id": "xk9el1x2-yn2wrvjn", "value_id": "5q8n6vgq"},
+					{"name": "emulator", "var_id": "xk9el1x2-yn2wrvjn", "value_id": "4qykp241"}
+				]
+			}
+		}
 	},
 	"hp2_ps2": {
 		"categories": {
