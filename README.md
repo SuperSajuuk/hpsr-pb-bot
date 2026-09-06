@@ -95,18 +95,23 @@ handled in the same way).
 Additional flags may be supported in the future, depending on relevant use cases.
 
 ## Setup
+> [!IMPORTANT]
+> <your-render-instance-name> should be replaced with the name of your deployed instance of this code. A private 
+> production instance is available for selected individuals: anyone using that production instance will know the 
+> relevant render instance name to use.
 
 To support PB lookups, add the following custom command:
 
 ```
-!command add !pb ${customapi.https://srdc-run-finder.onrender.com/pb/${channel}+${queryescape ${1:|' '}}}
+!command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogameprovided}/$
+{2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
 ```
 
 To support looking up the latest run, add the following custom command (recommended to add this as its more
 efficient than parsing PBs):
 
 ```
-!command add !run ${customapi.https://srdc-run-finder.onrender.com/run/${channel}/${1|nogameprovided}/$
+!command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogameprovided}/$
 {2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
 ```
 
