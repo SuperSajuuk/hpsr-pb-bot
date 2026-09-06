@@ -46,9 +46,65 @@ CE_GAME_MAP = {
 	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"}
 }
 
-# Board aliases. More relevant for CEs, but useful if
-# you want multiple user input choices for a category
-# to be found.
+# Multirun game mapping.
+# This section should only be used for multirun boards.
+# The key name should be the series that has a multirun board.
+# The value is a dictionary containing two keys: a human-readable name
+# and the Slug URL ID.
+MULTIRUN_GAME_MAP = {
+	"hp": {"name": "Harry Potter Multiruns", "id": "hpmulti"},
+	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"}
+}
+
+# Board slug mapping. This is used to map the values produced by
+# concatenating platform and game in the code. The ordering of the
+# keys is to ensure they are grouped by platform commonalities for
+# easier reading.
+BOARD_GAME_SLUG = {
+	"hp1_ps1": "hp1ps1",
+	"hp2_ps1": "hp2ps1",
+	"hp1_pc": "hp1pc",
+	"hp2_pc": "hp2pc",
+	"hp3_pc": "hp3pc",
+	"hp4_pc": "hp4",
+	"hp5_pc": "hp5",
+	"hp6_pc": "hp6",
+	"hp7.1_pc": "hp7p1",
+	"hp7.2_pc": "hp7p2",
+	"hp1_ps2": "hp1_6th_gen",
+	"hp2_ps2": "hp2ps2",
+	"hp3_ps2": "hp3_6th_gen",
+	"hp4_ps2": "hp4",
+	"hp5_ps2": "hp5",
+	"hp6_ps2": "hp6",
+	"hp1_xbox": "hp1_6th_gen",
+	"hp2_xbox": "hp2_6th_gen",
+	"hp3_xbox": "hp3_6th_gen",
+	"hp4_xbox": "hp4",
+	"hp5_xbox": "hp5",
+	"hp6_xbox": "hp6",
+	"hp7.1_xbox": "hp7p1",
+	"hp7.2_xbox": "hp7p2",
+	"hp1_gcn": "hp1_6th_gen",
+	"hp2_gcn": "hp2_6th_gen",
+	"hp3_gcn": "hp3_6th_gen",
+	"hp4_gcn": "hp4",
+	"hp1_gba": "hp1gba",
+	"hp2_gba": "hp2gba",
+	"hp3_gba": "hp3gba",
+	"hp4_gba": "hp4gba",
+	"hp5_gba": "hp5gbads",
+	"hp1_gbc": "hp1gbc",
+	"hp2_gbc": "hp2gbc",
+	"hp4_ds": "hp4gba",
+	"hp5_ds": "hp5gbads",
+	"hp6_ds": "hp6ds",
+	"hp7.1_ds": "hp7p1ds",
+	"hp7.2_ds": "hp7p2ds"
+}
+
+# CE Board aliases. Useful if you want multiple
+# user input choices for a category to be found.
 CE_BOARD_ALIASES = {
 	"1pc": "1pc",
 	"2pc": "2pc",
@@ -131,56 +187,6 @@ CE_CATEGORY_ALIASES = {
 		},
 	}
 }
-
-# Board slug mapping. This is used to map the values produced by
-# concatenating platform and game in the code. The ordering of the
-# keys is to ensure they are grouped by platform commonalities for
-# easier reading.
-BOARD_GAME_SLUG = {
-	"hp1_ps1": "hp1ps1",
-	"hp2_ps1": "hp2ps1",
-	"hp1_pc": "hp1pc",
-	"hp2_pc": "hp2pc",
-	"hp3_pc": "hp3pc",
-	"hp4_pc": "hp4",
-	"hp5_pc": "hp5",
-	"hp6_pc": "hp6",
-	"hp7.1_pc": "hp7p1",
-	"hp7.2_pc": "hp7p2",
-	"hp1_ps2": "hp1_6th_gen",
-	"hp2_ps2": "hp2ps2",
-	"hp3_ps2": "hp3_6th_gen",
-	"hp4_ps2": "hp4",
-	"hp5_ps2": "hp5",
-	"hp6_ps2": "hp6",
-	"hp1_xbox": "hp1_6th_gen",
-	"hp2_xbox": "hp2_6th_gen",
-	"hp3_xbox": "hp3_6th_gen",
-	"hp4_xbox": "hp4",
-	"hp5_xbox": "hp5",
-	"hp6_xbox": "hp6",
-	"hp7.1_xbox": "hp7p1",
-	"hp7.2_xbox": "hp7p2",
-	"hp1_gcn": "hp1_6th_gen",
-	"hp2_gcn": "hp2_6th_gen",
-	"hp3_gcn": "hp3_6th_gen",
-	"hp4_gcn": "hp4",
-	"hp1_gba": "hp1gba",
-	"hp2_gba": "hp2gba",
-	"hp3_gba": "hp3gba",
-	"hp4_gba": "hp4gba",
-	"hp5_gba": "hp5gbads",
-	"hp1_gbc": "hp1gbc",
-	"hp2_gbc": "hp2gbc",
-	"hp4_ds": "hp4gba",
-	"hp5_ds": "hp5gbads",
-	"hp6_ds": "hp6ds",
-	"hp7.1_ds": "hp7p1ds",
-	"hp7.2_ds": "hp7p2ds"
-}
-
-# This just sets a constant for the hpmulti game board.
-MULTIRUN_SLUG = "hpmulti"
 
 # Map abbreviations passed by users to human-readable names.
 # This should be used only for 'main' boards: ie not multiruns

@@ -96,9 +96,9 @@ Additional flags may be supported in the future, depending on relevant use cases
 
 ## Setup
 > [!IMPORTANT]
-> <your-render-instance-name> should be replaced with the name of your deployed instance of this code. A private 
-> production instance is available for selected individuals: anyone using that production instance will know the 
-> relevant render instance name to use.
+> The text <your-render-instance-name> in the command definitions below should be replaced with the name of your 
+> deployed instance of this code. A private production instance is available for selected individuals: anyone using 
+> that production instance will know the relevant render instance name to use.
 
 This command functionality is supported in both StreamElements and FossaBot. The commands to add are separated as 
 each both handles customapi support in different ways.
@@ -110,14 +110,12 @@ replace `${channel}` with the appropriate SRDC username.
 ### StreamElements
 !pb:
 ```
-!command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogameprovided}/$
-{2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
+!command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogame}/${2|noplatform}/${3|noboard}/${queryescape ${4:|' '}}}
 ```
 
 !run:
 ```
-!command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogameprovided}/$
-{2|noplatformprovided}/${3|noboardprovided}/${queryescape ${4:|' '}}}
+!command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogame}/${2|noplatform}/${3|noboard}/${queryescape ${4:|' '}}}
 ```
 
 ### Fossabot
@@ -126,12 +124,12 @@ text that is below:
 
 !pb:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1}/${2}/${3}/${urlencode ${fromindex4}}}
+${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1 nogame}/${2 noplatform}/${3 noboard}/${urlencode ${fromindex4}}}
 ```
 
 !run:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1}/${2}/${3}/${urlencode ${fromindex4}}}
+${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1 nogame}/${2 noplatform}/${3 noboard}/${urlencode ${fromindex4}}}
 ```
 
 ## Games
@@ -151,6 +149,9 @@ ${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1}
 | `multi` | Multiruns                                   |
 
 ## Platforms
+These codes are based on a normal run. If ce or multi are provided for the "game" parameter above, the platform code is 
+the ID representing the relevant Category Extension or Multirun board for the series in question (eg if you are 
+looking for the Harry Potter CE board, then platform should be given as `hp`, if game is set to `ce`)
 
 | Code   | Platform             |
 |--------|----------------------|
