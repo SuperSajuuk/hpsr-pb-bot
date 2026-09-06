@@ -8,6 +8,7 @@
 # methods being duplicated several times.
 import srcomapi.datatypes as dt
 import datetime
+import config
 from model import SpeedRun
 
 
@@ -56,6 +57,33 @@ class Utilities:
 				url += f"&var-{var_id}={var_value}"
 
 		return self.api.get(url)
+
+	@staticmethod
+	def resolve_leaderboard_config(game_key: str, internal_key: str, cat_key: str = None):
+		"""
+		Resolve the correct leaderboard config block, depending on whether
+		the config exists under the game_key or the internal_key. This will
+		either return the relevant config dictionary, or None.
+		"""
+		# Check to see if there is a config key under the game_key
+		game_cfg = config.LEADERBOARD_CONFIG.get(game_key)
+		if game_cfg:
+			categories = game_cfg.get("categories")
+			if categories:
+				if internal_key in categories:
+					return categories[internal_key]
+				if cat_key in categories:
+					return categories[cat_key]
+
+		# Didn't find it under game_key, so perhaps look under the internal key
+		internal_cfg = config.LEADERBOARD_CONFIG.get(internal_key)
+		if internal_cfg:
+			categories = internal_cfg.get("categories")
+			if categories:
+				return categories
+
+		# Found nothing, so return None.
+		return None
 
 	def lookup_run_place(self, game_id, category_id, run_id, variables: dict | None):
 		"""

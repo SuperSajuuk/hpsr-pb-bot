@@ -65,39 +65,74 @@ class NormalRun:
 
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.utils.get_user_id(player)
-		cfg = config.LEADERBOARD_CONFIG.get(slug, None)
-		want_emulator = bool(flags and flags.get("emulator", False))
+		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, cat_key)
+		cfg_2 = None
+		if cfg is not None:
+			cfg_2 = cfg.get(cat_key, None)
+
+		# Check if either cfg or cfg_2 contains a variables key.
+		# If so, capture all variables and build a var_filters list
+		# for use in the query.
 		var_filters = None
-		if cfg and "platform" in cfg:
-			# Capture the variable ID and values depending on the platform.
-			platform_cfg = cfg["platform"]
-			var_id = platform_cfg["var_id"]
-			values = platform_cfg["values"]
-			console_val = values["console"]
-			emulator_val = values["emulator"]
+		variable_data = None
+		active_slice = None
+		if (cfg and "variables" in cfg) or (cfg_2 and "variables" in cfg_2):
+			# All the variable data is stored in the "variables" key.
+			# Use that to capture all the relevant info we need.
+			# Some keys might contain names to define what they are.
+			variable_data = cfg.get("variables", None)
+			if variable_data is None:
+				variable_data = cfg_2.get("variables", [])
 
-			# Build initial var_filters based on flags. Then, query SRDC to capture
-			# runs with the initial filter, and do client-side processing to check
-			# for console/emulator splits.
-			var_filters = {var_id: emulator_val} if want_emulator else {var_id: console_val}
-			runs = self.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
-			if want_emulator:
-				# Keep only emulator runs
-				runs = [r for r in runs if r["values"].get(var_id) == emulator_val]
-			else:
-				# Prefer console runs: keep only console runs if any exist
-				console_runs = [r for r in runs if r["values"].get(var_id) == console_val]
-				if console_runs:
-					runs = console_runs
+			# Check the user provided flags against the slice names.
+			slice_names = {x["name"] for x in variable_data if "name" in x}
+			if flags:
+				# Flags that match slice names AND are True.
+				# If any are found, select it as the active slice.
+				true_flags = {name for name in slice_names if flags.get(name) is True}
+				if true_flags:
+					active_slice = next(iter(true_flags))
 				else:
-					# Fallback: try emulator runs
-					runs = self.search_runs(game_obj.id, category_obj.id, user_id, {var_id: emulator_val})
-					runs = [r for r in runs if r["values"].get(var_id) == emulator_val]
-		else:
-			# No platform variable configured: fall back to unfiltered search
-			runs = self.search_runs(game_obj.id, category_obj.id, user_id)
+					active_slice = next((name for name in slice_names if name not in flags), None)
 
-		# If nothing is returned by this, just return None.
+			# This might still be None: in which case, just pick the first slice.
+			if active_slice is None:
+				active_slice = next(iter(slice_names), None)
+
+			# Build var_filters
+			var_filters = {}
+			for x in variable_data:
+				if "name" not in x:
+					var_id = x["var_id"].split("-")[1]
+					var_filters[var_id] = x["value_id"]
+			for x in variable_data:
+				if x.get("name") == active_slice:
+					var_id = x["var_id"].split("-")[1]
+					var_filters[var_id] = x["value_id"]
+
+		# With the provided data, search SRDC for runs.
+		# If nothing there, just return None.
+		runs = self.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
+		if not runs:
+			return None
+
+		# After returning runs, you may receive more than you asked for: this
+		# is a limitation of SRDC. Thus, to just have "one run", we need to do
+		# some filtering here.
+		# Client-side filtering based on selected slice
+		if active_slice is not None:
+			filtered_runs = []
+			for r in runs:
+				# Check if this run matches the chosen slice
+				for x in variable_data:
+					if x.get("name") == active_slice:
+						var_id = x["var_id"].split("-")[1]
+						if r["values"].get(var_id) == x["value_id"]:
+							filtered_runs.append(r)
+							break
+			runs = filtered_runs
+
+		# If nothing remains after filtering, return None
 		if not runs:
 			return None
 
@@ -105,7 +140,7 @@ class NormalRun:
 		# The run at the top of the index will then be used to get its placement
 		# in the leaderboard. To avoid duplication, leaderboard placement is
 		# parsed by a helper function.
-		runs.sort(key=lambda r: r["status"]["verify-date"], reverse=True)
+		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.

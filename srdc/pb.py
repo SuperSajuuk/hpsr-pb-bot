@@ -62,7 +62,7 @@ class PersonalBest:
 	# ---------------------------------------------------------
 	# PB FILTERING
 	# ---------------------------------------------------------
-	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None):
+	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None, flags: dict=None):
 		"""
 		Find PBs matching a category and optional variable filter.
 		variable_filter = ("variable_id", "expected_value")
@@ -78,18 +78,38 @@ class PersonalBest:
 			if variable_filter is not None:
 				# If the variable_filter data includes a "variables" key, use data from there
 				variable_data = variable_filter.get("variables", None)
-				var_id = None
-				expected = None
 				if variable_data is not None:
+					# The variable_data might include multiple variable dictionaries.
+					# To identify the one we need, capture the name value and map it
+					# to the flags' dictionary. Flags are derived from the users' input.
+					slice_names = {x["name"] for x in variable_data if "name" in x}
+					active_slice = None
+					if flags is not None:
+						for name in slice_names:
+							if flags.get(name, False):
+								active_slice = name
+								break
+
+					# Check for a slice or continue on if there was nothing.
+					if active_slice is not None:
+						variable_data = [x for x in variable_data if x["name"] == active_slice]
+
+					# Now parse just the variable that we need.
+					all_match = True
 					for x in variable_data:
 						var_id = x.get("var_id").split("-")[1]
 						expected = x.get("value_id", None)
-				else:
-					var_id, expected = variable_filter
+						if run["values"].get(var_id) == expected:
+							break
+						all_match = False
 
-				# Check if the value ID is the one we wanted.
-				if run["values"].get(var_id) != expected:
-					continue
+					if not all_match:
+						continue
+				else:
+					# Check if the value ID is the one we wanted.
+					var_id, expected = variable_filter
+					if run["values"].get(var_id) != expected:
+						continue
 
 			# Append the PB result to the list.
 			results.append(self.extract_pb(entry, player))
@@ -128,7 +148,7 @@ class PersonalBest:
 		# check for either one.
 		category_obj = None
 		for cat in game_obj.categories:
-			if cat.name == category_meta or cat.name == ce_category_meta.upper():
+			if cat.name == category_meta or (ce_category_meta is not None and cat.name == ce_category_meta.upper()):
 				category_obj = cat
 				break
 
@@ -139,15 +159,14 @@ class PersonalBest:
 		# Fetch PBs for this player based on this game ID.
 		# Also, load unified leaderboard config for this game (if present)
 		pbs = self.search_pbs(player, game_obj.id)
-		variables = config.LEADERBOARD_CONFIG.get(game_key, None)
+		variables = self.utils.resolve_leaderboard_config(game_key, internal_key)
+		variables_2 = None
 		if variables is not None:
-			category_data = config.LEADERBOARD_CONFIG[game_key].get("categories", None)
-			if category_data is not None:
-				variables = category_data.get(internal_key, None)
+			variables_2 = variables.get(cat_key, None)
 
 		# Filter the PB list to try and find the PB the user asked for.
 		# If no PB found, return None.
-		result = self.find_pbs(player, pbs, category_obj.id, variables)
+		result = self.find_pbs(player, pbs, category_obj.id, variables if variables_2 is None else variables_2, flags)
 		if not result:
 			return None
 

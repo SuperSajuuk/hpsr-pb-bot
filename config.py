@@ -217,27 +217,54 @@ CE_CATEGORY_MAP = {
 # The aliases sub-key may be required if you have troubles calling for
 # PBs with the !pb command.
 LEADERBOARD_CONFIG = {
-	"hp2ps2": {
+	"hp1_6th_gen": {
 		"categories": {
 			"any": {
-				"var_id": "rklo0owk",
-				"value": "any",
-				"h": "any"
+				"variables": [
+					{"name": "console", "var_id": "zd3yw82n-9l7ro37n", "value_id": "klr8pkj1"},
+					{"name": "emulator", "var_id": "zd3yw82n-9l7ro37n", "value_id": "21dpz841"},
+				],
 			},
 			"100": {
-				"var_id": "ndxvrvj2",
-				"value": "100",
-				"h": "100"
+				"variables": [
+					{"name": "console", "var_id": "9d839vw2-9l7ro37n", "value_id": "klr8pkj1"},
+					{"name": "emulator", "var_id": "9d839vw2-9l7ro37n", "value_id": "21dpz841"},
+				],
+			},
+			"nms": {
+				"variables": [
+					{"name": "console", "var_id": "zdnlom72-9l7ro37n", "value_id": "klr8pkj1"},
+					{"name": "emulator", "var_id": "zdnlom72-9l7ro37n", "value_id": "21dpz841"}
+				],
+			}
+		}
+	},
+	"hp2_6th_gen": {
+		"categories": {}
+	},
+	"hp3_6th_gen": {
+		"categories": {}
+	},
+	"hp2_ps2": {
+		"categories": {
+			"any": {
+				"variables": [
+					{"name": "console", "var_id": "rklo0owk-yn20gk2l", "value_id": "139v60r1"},
+					{"name": "emulator", "var_id": "rklo0owk-yn20gk2l", "value_id": "qvv4y7rq"},
+				],
+			},
+			"100": {
+				"variables": [
+					{"name": "console", "var_id": "ndxvrvj2-yn20gk2l", "value_id": "139v60r1"},
+					{"name": "emulator", "var_id": "ndxvrvj2-yn20gk2l", "value_id": "qvv4y7rq"},
+				],
 			},
 			"noeds": {
-				"var_id": "w209e9z2",
-				"value": "no-major-skips",
-				"h": "no-major-skips"
-			},
-		},
-		"platform": {
-			"var_id": "yn20gk2l",
-			"values": {"console": "139v60r1", "emulator": "qvv4y7rq"}
+				"variables": [
+					{"name": "console", "var_id": "w209e9z2-yn20gk2l", "value_id": "139v60r1"},
+					{"name": "emulator", "var_id": "w209e9z2-yn20gk2l", "value_id": "qvv4y7rq"}
+				],
+			}
 		}
 	},
 	"hpce": {
@@ -800,8 +827,7 @@ LEADERBOARD_CONFIG = {
 				"variables": [
 					{"var_id": "jdr966xd-r8r7v77n", "value_id": "klrm240q"}
 				]
-			},
-			"platform": None
+			}
 		},
 		"hpmulti": {
 			"categories": {
@@ -905,8 +931,7 @@ LEADERBOARD_CONFIG = {
 					"value": "rqvyx6wq",
 					"h": "Handheld_Octofecta-100"
 				}
-			},
-			"platform": None  # No platform variable is required for these multirun categories.
+			}
 		},
 	}
 }

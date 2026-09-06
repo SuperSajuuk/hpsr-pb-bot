@@ -135,7 +135,7 @@ class CategoryExtension:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
-		runs.sort(key=lambda rx: rx["status"]["verify-date"], reverse=True)
+		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 
 		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
 		# of additional runs. The list of runs must be filtered to get the correct
