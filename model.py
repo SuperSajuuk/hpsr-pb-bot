@@ -13,6 +13,7 @@ class SpeedRun:
 	category: str
 	time: str
 	raw: dict | None
+	platform: str | None
 	emulator: bool
 	place: int | None
 	link: str

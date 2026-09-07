@@ -1,22 +1,24 @@
 #
-# Category Extension Run
+# Multirun Boards
 #
-# This code processes a Category Extension Run object. A CE run is
-# defined as a run belonging to a defined Category Extension board:
-# such boards have the "Category Extension" tag on them. Should a
-# user provide a game which we do not have a hard-coded value for,
-# the system will look up SRDC and then fail if no board exists.
+# This code processes a Multirun Board Run object. A Multirun board is
+# basically a category extension board, but the type of categories are
+# specifically about running more than one game. Such boards usually have
+# the "Multi-game" tag on them. Should a user provide a game which we
+# do not have a hard-coded value for, the system will look up SRDC and
+# then fail if no board exists.
 from model import SpeedRun
 import srcomapi.datatypes as dt
 import datetime
+import config
 from typing import Any, Dict
 
 
-# CategoryExtension
+# MultiRun
 # This handles the logic of querying the SRDC
-# API for a category extension run submission.
+# API for a Multirun submission.
 # This is used by !run only.
-class CategoryExtension:
+class MultiRun:
 	def __init__(self, api, game_map, platform_map, category_map, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
@@ -57,18 +59,18 @@ class CategoryExtension:
 		# Return the full list.
 		return all_runs
 
-	# Resolve the Game Slug for a CE
+	# Resolve the Game Slug for a Multirun
 	# Using just the game code provided, check our
 	# local config for that code. If it's not there,
 	# query SRDC and ensure it does have the category
 	# extension tag.
-	def resolve_ce_game_slug(self, base_game: str) -> dt.Game | str:
+	def resolve_multirun_game_slug(self, base_game: str) -> dt.Game | str:
 		"""
-		Resolve the Game Slug for a Category Extension
+		Resolve the Game Slug for a Multirun
 
 		If possible, rely on local config data before querying SRDC.
 		If we don't have a config key for this, query SRDC and ensure
-		the game does have the Category Extension game type assigned.
+		the game does have the Multi Run game type assigned.
 
 		Raises ValueError if no such game is found.
 		"""
@@ -81,53 +83,53 @@ class CategoryExtension:
 		# query SRDC for the specific game that is needed.
 		search = self.api.get(f"games?abbreviation={base_game}&embed=tags")
 		if not search:
-			raise ValueError(f"No Category Extension game found for base game: {base_game}")
+			raise ValueError(f"No Multi-run game found for base game: {base_game}")
 
 		# Parse the game object for the relevant tag.
-		# This is hard-coded because category extension is
+		# This is hard-coded because multi-run is
 		# always the same and doesn't change.
 		game = search[0]
-		is_ce = False
+		is_multi_run = False
 		for tag in game["gametypes"]:
-			if tag == "53no817x":
-				is_ce = True
+			if tag == "rj1dy1o8":
+				is_multi_run = True
 				break
 
 		# Error here, because the required tag cannot be found.
-		if not is_ce:
-			raise ValueError(f"No Category Extension game found for base game: {base_game}")
+		if not is_multi_run:
+			raise ValueError(f"No Multi-run game found for base game: {base_game}")
 
-		# Return the game object for this category extension board.
+		# Return the game object for this multi-run board.
 		return game
 
-	def lookup_ce_run(self, base_game: str,	ce_category: str, player: str) -> SpeedRun | None:
+	def lookup_multi_run(self, base_game: str, mr_category: str, player: str, flags: dict) -> SpeedRun | None:
 		"""
-		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
-		but with CE-specific variables.
+		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
+		but with multirun-specific variables.
 		"""
 		# Find the required Slug URL for this category extension board,
 		# then resolve the slug to find the game object.
-		ce_slug = self.resolve_ce_game_slug(base_game)
-		slug_id = ce_slug.get("id", None)
+		mr_slug = self.resolve_multirun_game_slug(base_game)
+		slug_id = mr_slug.get("id", None)
 		game_obj = self.utils.get_game_code(slug_id)
 		if game_obj is None:
 			raise ValueError(f"Could not find the game `{base_game}`. Check for typos and try again.")
 
 		# Find the leaderboard config for this category.
-		slug_id = ce_slug.get("id")
+		slug_id = mr_slug.get("id")
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
-			raise ValueError(f"No leaderboard config found for CE game slug: {slug_id}")
+			raise ValueError(f"No leaderboard config found for Multirun game slug: {slug_id}")
 
-		# Category metadata is necessary for CEs: if nothing is found, or the
-		# CE category cannot be found in the configuration, return an error.
-		ce_categories_cfg = cfg.get("categories", {})
-		if ce_category not in ce_categories_cfg:
-			raise ValueError(f"Unknown CE category key: {ce_category}")
+		# Category metadata is necessary for Multiruns: if nothing is found, or the
+		# Multirun category cannot be found in the configuration, return an error.
+		mr_categories_cfg = cfg.get("categories", {})
+		if mr_category not in mr_categories_cfg:
+			raise ValueError(f"Unknown Multirun category key: {mr_category}")
 
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
-		category_meta = ce_categories_cfg[ce_category]
+		category_meta = mr_categories_cfg[mr_category]
 		category_obj = None
 		for cat in game_obj.categories:
 			if cat.name == category_meta["board"]:
@@ -136,22 +138,22 @@ class CategoryExtension:
 
 		# If category_obj is still None, then the category does not exist.
 		if not category_obj:
-			raise ValueError("CE category not found in CE game")
+			raise ValueError("Multirun category not found in Multirun game")
 
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)
-		ce_cat_vars = category_meta.get("variables", [])
-		runs = self.search_runs(game_obj.id, category_obj.id, user_id, ce_cat_vars)
+		mr_cat_vars = category_meta.get("variables", [])
+		runs = self.search_runs(game_obj.id, category_obj.id, user_id, mr_cat_vars)
 		if not runs:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 
-		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
-		# of additional runs. The list of runs must be filtered to get the correct
-		# run that the user asked for.
-		required_variables = {var["var_id"].split("-")[-1]: var["value_id"] for var in ce_cat_vars}
+		# Unlike category extensions, multi-runs tends to have very few sub-boards
+		# However, as they're still a form of category extension, we do need to ensure
+		# all returned runs are filtered to get the correct run that the user asked for.
+		required_variables = {var["var_id"].split("-")[-1]: var["value_id"] for var in mr_cat_vars}
 		filtered_runs = []
 		for r in runs:
 			ok = True

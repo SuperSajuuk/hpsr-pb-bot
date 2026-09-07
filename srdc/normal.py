@@ -9,7 +9,7 @@
 # be in multi.py
 from model import SpeedRun
 import datetime
-import config
+import configs.generic as config
 from typing import Dict
 
 

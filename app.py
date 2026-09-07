@@ -14,14 +14,24 @@
 # will split up data.py into more logical pieces so everything is much
 # more understandable.
 
-# Import all the packages we need
+# Import the core packages
 import flask
-import config
 import srcomapi
+
+# Import the config data.
+import configs.ce as ce_config
+import configs.multi as mr_config
+import configs.normal as nm_config
+import configs.leaderboard as lb_config
+import configs.generic as config
+# import config
+
+# Import everything else that is needed
 import utils
 import srdc.normal as normal_run
 import srdc.ce as ce_run
 import srdc.pb as pb
+import srdc.multi as multi
 from model import SpeedRun
 
 # Instantiate Flask and the SRDC API
@@ -30,10 +40,11 @@ srdc_api = srcomapi.SpeedrunCom()
 srdc_api.debug = 1
 
 # Instantiate all our internal code for powering the actual program.
-utils = utils.Utilities(srdc_api)
-normal = normal_run.NormalRun(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP, utils)
-cat_ext = ce_run.CategoryExtension(srdc_api, config.CE_GAME_MAP, config.PLATFORM_MAP, config.CE_BOARD_ALIASES, config.CE_CATEGORY_ALIASES, utils)
-per_best = pb.PersonalBest(srdc_api, config.GAME_MAP, config.PLATFORM_MAP, config.CATEGORY_MAP, config.CE_BOARD_ALIASES, config.CE_CATEGORY_MAP, utils)
+utils = utils.Utilities(srdc_api, lb_config.LEADERBOARD_CONFIG)
+normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, utils)
+cat_ext = ce_run.CategoryExtension(srdc_api, ce_config.GAME_MAP, config.PLATFORM_MAP, ce_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
+multirun = multi.MultiRun(srdc_api, mr_config.GAME_MAP, config.PLATFORM_MAP, mr_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
+per_best = pb.PersonalBest(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, ce_config.BOARD_ALIASES, ce_config.SUB_CATEGORY_MAP, utils)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -69,74 +80,40 @@ def process_normal_run(game: str, platform: str, board: str, extras: list[str], 
 	return run
 
 
-def process_multi_run(platform: str, multirun_key: str, board: str, extras: list[str], player: str, flags: dict):
-	"""
-	Parse the values of platform, multirun_key and board for a multi-run submission.
-	This will then call SRDC using lookup_multi_run.
-	"""
-	multirun_categories = config.LEADERBOARD_CONFIG.get("hpmulti", {}).get("categories", {})
-	# Prefer board if it matches a multirun category; otherwise try extras
-	cat_key = board if board in multirun_categories else None
-	if not cat_key:
-		for t in extras:
-			if t in multirun_categories:
-				cat_key = t
-				break
-	# Fallback to 'any' if still missing
-	if not cat_key:
-		cat_key = "any"
-
-	# Validate multirun_key (some callers may pass board as multirun_key)
-	if multirun_key not in multirun_categories:
-		# try extras for multirun key
-		for t in extras:
-			if t in multirun_categories:
-				multirun_key = t
-				break
-	if multirun_key not in multirun_categories:
-		return None
-
-	# Call the SRDC multirun lookup. Adjust signature to your implementation.
-	# Example assumed signature: srdc.lookup_multirun(multirun_key, platform, cat_key, player)
-	run = srdc.lookup_multirun(multirun_key, platform, cat_key, player)
-
-	if run is not None and flags.get("emulator", False):
-		setattr(run, "emulator", True)
-	return run
-
-
-# -------------------------------
-# process_category_extension
-# -------------------------------
-def process_category_extension(base_game: str, ce_board: str, extras: list[str], player: str, flags: dict) -> SpeedRun | None:
+def process_multi_run(base_game: str, mr_board: str, extras: list[str], player: str, flags: dict) -> SpeedRun | None:
 	"""
 	Fully dynamic CE parser + CE run lookup.
 	"""
-	# Parse the base_game to see if we have a supported CE
+	# Parse the base_game to see if we have a supported Multirun
 	# board in the code. If not, there is an error.
-	ce_key = config.CE_GAME_MAP.get(base_game)
-	if not ce_key:
+	mr_key = mr_config.GAME_MAP.get(base_game)
+	if not mr_key:
 		return None
 
-	# Parse the ce_key (which contains the game name) to see
+	# Parse the mr_key (which contains the game name) to see
 	# if it exists. If not, there is an error.
-	alias_table = config.CE_CATEGORY_ALIASES.get(ce_key["id"])
+	alias_table = mr_config.CATEGORY_ALIASES.get(mr_key["id"])
 	if not alias_table:
 		return None
 
+	# Use the board_token (the top-level board) to find
+	# actual internal token name (this is needed to ensure
+	# random user input always maps to the correct internal
+	# value).
+	token = mr_board.lower() if mr_board else None
+	board_token = mr_config.BOARD_TOKEN_ALIASES[mr_key["id"]].get(token, None)
+	if token is None and board_token is None:
+		return None
+	if token is not None and board_token is None:
+		board_token = token
+
 	# Now find the board they are actually looking for.
-	# Due to length reasons, this may either be in the
-	# ce_board variable, or it will come from the extras
-	# due to overflow.
-	# board may come from ce_board OR extras.
-	board_token = ce_board.lower() if ce_board else None
+	# This may be in board_token: if it isn't, we will check
+	# the mr_board flag.
 	if not board_token or board_token not in alias_table:
-		# Try extras
-		for t in list(extras):
-			if t in alias_table:
-				board_token = t
-				extras.remove(t)
-				break
+		mr_board_flag = flags.get("mr_board", None)
+		if mr_board_flag is not None and mr_board_flag in alias_table:
+			board_token = mr_board_flag
 
 	# Nothing found, so assumed not to exist
 	if not board_token:
@@ -149,7 +126,7 @@ def process_category_extension(base_game: str, ce_board: str, extras: list[str],
 	runner = player
 
 	# Check the extras for any sub-tokens of relevance
-	# or assume a plyer override is given.
+	# or assume a player override is given.
 	for t in list(extras):
 		if t in board_alias_map:
 			sub_token = t
@@ -158,10 +135,53 @@ def process_category_extension(base_game: str, ce_board: str, extras: list[str],
 			# Anything not a subcategory becomes runner
 			runner = t
 
-	# Build the internal key and lookup the CE. Then return the run result.
+	# Build the internal key and lookup the Multirun. Then return the run result.
 	resolved_sub = board_alias_map[sub_token]
 	internal_key = f"{board_token}_{resolved_sub}"
-	run = cat_ext.lookup_ce_run(base_game, internal_key, runner, flags)
+	run = multirun.lookup_multi_run(base_game, internal_key, runner, flags)
+	return run
+
+
+def process_category_extension(base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> SpeedRun | None:
+	"""
+	Using the provided variables, determine if the category
+	extension is configured, there is a valid category_board
+	value,
+	"""
+	# Parse the base_game to see if we have a supported CE
+	# board in the code. If not, there is an error.
+	ce_key = ce_config.GAME_MAP.get(base_game)
+	if not ce_key:
+		return None
+
+	# Parse the ce_key (which contains the game name) to see
+	# if it exists. If not, there is an error.
+	alias_table = ce_config.CATEGORY_ALIASES.get(ce_key["id"])
+	if not alias_table:
+		return None
+
+	# Check if the top board is defined in the alias list.
+	# If it isn't, the user might have provided an alternative
+	# name, which needs to be checked
+	if ce_top_board not in alias_table:
+		ce_top_board = ce_config.BOARD_TOKEN_ALIASES[ce_key["id"]].get(ce_top_board, None)
+		if ce_top_board is None:
+			return None
+
+	# Use the board_token (the top-level board) to find
+	# actual internal token name (this is needed to ensure
+	# random user input always maps to the correct internal
+	# value).
+	#
+	# If this returns None, then whatever token they provided
+	# does not exist in the alias table.
+	board_token = alias_table[ce_top_board].get(ce_category_board, None)
+	if board_token is None:
+		return None
+
+	# Build the internal key and lookup the CE. Then return the run result.
+	internal_key = f"{ce_top_board}_{board_token}"
+	run = cat_ext.lookup_ce_run(base_game, internal_key, player)
 	return run
 
 
@@ -171,33 +191,39 @@ def split_extras(argstr: str) -> list[str]:
 	return [] if not argstr else [p.strip().lower() for p in argstr.split('+') if p.strip()]
 
 
-# Parse the player and other flags in the token list.
-def extract_player_and_flags(tokens: list[str]) -> tuple[list[str], str | None, dict]:
-	flags = {"emulator": False}
-	remaining: list[str] = []
-	player_candidate: str | None = None
+# Parse all arguments from "args"
+# This effectively covers optional switches
+# or behavioural changes
+def extract_flags(tokens: list[str]) -> dict:
+	# Set default flag values
+	# These will then be used by the program to decide certain things
+	flags = {
+		"emulator": False, "player": None,
+		"ce_board": None, "mr_board": None
+	}
+
+	# Parse all the tokens and map them to things.
 	for token in tokens:
 		# Check if the token is set to emulator
-		# This usually means we're looking up a 6th gen run with console/emulator splits.
 		if token == "emulator":
 			flags["emulator"] = True
 			continue
-		# Keep platform tokens for mode-specific parsing
-		if token in config.PLATFORM_MAP:
-			remaining.append(token)
-			continue
-		# CE tokens
-		if token in getattr(config, "CE_TYPE_MAP", {}) or token in getattr(config, "CE_CATEGORY_MAP", {}):
-			remaining.append(token)
-			continue
-		# Top-level categories or multirun keys
-		if token in config.CATEGORY_MAP or token in config.LEADERBOARD_CONFIG.get("hpmulti", {}).get("categories", {}):
-			remaining.append(token)
-			continue
-		# Token doesn't match anything: it's probably an alternative runner we're looking for.
-		player_candidate = token
 
-	return remaining, player_candidate, flags
+		# Check if the token represents a sub-board for category extensions.
+		if token in ce_config.SUB_CATEGORY_MAP:
+			flags["ce_board"] = token
+			continue
+
+		# Check if the token represents a sub-board for multi-runs.
+		if token in mr_config.SUB_CATEGORY_MAP:
+			flags["mr_board"] = token
+			continue
+
+		# The token did not match anything in the defined list.
+		# Assuming that the token means a player override.
+		flags["player"] = token
+
+	return flags
 
 
 # Given a specific player, game and category, return the most
@@ -218,11 +244,12 @@ def latest_run(owner, game, platform, board, args):
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(extras_raw)
-	remaining, player_override, flags = extract_player_and_flags(extras)
+	flags = extract_flags(extras)
+	runner_override = flags.get("player", None)
 
 	# Resolve the player. This will always be the channel owner,
-	# unless the player_override has been set.
-	player = player_override if player_override else owner
+	# unless the player flag has been set.
+	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
 
 	# Process the provided data and match it to value of "game".
@@ -232,29 +259,15 @@ def latest_run(owner, game, platform, board, args):
 		case "ce":
 			# This is a category extension, pass everything to
 			# the processor and store the result in a variable.
-			cat_clean_name = config.CE_CATEGORY_MAP[extras[0]]
-			result = process_category_extension(platform, board, extras, player, flags)
-			clean_name = f'{config.CE_GAME_MAP[platform]["name"]} ({config.CE_BOARD_ALIASES[board].upper()} - {cat_clean_name})'
+			cat_clean_name = ce_config.SUB_CATEGORY_MAP[flags["ce_board"]]
+			result = process_category_extension(platform, board, flags["ce_board"], player)
+			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({ce_config.BOARD_ALIASES[board]} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi"):
-			# This is multi-run mode. Pull in the necessary config data and parse it.
-			# As a quirk of the command syntax, if board doesn't look like a multirun key,
-			# it might be in the extras.
-			multirun_key = board
-			multirun_categories = config.LEADERBOARD_CONFIG.get("hpmulti", {}).get("categories", {})
-			if multirun_key not in multirun_categories:
-				for t in list(extras):
-					if t in multirun_categories:
-						multirun_key = t
-						extras.remove(t)
-						break
-
-			# Check if the multirun_key is in the category list.
-			if multirun_key not in multirun_categories:
-				return "Unknown multirun key. Provide a valid multirun (e.g., pctrifecta).", 400
-
-			# Process a multi-run: returns SpeedRun or None.
-			result = process_multi_run(platform, multirun_key, board, extras, player, flags)
-			clean_name = multirun_key
+			# This is a category extension, pass everything to
+			# the processor and store the result in a variable.
+			cat_clean_name = mr_config.SUB_CATEGORY_MAP[flags["mr_board"]]
+			result = process_multi_run(platform, board, extras, player, flags)
+			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({mr_config.BOARD_ALIASES[board]} - {cat_clean_name})'
 		case _:
 			# Normal single-game run
 			# Validate that the values in game, platform and board actually match something.
@@ -274,7 +287,7 @@ def latest_run(owner, game, platform, board, args):
 		return "No run found for this criteria."
 
 	# Output the relevant text, after a little processing,
-	emulator_text = " (Emulator)" if result.emulator else ""
+	emulator_text = " (Emulator)" if result.emulator and result.platform != "8gej2n93" else ""
 	place = getattr(result, "place", "?")
 	time = getattr(result, "time", "unknown time")
 	link = getattr(result, "link", "no link")
@@ -300,11 +313,12 @@ def personal_best(owner, game, platform, board, args):
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(extras_raw)
-	remaining, player_override, flags = extract_player_and_flags(extras)
+	flags = extract_flags(extras)
+	runner_override = flags.get("player", None)
 
 	# Resolve the player. This will always be the channel owner,
-	# unless the player_override has been set.
-	player = player_override if player_override else owner
+	# unless the player flag has been set.
+	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
 
 	# Validate category
@@ -316,27 +330,27 @@ def personal_best(owner, game, platform, board, args):
 			if t in config.CATEGORY_MAP:
 				cat_key = t
 				break
-			if t in config.CE_CATEGORY_MAP:
+			if t in ce_config.SUB_CATEGORY_MAP:
 				cat_key = t
 				is_ce_pb = True
 				break
 
 	# Check if cat_key is in the category map.
 	# If it's not there, then the run is not valid and should return.
-	if cat_key not in config.CATEGORY_MAP and cat_key not in config.CE_CATEGORY_MAP:
+	if cat_key not in config.CATEGORY_MAP and cat_key not in ce_config.SUB_CATEGORY_MAP:
 		return f"Unknown category key: {cat_key}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
 
 	# Produce an internal key. If this is a CE, get it from aliases.
 	internal_key = f"{game}_{platform}"
 	board_name = None
-	if is_ce_pb or cat_key in config.CE_CATEGORY_MAP:
-		ce_aliases = config.LEADERBOARD_CONFIG[game].get("aliases", {})
+	if is_ce_pb or cat_key in ce_config.SUB_CATEGORY_MAP:
+		ce_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
 		if platform not in ce_aliases:
 			return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
 		# Set board name, then find it in the board list
 		board_name = ce_aliases[platform]
-		for key, data in config.LEADERBOARD_CONFIG[game]["categories"].items():
+		for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
 			if data["board"] == board_name:
 				internal_key = key
 				break
@@ -353,8 +367,8 @@ def personal_best(owner, game, platform, board, args):
 
 	# Print the standard string to represent this PB.
 	is_emulator = " (Emulator)" if result.emulator else ""
-	if is_ce_pb or cat_key in config.CE_CATEGORY_MAP:
-		clean_name = f"{config.GAME_MAP[game]} ({board_name} - {config.CE_CATEGORY_MAP[board]})"
+	if is_ce_pb or cat_key in ce_config.SUB_CATEGORY_MAP:
+		clean_name = f"{config.GAME_MAP[game]} ({board_name} - {ce_config.SUB_CATEGORY_MAP[board]})"
 	else:
 		clean_name = f"{config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {config.CATEGORY_MAP[cat_key]}{is_emulator})"
 	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
@@ -372,9 +386,14 @@ def value_error_handler(error):
 	return str(error)
 
 
+# @app.errorhandler(KeyError)
+# def key_error_handler(error):
+# 	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
+
+
 @app.errorhandler(500)
 def internal_error(error):
-	return f"Encountered an error in your request, or could not find a run: {str(error)})."
+	return f"Encountered an error in your request, or could not find a run: {str(error)}."
 
 
 @app.errorhandler(408)

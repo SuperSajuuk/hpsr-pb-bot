@@ -10,8 +10,9 @@
 # heavily filtered. In normal cases, it is better to look up runs directly
 # using the /run/ route.
 from model import SpeedRun
+import configs.ce as ce_config
+import configs.generic as config
 import datetime
-import config
 from typing import Dict
 import srcomapi.datatypes as dt
 
@@ -129,7 +130,7 @@ class PersonalBest:
 		# If one doesn't exist, it might be a CE.
 		slug = config.BOARD_GAME_SLUG.get(internal_key, None)
 		if slug is None:
-			for key, val in config.CE_GAME_MAP.items():
+			for key, val in ce_config.GAME_MAP.items():
 				if val["id"] == game_key:
 					slug = val["id"]
 					break

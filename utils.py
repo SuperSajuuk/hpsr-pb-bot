@@ -8,13 +8,13 @@
 # methods being duplicated several times.
 import srcomapi.datatypes as dt
 import datetime
-import config
 from model import SpeedRun
 
 
 class Utilities:
-	def __init__(self, api):
+	def __init__(self, api, lb_config):
 		self.api = api
+		self.lb_config = lb_config
 		self.game_code_cache = {}
 
 	def get_game_code(self, game_key: str):
@@ -58,15 +58,14 @@ class Utilities:
 
 		return self.api.get(url)
 
-	@staticmethod
-	def resolve_leaderboard_config(game_key: str, internal_key: str, cat_key: str = None):
+	def resolve_leaderboard_config(self, game_key: str, internal_key: str, cat_key: str = None):
 		"""
 		Resolve the correct leaderboard config block, depending on whether
 		the config exists under the game_key or the internal_key. This will
 		either return the relevant config dictionary, or None.
 		"""
 		# Check to see if there is a config key under the game_key
-		game_cfg = config.LEADERBOARD_CONFIG.get(game_key)
+		game_cfg = self.lb_config.get(game_key)
 		if game_cfg:
 			categories = game_cfg.get("categories")
 			if categories:
@@ -76,7 +75,7 @@ class Utilities:
 					return categories[cat_key]
 
 		# Didn't find it under game_key, so perhaps look under the internal key
-		internal_cfg = config.LEADERBOARD_CONFIG.get(internal_key)
+		internal_cfg = self.lb_config.get(internal_key)
 		if internal_cfg:
 			categories = internal_cfg.get("categories")
 			if categories:
@@ -138,6 +137,7 @@ class Utilities:
 			category=str(run_obj["category"]),
 			time=time,
 			raw=None,
+			platform=run_obj["system"]["platform"],
 			emulator=run_obj["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
 			link=run_obj["weblink"],
