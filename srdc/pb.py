@@ -10,8 +10,6 @@
 # heavily filtered. In normal cases, it is better to look up runs directly
 # using the /run/ route.
 from model import SpeedRun
-import configs.ce as ce_config
-import configs.generic as config
 import datetime
 from typing import Dict
 import srcomapi.datatypes as dt
@@ -22,15 +20,36 @@ import srcomapi.datatypes as dt
 # API for a Personal Best from a single user.
 # This is used by !pb only.
 class PersonalBest:
-	def __init__(self, srdc_api, game_map, platform_map, category_map, ce_board_aliases, ce_category_map, utils):
+	def __init__(self, srdc_api, game_map, category_map, board_aliases, board_slugs, utils):
 		self.api = srdc_api
-		self.game_map = game_map
-		self.platform_map = platform_map
-		self.category_map = category_map
-		self.ce_board_aliases = ce_board_aliases
-		self.ce_category_map = ce_category_map
+		self.nm_game_map, self.ce_game_map, self.mr_game_map = game_map
+		self.nm_category_map, self.ce_category_map, self.mr_category_map = category_map
+		self.ce_board_aliases, self.mr_board_aliases = board_aliases
+		self.nm_board_slugs = board_slugs
 		self.utils = utils
 		self.game_code_cache = {}
+
+	# Return just the config dicts that match the mode of the PB
+	# This prevents us pointlessly checking "all" the categories
+	# and assumes the data we have returned is the one we need.
+	def get_config_dicts(self, game_mode: str):
+		ba = {}
+		slugs = {}
+		match game_mode:
+			case "ce":
+				gm = self.ce_game_map
+				cm = self.ce_category_map
+				ba = self.ce_board_aliases
+			case "mr":
+				gm = self.mr_game_map
+				cm = self.mr_category_map
+				ba = self.mr_board_aliases
+			case _:
+				gm = self.nm_game_map
+				cm = self.nm_category_map
+				slugs = self.nm_board_slugs
+
+		return gm, cm, ba, slugs
 
 	# ---------------------------------------------------------
 	# PB FETCH
@@ -54,6 +73,7 @@ class PersonalBest:
 			category=str(run["category"]),
 			time=time,
 			raw=run,
+			platform=run["system"]["platform"],
 			emulator=run["system"]["emulated"],
 			place=entry["place"],
 			link=run["weblink"],
@@ -120,17 +140,18 @@ class PersonalBest:
 	# ---------------------------------------------------------
 	# PB LOOKUP
 	# ---------------------------------------------------------
-	def lookup_pb(self, game_key: str, internal_key: str, cat_key: str, player: str, extras: list, flags: dict | None) -> SpeedRun | None:
+	def lookup_pb(self, pb_mode: str, game_key: str, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
 		Look up the most recent Personal Best for a player in a specific game/category.
 		Uses SRDC variable filters and client-side filtering to ensure only the run the
 		user requested is returned.
 		"""
 		# Obtain the slug URL for the game key.
-		# If one doesn't exist, it might be a CE.
-		slug = config.BOARD_GAME_SLUG.get(internal_key, None)
+		# If one doesn't exist, it might be a CE or MR.
+		game_map, category_map, board_aliases, board_slugs = self.get_config_dicts(pb_mode)
+		slug = board_slugs.get(internal_key, None)
 		if slug is None:
-			for key, val in ce_config.GAME_MAP.items():
+			for key, val in game_map.items():
 				if val["id"] == game_key:
 					slug = val["id"]
 					break
@@ -141,15 +162,21 @@ class PersonalBest:
 
 		# Pull game object and category information if needed
 		game_obj = self.utils.get_game_code(slug)
-		category_meta = self.category_map.get(cat_key, None)
-		ce_category_meta = self.ce_board_aliases.get(internal_key.split("_")[0], None)
+		category_meta = category_map.get(cat_key, None)
+		ce_category_meta = None
+		if board_aliases is not None:
+			ce_cat_key = internal_key.split("_")[0]
+			for key, val in board_aliases.items():
+				if ce_cat_key in val:
+					ce_category_meta = key
+					break
 
 		# Find the actual category object inside the game
 		# This may be a normal run board or a CE board, so
 		# check for either one.
 		category_obj = None
 		for cat in game_obj.categories:
-			if cat.name == category_meta or (ce_category_meta is not None and cat.name == ce_category_meta.upper()):
+			if cat.name == category_meta or (ce_category_meta is not None and cat.name == ce_category_meta):
 				category_obj = cat
 				break
 

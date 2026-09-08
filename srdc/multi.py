@@ -102,7 +102,7 @@ class MultiRun:
 		# Return the game object for this multi-run board.
 		return game
 
-	def lookup_multi_run(self, base_game: str, mr_category: str, player: str, flags: dict) -> SpeedRun | None:
+	def lookup_multi_run(self, base_game: str, mr_category: str, player: str) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
 		but with multirun-specific variables.

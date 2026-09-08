@@ -41,10 +41,17 @@ srdc_api.debug = 1
 
 # Instantiate all our internal code for powering the actual program.
 utils = utils.Utilities(srdc_api, lb_config.LEADERBOARD_CONFIG)
-normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, utils)
+normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
 cat_ext = ce_run.CategoryExtension(srdc_api, ce_config.GAME_MAP, config.PLATFORM_MAP, ce_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
 multirun = multi.MultiRun(srdc_api, mr_config.GAME_MAP, config.PLATFORM_MAP, mr_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
-per_best = pb.PersonalBest(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, ce_config.BOARD_ALIASES, ce_config.SUB_CATEGORY_MAP, utils)
+per_best = pb.PersonalBest(
+	srdc_api=srdc_api,
+	game_map=(nm_config.GAME_MAP, ce_config.GAME_MAP, mr_config.GAME_MAP),
+	category_map=(nm_config.CATEGORY_MAP, ce_config.SUB_CATEGORY_MAP, mr_config.SUB_CATEGORY_MAP),
+	board_aliases=(ce_config.BOARD_ALIASES, mr_config.BOARD_ALIASES),
+	board_slugs=nm_config.BOARD_GAME_SLUG,
+	utils=utils
+)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -80,11 +87,17 @@ def process_normal_run(game: str, platform: str, board: str, extras: list[str], 
 	return run
 
 
-def process_multi_run(base_game: str, mr_board: str, extras: list[str], player: str, flags: dict) -> SpeedRun | None:
+def process_multi_run(base_game: str, mr_board: str, mr_category_board: str, player: str) -> (SpeedRun | None, str | None):
 	"""
-	Fully dynamic CE parser + CE run lookup.
+	Using the provided variables, determine if the multi-run board
+	is configured and whether there is a valid mr_board value.
+
+	If all above board, pass the data over to lookup_ce_run,
+	alongside the player and internal_key and find the run.
+
+	Returns a SpeedRun object or None.
 	"""
-	# Parse the base_game to see if we have a supported Multirun
+	# Parse the base_game to see if we have a supported multi-run
 	# board in the code. If not, there is an error.
 	mr_key = mr_config.GAME_MAP.get(base_game)
 	if not mr_key:
@@ -96,57 +109,52 @@ def process_multi_run(base_game: str, mr_board: str, extras: list[str], player: 
 	if not alias_table:
 		return None
 
+	# Check if the top board is defined in the alias list.
+	# If it isn't, the user might have provided an alternative
+	# name, which needs to be checked
+	if mr_board not in alias_table:
+		mr_board = mr_config.BOARD_TOKEN_ALIASES[mr_key["id"]].get(mr_board, None)
+		if mr_board is None:
+			return None
+
 	# Use the board_token (the top-level board) to find
 	# actual internal token name (this is needed to ensure
 	# random user input always maps to the correct internal
 	# value).
-	token = mr_board.lower() if mr_board else None
-	board_token = mr_config.BOARD_TOKEN_ALIASES[mr_key["id"]].get(token, None)
-	if token is None and board_token is None:
-		return None
-	if token is not None and board_token is None:
-		board_token = token
-
-	# Now find the board they are actually looking for.
-	# This may be in board_token: if it isn't, we will check
-	# the mr_board flag.
-	if not board_token or board_token not in alias_table:
-		mr_board_flag = flags.get("mr_board", None)
-		if mr_board_flag is not None and mr_board_flag in alias_table:
-			board_token = mr_board_flag
-
-	# Nothing found, so assumed not to exist
-	if not board_token:
+	#
+	# If this returns None, then whatever token they provided
+	# does not exist in the alias table.
+	board_token = alias_table[mr_board].get(mr_category_board, None)
+	if board_token is None:
 		return None
 
-	# Map the board_alias and set the runner to the relevant
-	# player variable.
-	board_alias_map = alias_table[board_token]
-	sub_token = None
-	runner = player
+	# Build the internal key and lookup the multi-run.
+	internal_key = f"{mr_board}_{board_token}"
+	run = multirun.lookup_multi_run(base_game, internal_key, player)
 
-	# Check the extras for any sub-tokens of relevance
-	# or assume a player override is given.
-	for t in list(extras):
-		if t in board_alias_map:
-			sub_token = t
-			extras.remove(t)
-		else:
-			# Anything not a subcategory becomes runner
-			runner = t
+	# Produce a clean name based on the alias value. This allows one
+	# "output" name against lots of aliases for tidiness of the
+	# board aliases.
+	alias_name = None
+	for name, aliases in mr_config.BOARD_ALIASES.items():
+		if mr_board in aliases:
+			alias_name = name
+			break
 
-	# Build the internal key and lookup the Multirun. Then return the run result.
-	resolved_sub = board_alias_map[sub_token]
-	internal_key = f"{board_token}_{resolved_sub}"
-	run = multirun.lookup_multi_run(base_game, internal_key, runner, flags)
-	return run
+	# Return the run object and the alias_name produced.
+	return run, alias_name
 
 
-def process_category_extension(base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> SpeedRun | None:
+def process_category_extension(base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> (SpeedRun | None, str | None):
 	"""
 	Using the provided variables, determine if the category
-	extension is configured, there is a valid category_board
-	value,
+	extension is configured and whether there is a valid
+	category_board value.
+
+	If all above board, pass the data over to lookup_ce_run,
+	alongside the player and internal_key and find the run.
+
+	Returns a SpeedRun object or None.
 	"""
 	# Parse the base_game to see if we have a supported CE
 	# board in the code. If not, there is an error.
@@ -179,10 +187,21 @@ def process_category_extension(base_game: str, ce_top_board: str, ce_category_bo
 	if board_token is None:
 		return None
 
-	# Build the internal key and lookup the CE. Then return the run result.
+	# Build the internal key and lookup the CE.
 	internal_key = f"{ce_top_board}_{board_token}"
 	run = cat_ext.lookup_ce_run(base_game, internal_key, player)
-	return run
+
+	# Produce a clean name based on the alias value. This allows one
+	# "output" name against lots of aliases for tidiness of the
+	# board aliases.
+	alias_name = None
+	for name, aliases in ce_config.BOARD_ALIASES.items():
+		if ce_board in aliases:
+			alias_name = name
+			break
+
+	# Return the run object and the alias_name produced.
+	return run, alias_name
 
 
 # Parse the list of extra data in the arguments.
@@ -240,10 +259,9 @@ def latest_run(owner, game, platform, board, args):
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	board = board.strip().lower()
-	extras_raw = args
 
 	# Parse everything in the arguments, if anything is there.
-	extras = split_extras(extras_raw)
+	extras = split_extras(args)
 	flags = extract_flags(extras)
 	runner_override = flags.get("player", None)
 
@@ -256,18 +274,18 @@ def latest_run(owner, game, platform, board, args):
 	# This will set the code off to finding a run that matches
 	# the search parameters.
 	match game:
-		case "ce":
+		case _ if game in ("ce", "catext"):
 			# This is a category extension, pass everything to
 			# the processor and store the result in a variable.
 			cat_clean_name = ce_config.SUB_CATEGORY_MAP[flags["ce_board"]]
 			result = process_category_extension(platform, board, flags["ce_board"], player)
 			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({ce_config.BOARD_ALIASES[board]} - {cat_clean_name})'
-		case _ if game in ("multirun", "multi"):
-			# This is a category extension, pass everything to
+		case _ if game in ("multirun", "multi", "mr"):
+			# This is a multi-run: pass everything to
 			# the processor and store the result in a variable.
 			cat_clean_name = mr_config.SUB_CATEGORY_MAP[flags["mr_board"]]
-			result = process_multi_run(platform, board, extras, player, flags)
-			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({mr_config.BOARD_ALIASES[board]} - {cat_clean_name})'
+			result, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
+			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# Normal single-game run
 			# Validate that the values in game, platform and board actually match something.
@@ -309,10 +327,9 @@ def personal_best(owner, game, platform, board, args):
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	board = board.strip().lower()
-	extras_raw = args
 
 	# Parse everything in the arguments, if anything is there.
-	extras = split_extras(extras_raw)
+	extras = split_extras(args)
 	flags = extract_flags(extras)
 	runner_override = flags.get("player", None)
 
@@ -321,43 +338,53 @@ def personal_best(owner, game, platform, board, args):
 	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
 
-	# Validate category
-	cat_key = board
-	is_ce_pb = False
-	if extras:
-		# If extras contains a known category, prefer it (first match)
-		for t in extras:
-			if t in config.CATEGORY_MAP:
-				cat_key = t
-				break
-			if t in ce_config.SUB_CATEGORY_MAP:
-				cat_key = t
-				is_ce_pb = True
-				break
-
 	# Check if cat_key is in the category map.
 	# If it's not there, then the run is not valid and should return.
-	if cat_key not in config.CATEGORY_MAP and cat_key not in ce_config.SUB_CATEGORY_MAP:
-		return f"Unknown category key: {cat_key}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
+	if board not in nm_config.CATEGORY_MAP and board not in ce_config.SUB_CATEGORY_MAP and board not in mr_config.SUB_CATEGORY_MAP:
+		return f"Unknown category key: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
 
-	# Produce an internal key. If this is a CE, get it from aliases.
+	# Produce an internal key.
 	internal_key = f"{game}_{platform}"
 	board_name = None
-	if is_ce_pb or cat_key in ce_config.SUB_CATEGORY_MAP:
-		ce_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
-		if platform not in ce_aliases:
-			return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+	mode = None
+	match board:
+		case _ if board in ce_config.SUB_CATEGORY_MAP:
+			ce_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
+			print(f"CE aliases: {ce_aliases}")
+			if platform not in ce_aliases:
+				return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
-		# Set board name, then find it in the board list
-		board_name = ce_aliases[platform]
-		for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
-			if data["board"] == board_name:
-				internal_key = key
-				break
+			# Set board name, then find it in the board list
+			board_name = ce_aliases[platform]
+			mode = "ce"
+			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
+				if data["board"] == board_name:
+					internal_key = key
+					break
+		case _ if board in mr_config.SUB_CATEGORY_MAP:
+			# Check if the platform name is in the alias list.
+			mr_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
+			alias_found = False
+			for name, aliases in mr_aliases.items():
+				if platform in aliases:
+					board_name = name
+					alias_found = True
+					break
+
+			# If alias_found is False, then the alias is invalid.
+			if not alias_found:
+				return f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+
+			# Set board name, then find it in the board list
+			mode = "mr"
+			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
+				if data["board"] == board_name:
+					internal_key = key
+					break
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
 	try:
-		result = per_best.lookup_pb(game, internal_key, board, player, extras, flags)
+		result = per_best.lookup_pb(mode, game, internal_key, board, player, flags)
 	except ValueError:
 		return "No PB found for this criteria."
 
@@ -365,12 +392,29 @@ def personal_best(owner, game, platform, board, args):
 	if not result:
 		return "No PB found for this criteria."
 
-	# Print the standard string to represent this PB.
-	is_emulator = " (Emulator)" if result.emulator else ""
-	if is_ce_pb or cat_key in ce_config.SUB_CATEGORY_MAP:
-		clean_name = f"{config.GAME_MAP[game]} ({board_name} - {ce_config.SUB_CATEGORY_MAP[board]})"
-	else:
-		clean_name = f"{config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {config.CATEGORY_MAP[cat_key]}{is_emulator})"
+	# Match the mode to generate a clean name.
+	match mode:
+		case "ce":
+			game_name = None
+			for key, val in ce_config.GAME_MAP.items():
+				if val["id"] == game:
+					game_name = val["name"]
+					break
+
+			clean_name = f"{game_name} ({board_name} - {ce_config.SUB_CATEGORY_MAP[board]})"
+		case "mr":
+			game_name = None
+			for key, val in mr_config.GAME_MAP.items():
+				if val["id"] == game:
+					game_name = val["name"]
+					break
+
+			clean_name = f"{game_name} ({board_name} - {mr_config.SUB_CATEGORY_MAP[board]})"
+		case _:
+			is_emulator = " (Emulator)" if result.emulator else ""
+			clean_name = f"{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {nm_config.CATEGORY_MAP[board]}{is_emulator})"
+
+	# Return the standard string to represent this PB.
 	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
 
 

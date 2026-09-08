@@ -96,7 +96,7 @@ Additional flags may be supported in the future, depending on relevant use cases
 
 ## Setup
 > [!IMPORTANT]
-> The text <your-render-instance-name> in the command definitions below should be replaced with the name of your 
+> The text `<your-render-instance-name>` in the command definitions below should be replaced with the name of your 
 > deployed instance of this code. A private production instance is available for selected individuals: anyone using 
 > that production instance will know the relevant render instance name to use.
 

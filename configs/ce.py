@@ -113,24 +113,20 @@ SUB_CATEGORY_MAP = {
 # Board aliases. Useful if you want multiple
 # user input choices to display the appropriate label.
 BOARD_ALIASES = {
-	"1pc": "1PC",
-	"2pc": "2PC",
-	"3pc": "3PC",
-	"4pc": "4PC",
-	"5pc": "5PC",
-	"6pc": "6PC",
-	"sy": "Single Year",
-	"singleyear": "Single Year",
-	"insane": "Insane%",
-	"ins": "Insane%",
-	"mr": "Multiruns",
-	"multiruns": "Multiruns",
-	"1ps1": "1PS1",
-	"2ps1": "2PS1",
-	"4psp": "4PSP",
-	"5psp": "5PSP",
-	"dvd": "DVD Games",
-	"dvdgames": "DVD Games"
+	"1PC": ["1pc", "hp1pc"],
+	"2PC": ["2pc", "hp2pc"],
+	"3PC": ["3pc", "hp3pc"],
+	"4PC": ["4pc", "hp4pc"],
+	"5PC": ["5pc", "hp5pc"],
+	"6PC": ["6pc", "hp6pc"],
+	"Single Year": ["sy", "singleyear"],
+	"Insane%": ["insane", "ins"],
+	"Multiruns": ["mr", "hpmr", "multiruns", "hpmultiruns"],
+	"1PS1": ["1ps1", "hp1ps1"],
+	"2PS1": ["2ps1", "hp2ps1"],
+	"4PSP": ["4psp", "hp4psp"],
+	"5PSP": ["5psp", "hp5psp"],
+	"DVD Games": ["dvd", "dvdgames", "hpdvdgames"]
 }
 
 # Board token aliases.

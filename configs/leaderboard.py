@@ -665,6 +665,13 @@ LEADERBOARD_CONFIG = {
 		},
 	},
 	"hpmulti": {
+		"aliases": {
+			"PC Trifecta": ["pctri", "pctrifecta"],
+			"7PC Duofecta": ["7pcduo", "7pcduofecta"],
+			"PS1 Duofecta": ["ps1duo", "ps1duofecta"],
+			"PC Octofecta": ["pcocto", "pcoctofecta"],
+			"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"]
+		},
 		"categories": {
 			"pctri_any": {
 				"board": "PC Trifecta",

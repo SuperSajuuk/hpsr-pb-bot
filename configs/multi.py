@@ -24,25 +24,14 @@ SUB_CATEGORY_MAP = {
 	"nms": "No Major Skips"
 }
 
-# Board aliases. Useful if you want multiple
-# user input choices to display the appropriate label.
+# Board aliases. The key name must be the alias name to display:
+# the value of each key is a list of string aliases to be checked.
 BOARD_ALIASES = {
-	"pctri": "PC Trifecta",
-	"pctrifecta": "PC Trifecta",
-	"7pcduo": "7PC Duofecta",
-	"7pcduofecta": "7PC Duofecta",
-	"ps1duo": "PS1 Duofecta",
-	"ps1duofecta": "PS1 Duofecta",
-	"pcocto": "PC Octofecta",
-	"pcoctofecta": "PC Octofecta",
-	"6thgentri": "6th Gen Trifecta",
-	"6thgentrifecta": "6th Gen Trifecta",
-	"gcntri": "6th Gen Trifecta",
-	"gcntrifecta": "6th Gen Trifecta",
-	"xboxtri": "6th Gen Trifecta",
-	"xboxtrifecta": "6th Gen Trifecta",
-	"ps2tri": "6th Gen Trifecta",
-	"ps2trifecta": "6th Gen Trifecta"
+	"PC Trifecta": ["pctri", "pctrifecta"],
+	"7PC Duofecta": ["7pcduo", "7pcduofecta"],
+	"PS1 Duofecta": ["ps1duo", "ps1duofecta"],
+	"PC Octofecta": ["pcocto", "pcoctofecta"],
+	"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"]
 }
 
 # Board token aliases.

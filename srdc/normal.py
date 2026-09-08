@@ -18,11 +18,12 @@ from typing import Dict
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, category_map, utils):
+	def __init__(self, api, game_map, platform_map, category_map, board_slugs, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.category_map = category_map
+		self.board_slugs = board_slugs
 		self.utils = utils
 
 	# ---------------------------------------------------------
@@ -49,7 +50,7 @@ class NormalRun:
 		user requested is returned (this is due to the way SRDC returns runs from the API)
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
-		slug = config.BOARD_GAME_SLUG[internal_key]
+		slug = self.board_slugs[internal_key]
 		game_obj = self.utils.get_game_code(slug)
 		category_meta = self.category_map[cat_key]
 
