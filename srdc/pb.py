@@ -162,8 +162,13 @@ class PersonalBest:
 
 		# Pull game object and category information if needed
 		game_obj = self.utils.get_game_code(slug)
-		category_meta = category_map.get(cat_key, None)
+		category_meta = None
 		ce_category_meta = None
+		for board_name, aliases in category_map.items():
+			if cat_key in aliases:
+				category_meta = board_name
+				break
+
 		if board_aliases is not None:
 			ce_cat_key = internal_key.split("_")[0]
 			for key, val in board_aliases.items():

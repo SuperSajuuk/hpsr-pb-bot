@@ -222,6 +222,9 @@ def extract_flags(tokens: list[str]) -> dict:
 	}
 
 	# Parse all the tokens and map them to things.
+	# For CE/MR tokens, we ignore the key name of each iteration
+	# as that is only for output text: here we just care about
+	# alias checks.
 	for token in tokens:
 		# Check if the token is set to emulator
 		if token == "emulator":
@@ -229,13 +232,23 @@ def extract_flags(tokens: list[str]) -> dict:
 			continue
 
 		# Check if the token represents a sub-board for category extensions.
-		if token in ce_config.SUB_CATEGORY_MAP:
-			flags["ce_board"] = token
+		ce_match = False
+		for _, aliases in ce_config.SUB_CATEGORY_MAP.items():
+			if token in aliases:
+				flags["ce_board"] = token
+				ce_match = True
+				break
+		if ce_match:
 			continue
 
 		# Check if the token represents a sub-board for multi-runs.
-		if token in mr_config.SUB_CATEGORY_MAP:
-			flags["mr_board"] = token
+		mr_match = False
+		for _, aliases in mr_config.SUB_CATEGORY_MAP.items():
+			if token in aliases:
+				flags["mr_board"] = token
+				mr_match = True
+				break
+		if mr_match:
 			continue
 
 		# The token did not match anything in the defined list.
@@ -338,30 +351,53 @@ def personal_best(owner, game, platform, board, args):
 	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
 
-	# Check if cat_key is in the category map.
+	# Parse the board value in both the CE and MR category maps.
+	not_in_ce = True
+	not_in_mr = True
+	mode = None
+	category_name = None
+	for sub_cat_name, aliases in ce_config.SUB_CATEGORY_MAP.items():
+		if board in aliases:
+			not_in_ce = False
+			category_name = sub_cat_name
+			mode = "ce"
+			break
+	for sub_cat_name, aliases in mr_config.SUB_CATEGORY_MAP.items():
+		if board in aliases:
+			not_in_mr = False
+			category_name = sub_cat_name
+			mode = "mr"
+			break
+
+	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
-	if board not in nm_config.CATEGORY_MAP and board not in ce_config.SUB_CATEGORY_MAP and board not in mr_config.SUB_CATEGORY_MAP:
-		return f"Unknown category key: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
+	if board not in nm_config.CATEGORY_MAP and not_in_ce and not_in_mr:
+		return f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
 
 	# Produce an internal key.
 	internal_key = f"{game}_{platform}"
 	board_name = None
-	mode = None
-	match board:
-		case _ if board in ce_config.SUB_CATEGORY_MAP:
+	match mode:
+		case "ce":
+			# Check if the platform name is in the alias list.
 			ce_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
-			print(f"CE aliases: {ce_aliases}")
-			if platform not in ce_aliases:
+			alias_found = False
+			for name, aliases in ce_aliases.items():
+				if platform in aliases:
+					board_name = name
+					alias_found = True
+					break
+
+			# If alias_found is False, then the alias is invalid.
+			if not alias_found:
 				return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
-			# Set board name, then find it in the board list
-			board_name = ce_aliases[platform]
-			mode = "ce"
+			# Capture the internal key based on board_name
 			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
 				if data["board"] == board_name:
 					internal_key = key
 					break
-		case _ if board in mr_config.SUB_CATEGORY_MAP:
+		case "mr":
 			# Check if the platform name is in the alias list.
 			mr_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
 			alias_found = False
@@ -375,8 +411,7 @@ def personal_best(owner, game, platform, board, args):
 			if not alias_found:
 				return f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
-			# Set board name, then find it in the board list
-			mode = "mr"
+			# Capture the internal key based on board_name
 			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
 				if data["board"] == board_name:
 					internal_key = key
@@ -385,8 +420,8 @@ def personal_best(owner, game, platform, board, args):
 	# Query SRDC to find the most recent PB of the player for this game/category.
 	try:
 		result = per_best.lookup_pb(mode, game, internal_key, board, player, flags)
-	except ValueError:
-		return "No PB found for this criteria."
+	except ValueError as e:
+		return str(e)
 
 	# Was there any results?
 	if not result:
@@ -400,16 +435,14 @@ def personal_best(owner, game, platform, board, args):
 				if val["id"] == game:
 					game_name = val["name"]
 					break
-
-			clean_name = f"{game_name} ({board_name} - {ce_config.SUB_CATEGORY_MAP[board]})"
+			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case "mr":
 			game_name = None
 			for key, val in mr_config.GAME_MAP.items():
-				if val["id"] == game:
+				if val["id"] == game or game in val.get("aliases", []):
 					game_name = val["name"]
 					break
-
-			clean_name = f"{game_name} ({board_name} - {mr_config.SUB_CATEGORY_MAP[board]})"
+			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case _:
 			is_emulator = " (Emulator)" if result.emulator else ""
 			clean_name = f"{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {nm_config.CATEGORY_MAP[board]}{is_emulator})"

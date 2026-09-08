@@ -10,8 +10,8 @@
 # The value of each key is a dictionary which contains two
 # keys: a human-readable name and the Slug URL ID.
 GAME_MAP = {
-	"hp": {"name": "Harry Potter Multiruns", "id": "hpmulti"},
-	"rac": {"name": "Multiple Ratchet & Clank Games", "id": "racmulti"}
+	"hp": {"name": "Harry Potter Multiruns", "aliases": ["hpmultirun", "hpmultiruns"], "id": "hpmulti"},
+	"rac": {"name": "Multiple Ratchet & Clank Games", "aliases": ["racmultirun", "racmultiruns"], "id": "racmulti"}
 }
 
 # Sub-category mapping.
