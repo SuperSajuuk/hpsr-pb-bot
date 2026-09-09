@@ -80,7 +80,9 @@ SUB_CATEGORY_MAP = {
 	"HP5 100%": ["hp5100", "hp5hundo", "5100", "5hundo"],
 	"HP6 100%": ["hp6100", "hp6hundo", "6100", "6hundo"],
 	"HP7.1 100%": ["hp71100", "hp71hundo", "71100", "71hundo"],
-	"HP7.2 100%": ["hp72100", "hp72hundo", "72100", "72hundo"]
+	"HP7.2 100%": ["hp72100", "hp72hundo", "72100", "72hundo"],
+	"Hogwarts Challenge": ["hc", "hogwartschallenge"],
+	"Wizarding World": ["ww", "wizardingworld"]
 }
 
 # Board aliases. Useful if you want multiple
@@ -111,7 +113,8 @@ BOARD_TOKEN_ALIASES = {
 		"multirun": "mr",
 		"multiruns": "mr",
 		"singleyear": "sy",
-		"dvdgames": "dvd"
+		"dvdgames": "dvd",
+		"hpdvdgames": "dvd"
 	}
 }
 
@@ -162,32 +165,58 @@ CATEGORY_ALIASES = {
 			"awc": "awc", "allwizardcards": "awc", "ss": "ss", "superspeed": "ss"
 		},
 		"4psp": {
-			"any": "any", "100": "100"
+			"any": "any", "100": "100", "hundo": "100"
 		},
 		"5psp": {
-			"any": "any", "100": "100"
+			"any": "any", "100": "100", "hundo": "100"
 		},
 		"mr": {
 			"glessduo": "glessduo", "glessduofecta": "glessduo", "glitchlessduo": "glessduo", "glitchlessduofecta": "glessduo",
 			"pcglessduo": "glessduo", "pcglessduofecta": "glessduo", "pcglitchlessduo": "glessduo", "pcglitchlessduofecta": "glessduo",
-			"rpgtri": "rpgtri"
+			"rpgtri": "rpgtri", "rpgtrifecta": "rpgtri"
 		},
 		"insane": {
-			"hp1pc": "hp1_pc", "hp2pc": "hp2_pc", "hp3pc": "hp3_pc", "hp4pc": "hp4_pc", "hp5pc": "hp5_pc", "hp6pc": "hp6_pc",
-			"hp71pc": "hp71_pc", "hp72pc": "hp72_pc", "1ps1": "1ps1", "2ps1": "2ps1", "hp2_6th": "hp2_6th_gen",
-			"hp3_6th": "hp3_6th_gen", "hp1gba": "hp1_gba", "hp2gba": "hp2_gba", "hp3gba": "hp3_gba", "qwcgba": "qwc_gba",
-			"hp6ds": "hp6_ds", "hp71ds": "hp71_ds", "hp72ds": "hp72_ds"
+			"hp1pc": "hp1_pc", "1pc": "hp1_pc",
+			"hp2pc": "hp2_pc", "2pc": "hp2_pc",
+			"hp3pc": "hp3_pc", "3pc": "hp3_pc",
+			"hp4pc": "hp4_pc", "4pc": "hp4_pc",
+			"hp5pc": "hp5_pc", "5pc": "hp5_pc",
+			"hp6pc": "hp6_pc", "6pc": "hp6_pc",
+			"hp71pc": "hp71_pc", "71pc": "hp71_pc",
+			"hp72pc": "hp72_pc", "72pc": "hp72_pc",
+			"1ps1": "1ps1", "hp1ps1": "1ps1",
+			"2ps1": "2ps1", "hp2ps1": "2ps1",
+			"hp2_6th": "hp2_6th_gen", "hp2xbox": "hp2_6th_gen", "hp2gcn": "hp2_6th_gen",
+			"hp3_6th": "hp3_6th_gen", "hp3xbox": "hp3_6th_gen", "hp3gcn": "hp3_6th_gen", "hp3ps2": "hp3_6th_gen",
+			"hp1gba": "hp1_gba", "1gba": "hp1_gba",
+			"hp2gba": "hp2_gba", "2gba": "hp2_gba",
+			"hp3gba": "hp3_gba", "3gba": "hp3_gba",
+			"qwcgba": "qwc_gba", "quidditchworldcupgba": "qwc_gba",
+			"hp6ds": "hp6_ds", "6ds": "hp6_ds",
+			"hp71ds": "hp71_ds", "71ds": "hp71_ds",
+			"hp72ds": "hp72_ds", "72ds": "hp72_ds"
 		},
 		"sy": {
-			"hp1any": "hp1_any", "hp2any": "hp2_any", "hp3any": "hp3_any", "hp4any": "hp4_any", "hp5any": "hp5_any",
-			"hp6any": "hp6_any", "hp71any": "hp71_any", "hp72any": "hp72_any",
-			"hp1hundo": "hp1_100", "hp2hundo": "hp2_100", "hp3hundo": "hp3_100", "hp4hundo": "hp4_100",
-			"hp5hundo": "hp5_100", "hp6hundo": "hp6_100", "hp71hundo": "hp71_100", "hp72hundo": "hp72_100",
-			"hp1100": "hp1_100", "hp2100": "hp2_100", "hp3100": "hp3_100", "hp4100": "hp4_100",
-			"hp5100": "hp5_100", "hp6100": "hp6_100", "hp7_1100": "hp71_100", "hp7_2100": "hp72_100"
+			"hp1any": "hp1_any", "1any": "hp1_any",
+			"hp2any": "hp2_any", "2any": "hp2_any",
+			"hp3any": "hp3_any", "3any": "hp3_any",
+			"hp4any": "hp4_any", "4any": "hp4_any",
+			"hp5any": "hp5_any", "5any": "hp5_any",
+			"hp6any": "hp6_any", "6any": "hp6_any",
+			"hp71any": "hp71_any", "71any": "hp71_any",
+			"hp72any": "hp72_any", "72any": "hp72_any",
+			"hp1hundo": "hp1_100", "hp1100": "hp1_100", "1100": "hp1_100", "1hundo": "hp1_100",
+			"hp2hundo": "hp2_100", "hp2100": "hp2_100", "2100": "hp2_100", "2hundo": "hp2_100",
+			"hp3hundo": "hp3_100", "hp3100": "hp3_100", "3100": "hp3_100", "3hundo": "hp3_100",
+			"hp4hundo": "hp4_100", "hp4100": "hp4_100", "4100": "hp4_100", "4hundo": "hp4_100",
+			"hp5hundo": "hp5_100", "hp5100": "hp5_100", "5100": "hp5_100", "5hundo": "hp5_100",
+			"hp6hundo": "hp6_100", "hp6100": "hp6_100", "6100": "hp6_100", "6hundo": "hp6_100",
+			"hp71hundo": "hp71_100", "hp71100": "hp71_100", "71100": "hp71_100", "71hundo": "hp71_100",
+			"hp72hundo": "hp72_100", "hp72100": "hp72_100", "72100": "hp72_100", "72hundo": "hp72_100"
 		},
 		"dvd": {
-			"hc": "hc", "ww": "ww"
-		},
+			"hc": "hc", "hogwartschallenge": "hc",
+			"ww": "ww", "wizardingworld": "ww"
+		}
 	}
 }

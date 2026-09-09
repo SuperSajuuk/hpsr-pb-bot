@@ -477,7 +477,7 @@ def value_error_handler(error):
 
 @app.errorhandler(500)
 def internal_error(error):
-	return f"Encountered an error in your request, or could not find a run: {str(error)}."
+	return f"Encountered an error in your request, or could not find a run: {str(error)}"
 
 
 @app.errorhandler(408)
