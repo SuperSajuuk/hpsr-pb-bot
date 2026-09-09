@@ -121,13 +121,18 @@ def process_multi_run(base_game: str, mr_board: str, mr_category_board: str, pla
 	# "output" name against lots of aliases for tidiness of the
 	# board aliases.
 	alias_name = None
+	cat_clean_name = None
 	for name, aliases in mr_config.BOARD_ALIASES.items():
 		if mr_board in aliases:
 			alias_name = name
 			break
+	for name, aliases in mr_config.SUB_CATEGORY_MAP.items():
+		if mr_category_board in aliases:
+			cat_clean_name = name
+			break
 
 	# Return the run object and the alias_name produced.
-	return run, alias_name
+	return run, cat_clean_name, alias_name
 
 
 def process_category_extension(base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> (SpeedRun | None, str | None):
@@ -180,13 +185,18 @@ def process_category_extension(base_game: str, ce_top_board: str, ce_category_bo
 	# "output" name against lots of aliases for tidiness of the
 	# board aliases.
 	alias_name = None
+	cat_alias_name = None
 	for name, aliases in ce_config.BOARD_ALIASES.items():
-		if ce_board in aliases:
+		if ce_top_board in aliases:
 			alias_name = name
+			break
+	for name, aliases in ce_config.SUB_CATEGORY_MAP.items():
+		if ce_category_board in aliases:
+			cat_alias_name = name
 			break
 
 	# Return the run object and the alias_name produced.
-	return run, alias_name
+	return run, cat_alias_name, alias_name
 
 
 # Parse the list of extra data in the arguments.
@@ -273,16 +283,14 @@ def latest_run(owner, game, platform, board, args):
 	# the search parameters.
 	match game:
 		case _ if game in ("ce", "catext"):
-			# This is a category extension, pass everything to
+			# This is a category extension: pass everything to
 			# the processor and store the result in a variable.
-			cat_clean_name = ce_config.SUB_CATEGORY_MAP[flags["ce_board"]]
-			result = process_category_extension(platform, board, flags["ce_board"], player)
-			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({ce_config.BOARD_ALIASES[board]} - {cat_clean_name})'
+			result, cat_clean_name, alias_name = process_category_extension(platform, board, flags["ce_board"], player)
+			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi", "mr"):
 			# This is a multi-run: pass everything to
 			# the processor and store the result in a variable.
-			cat_clean_name = mr_config.SUB_CATEGORY_MAP[flags["mr_board"]]
-			result, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
+			result, cat_clean_name, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
 			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# This is a normal main board run: check if game, platform
@@ -462,9 +470,9 @@ def value_error_handler(error):
 	return str(error)
 
 
-@app.errorhandler(KeyError)
-def key_error_handler(error):
-	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
+# @app.errorhandler(KeyError)
+# def key_error_handler(error):
+# 	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
 
 
 @app.errorhandler(500)

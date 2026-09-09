@@ -17,11 +17,10 @@ GAME_MAP = {
 # Sub-category mapping.
 # This refers to the second board under the top level board.
 SUB_CATEGORY_MAP = {
-	"any": "Any%",
-	"100": "100%",
-	"hundo": "100%",
-	"awc": "All Wizard Cards",
-	"nms": "No Major Skips"
+	"Any%": ["any"],
+	"100%": ["100", "hundo"],
+	"All Wizard Cards": ["awc", "allwizardcards"],
+	"No Major Skips": ["nms", "nomajorskips"]
 }
 
 # Board aliases. The key name must be the alias name to display:
