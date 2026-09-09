@@ -127,28 +127,39 @@ CATEGORY_ALIASES = {
 			"lc": "lowcast"
 		},
 		"2pc": {
-			"100gless": "100gless", "hundogless": "100gless", "100glitchless": "100gless", "hundoglitchless": "100gless",
-			"allchests": "allchests", "awcgless": "awcgless", "awcglitchless": "awcgless", "boostless": "boostless", "chungus": "chungus",
-			"cutscene": "cutscene", "hpwc": "hpwc", "highjump": "highjump", "hj": "highjump", "jumpless": "jumpless", "lowcast": "lowcast",
-			"lc": "lowcast", "ng": "ng", "nmg": "nmg"
+			"100gless": "100gless", "hundogless": "100gless", "100glitchless": "100gless", "hundoglitchless": "100gless", "allchests": "allchests",
+			"awcgless": "awcgless", "awcglitchless": "awcgless", "allwizardcardsgless": "awcgless", "allwizardcardsglitchless": "awcgless",
+			"boostless": "boostless", "chungus": "chungus", "chungus%": "chungus",
+			"cutscene": "cutscene", "cs": "cutscene", "cutscene%": "cs",
+			"hpwc": "hpwc", "hpwizardcard": "hpwc", "harrypotterwc": "hpwc", "harrypotterwizardcard": "hpwc",
+			"highjump": "highjump", "hj": "highjump", "jumpless": "jumpless", "jl": "jumpless",
+			"lowcast": "lowcast", "lc": "lowcast",
+			"ng": "ng", "ngplus": "ng", "newgameplus": "ng",
+			"nmg": "nmg", "nomajorglitches": "nmg"
 		},
 		"3pc": {
 			"any": "any"
 		},
 		"4pc": {
-			"avc1p": "avc_1p", "avc2p": "avc_2p", "avc3p": "avc_3p"
+			"avc1p": "avc_1p", "allvanishingcards1p": "avc_1p", "avc1player": "avc_1p", "allvanishingcards1player": "avc_1p", "avc2p": "avc_2p",
+			"allvanishingcards2p": "avc_2p", "avc2player": "avc_2p", "allvanishingcards2player": "avc_2p", "avc2players": "avc_2p",
+			"allvanishingcards2players": "avc_2p", "avc3p": "avc_3p", "allvanishingcards3p": "avc_3p", "avc3player": "avc_3p",
+			"allvanishingcards3player": "avc_3p", "avc3players": "avc_3p", "allvanishingcards3players": "avc_3p"
 		},
 		"5pc": {
-			"amg": "amg", "allportraits": "allportraits", "allsymbols": "allsymbols", "chess": "chess"
+			"amg": "amg", "allminigames": "amg",
+			"allportraits": "allportraits", "ap": "allportraits", "allp": "allportraits",
+			"allsymbols": "allsymbols", "as": "allsymbols",
+			"chess": "chess"
 		},
 		"6pc": {
-			"pr": "pr"
+			"pr": "pr", "potions": "pr", "potionsrush": "pr"
 		},
 		"1ps1": {
-			"awc": "awc", "ss": "ss", "ng": "ng"
+			"awc": "awc", "allwizardcards": "awc", "ss": "ss", "superspeed": "ss", "ng": "ng", "ngplus": "ng", "newgameplus": "ng"
 		},
 		"2ps1": {
-			"awc": "awc", "ss": "ss"
+			"awc": "awc", "allwizardcards": "awc", "ss": "ss", "superspeed": "ss"
 		},
 		"4psp": {
 			"any": "any", "100": "100"
