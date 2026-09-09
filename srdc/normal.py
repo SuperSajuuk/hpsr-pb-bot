@@ -52,7 +52,16 @@ class NormalRun:
 		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = self.board_slugs[internal_key]
 		game_obj = self.utils.get_game_code(slug)
-		category_meta = self.category_map[cat_key]
+
+		# Obtain the relevant category name from the category map.
+		category_meta = None
+		for category_name, aliases in self.category_map.items():
+			if cat_key in aliases:
+				category_meta = category_name
+				break
+
+		if not category_meta:
+			return None
 
 		# Check that there is a category matching the one we asked for.
 		category_obj = None

@@ -61,29 +61,14 @@ def resolve_player(channel_owner: str, player: str | None) -> str:
 
 
 # Process a normal run.
-def process_normal_run(game: str, platform: str, board: str, extras: list[str], player: str, flags: dict):
+def process_normal_run(game: str, platform: str, board: str, player: str, flags: dict):
 	"""
-	Parse the values of game, platform and board for a single game run,
-	then call SRDC via the lookup_run method.
+	Call SRDC via the lookup_run method.
 	"""
-	# Validate category
-	cat_key = board
-	if extras:
-		# If extras contains a known category, prefer it (first match)
-		for t in extras:
-			if t in config.CATEGORY_MAP:
-				cat_key = t
-				break
-
-	# Check if cat_key is in the category map.
-	# If it's not there, then the run is not valid and should return.
-	if cat_key not in config.CATEGORY_MAP:
-		return None
-
 	# Produce an internal key and search SRDC.
 	# Return the value of lookup_run, directly to the caller.
 	internal_key = f"{game}_{platform}"
-	run = normal.lookup_run(internal_key, cat_key, player, flags)
+	run = normal.lookup_run(internal_key, board, player, flags)
 	return run
 
 
@@ -300,18 +285,28 @@ def latest_run(owner, game, platform, board, args):
 			result, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
 			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
-			# Normal single-game run
-			# Validate that the values in game, platform and board actually match something.
-			if game not in config.GAME_MAP:
+			# This is a normal main board run: check if game, platform
+			# and board represent real entities and show an error if not.
+			if game not in nm_config.GAME_MAP:
 				return f"Unknown game: '{game}'. Refer to the docs for the supported games: {config.COMMAND_USAGE_DOC}", 400
 			if platform not in config.PLATFORM_MAP:
 				return f"Unknown platform: '{platform}'. Refer to the docs for the supported platforms: {config.COMMAND_USAGE_DOC}", 400
-			if board not in config.CATEGORY_MAP:
+
+			# Check if the board name is in the category list.
+			not_board = True
+			category_name = None
+			for board_name, aliases in nm_config.CATEGORY_MAP.items():
+				if board in aliases:
+					not_board = False
+					category_name = board_name
+					break
+
+			if not_board:
 				return f"Unknown category/board: '{board}'.  Refer to the docs for the supported categories: {config.COMMAND_USAGE_DOC}", 400
 
 			# Process the data and return SpeedRun or None.
-			result = process_normal_run(game, platform, board, extras, player, flags)
-			clean_name = f'{config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {config.CATEGORY_MAP[board]})'
+			result = process_normal_run(game, platform, board, player, flags)
+			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
 
 	# Check if a run object was returned, or if it is None.
 	if result is None:
@@ -352,10 +347,16 @@ def personal_best(owner, game, platform, board, args):
 	player = resolve_player(owner, player)
 
 	# Parse the board value in both the CE and MR category maps.
+	not_main = True
 	not_in_ce = True
 	not_in_mr = True
 	mode = None
 	category_name = None
+	for main_cat_name, aliases in nm_config.CATEGORY_MAP.items():
+		if board in aliases:
+			not_main = False
+			category_name = main_cat_name
+			break
 	for sub_cat_name, aliases in ce_config.SUB_CATEGORY_MAP.items():
 		if board in aliases:
 			not_in_ce = False
@@ -371,7 +372,7 @@ def personal_best(owner, game, platform, board, args):
 
 	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
-	if board not in nm_config.CATEGORY_MAP and not_in_ce and not_in_mr:
+	if not_main and not_in_ce and not_in_mr:
 		return f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
 
 	# Produce an internal key.
@@ -380,9 +381,8 @@ def personal_best(owner, game, platform, board, args):
 	match mode:
 		case "ce":
 			# Check if the platform name is in the alias list.
-			ce_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
 			alias_found = False
-			for name, aliases in ce_aliases.items():
+			for name, aliases in ce_config.BOARD_ALIASES.items():
 				if platform in aliases:
 					board_name = name
 					alias_found = True
@@ -399,9 +399,8 @@ def personal_best(owner, game, platform, board, args):
 					break
 		case "mr":
 			# Check if the platform name is in the alias list.
-			mr_aliases = lb_config.LEADERBOARD_CONFIG[game].get("aliases", {})
 			alias_found = False
-			for name, aliases in mr_aliases.items():
+			for name, aliases in mr_config.BOARD_ALIASES.items():
 				if platform in aliases:
 					board_name = name
 					alias_found = True
@@ -445,7 +444,7 @@ def personal_best(owner, game, platform, board, args):
 			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case _:
 			is_emulator = " (Emulator)" if result.emulator else ""
-			clean_name = f"{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {nm_config.CATEGORY_MAP[board]}{is_emulator})"
+			clean_name = f"{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name}{is_emulator})"
 
 	# Return the standard string to represent this PB.
 	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
@@ -463,9 +462,9 @@ def value_error_handler(error):
 	return str(error)
 
 
-# @app.errorhandler(KeyError)
-# def key_error_handler(error):
-# 	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
+@app.errorhandler(KeyError)
+def key_error_handler(error):
+	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
 
 
 @app.errorhandler(500)

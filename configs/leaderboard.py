@@ -100,22 +100,6 @@ LEADERBOARD_CONFIG = {
 		}
 	},
 	"hpce": {
-		"aliases": {
-			"1PC": ["1pc", "hp1pc"],
-			"2PC": ["2pc", "hp2pc"],
-			"3PC": ["3pc", "hp3pc"],
-			"4PC": ["4pc", "hp4pc"],
-			"5PC": ["5pc", "hp5pc"],
-			"6PC": ["6pc", "hp6pc"],
-			"Single Year": ["sy", "singleyear"],
-			"Insane%": ["insane", "ins"],
-			"Multiruns": ["mr", "hpmr", "multiruns", "hpmultiruns"],
-			"1PS1": ["1ps1", "hp1ps1"],
-			"2PS1": ["2ps1", "hp2ps1"],
-			"4PSP": ["4psp", "hp4psp"],
-			"5PSP": ["5psp", "hp5psp"],
-			"DVD Games": ["dvd", "dvdgames", "hpdvdgames"]
-		},
 		"categories": {
 			"1pc_100gless": {
 				"board": "1PC",
@@ -658,13 +642,6 @@ LEADERBOARD_CONFIG = {
 		},
 	},
 	"hpmulti": {
-		"aliases": {
-			"PC Trifecta": ["pctri", "pctrifecta"],
-			"7PC Duofecta": ["7pcduo", "7pcduofecta"],
-			"PS1 Duofecta": ["ps1duo", "ps1duofecta"],
-			"PC Octofecta": ["pcocto", "pcoctofecta"],
-			"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"]
-		},
 		"categories": {
 			"pctri_any": {
 				"board": "PC Trifecta",

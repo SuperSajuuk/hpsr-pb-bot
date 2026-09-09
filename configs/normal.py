@@ -23,18 +23,16 @@ GAME_MAP = {
 }
 
 # Map abbreviations passed by users to human-readable names.
-# CATEGORY_MAP is for main boards, CE_CATEGORY_MAP is for the
-# defined Category Extensions board, and MULTIRUN_CATEGORY_MAP
-# is for the defined Multi Run board.
+# This is just for main boards: for CE's and Multiruns, use
+# the ce.py and multi.py files under the configs folder.
 CATEGORY_MAP = {
-	"any": "Any%",
-	"100": "100%",
-	"glitchless": "Glitchless",
-	"gless": "Glitchless",
-	"nms": "No Major Skips",
-	"noeds": "Any% No EDS",
-	"awc": "All Wizard Cards",
-	"warpless": "Warpless"
+	"Any": ["any"],
+	"100%": ["100", "hundo"],
+	"Glitchless": ["gless", "glitchless"],
+	"No Major Skips": ["nms", "nomajorskips"],
+	"Any% No EDS": ["noeds", "anynoeds"],
+	"All Wizard Cards": ["awc", "allwizardcards"],
+	"Warpless": ["warpless"]
 }
 
 # Board slug mapping. This is used to map the values produced by
