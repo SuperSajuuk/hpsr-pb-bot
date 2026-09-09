@@ -678,80 +678,110 @@ LEADERBOARD_CONFIG = {
 					{"var_id": "n2y39y1d-wl3dqd98", "value_id": "21de6vjl"}
 				]
 			},
-			"7pc_duofecta_any": {
-				"var_id": "789dqd6n",
-				"value": "xqknooyq",
-				"h": "7PC_Duofecta-Any"
+			"7pcduo_any": {
+				"board": "7PC Duofecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "zd3wzryk-789dqd6n", "value_id": "xqknooyq"}
+				]
 			},
-			"7pc_duofecta_100": {
-				"var_id": "789dqd6n",
-				"value": "gq7x22yl",
-				"h": "7PC_Duofecta-100"
+			"7pcduo_100": {
+				"board": "7PC Duofecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "zd3wzryk-789dqd6n", "value_id": "gq7x22yl"}
+				]
 			},
-			"ps1_duofecta_any": {
-				"var_id": "wlek5kkl",
-				"value": "5q8942k1",
-				"h": "PS1_Duofecta-Any"
+			"ps1duo_any": {
+				"board": "PS1 Duofecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "7kjq8nzd-wlek5kkl", "value_id": "5q8942k1"}
+				]
 			},
-			"ps1_duofecta_100": {
-				"var_id": "wlek5kkl",
-				"value": "4qyw7571",
-				"h": "PS1_Duofecta-100"
+			"ps1duo_100": {
+				"board": "PS1 Duofecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "7kjq8nzd-wlek5kkl", "value_id": "4qyw7571"}
+				]
 			},
-			"ps1_duofecta_nms": {
-				"var_id": "wlek5kkl",
-				"value": "p120957l",
-				"h": "PS1_Duofecta-NMS"
+			"ps1duo_nms": {
+				"board": "PS1 Duofecta",
+				"subcategory": "nms",
+				"variables": [
+					{"var_id": "7kjq8nzd-wlek5kkl", "value_id": "p120957l"}
+				]
 			},
-			"6th_gen_trifecta_any": {
-				"var_id": "68k737yl",
-				"value": "mlnoeddq",
-				"h": "6th_Gen_Trifecta-Any"
+			"6thgentri_any": {
+				"board": "6th Gen Trifecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "jdz9xeg2-68k737yl", "value_id": "mlnoeddq"}
+				]
 			},
-			"6th_gen_trifecta_1001": {
-				"var_id": "68k737yl",
-				"value": "9qj82wg1",
-				"h": "6th_Gen_Trifecta-1001"
+			"6thgentri_100": {
+				"board": "6th Gen Trifecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "jdz9xeg2-68k737yl", "value_id": "9qj82wg1"}
+				]
 			},
-			"full_series_any": {
-				"var_id": "38dm1m18",
-				"value": "5lexn3zq",
-				"h": "Full_Series-Any"
+			"gbcduo_any": {
+				"board": "GBC Duofecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "wdml1wek-j84d0dj8", "value_id": "jq6evy7l"}
+				]
 			},
-			"full_series_100": {
-				"var_id": "38dm1m18",
-				"value": "0q534xn1",
-				"h": "Full_Series-100"
+			"gbcduo_100": {
+				"board": "GBC Duofecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "wdml1wek-j84d0dj8", "value_id": "5lmm284l"}
+				]
 			},
-			"gbc_duofecta_any": {
-				"var_id": "j84d0dj8",
-				"value": "jq6evy7l",
-				"h": "GBC_Duofecta-Any"
+			"gbapenta_any": {
+				"board": "GBA Pentafecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "vdo8g8ok-rn1jqjkn", "value_id": "81w07e5l"}
+				]
 			},
-			"gbc_duofecta_100": {
-				"var_id": "j84d0dj8",
-				"value": "5lmm284l",
-				"h": "GBC_Duofecta-100"
+			"gbapenta_100": {
+				"board": "GBA Pentafecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "vdo8g8ok-rn1jqjkn", "value_id": "zqovjm21"}
+				]
 			},
-			"gba_pentafecta_any": {
-				"var_id": "rn1jqjkn",
-				"value": "81w07e5l",
-				"h": "GBA_Pentafecta-Any"
+			"hhocto_any": {
+				"board": "Handheld Octofecta",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "7dg6n97k-p855j508", "value_id": "0136xw31"}
+				]
 			},
-			"gba_pentafecta_100": {
-				"var_id": "rn1jqjkn",
-				"value": "zqovjm21",
-				"h": "GBA_Pentafecta-100"
+			"hhocto_100": {
+				"board": "Handheld Octofecta",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "7dg6n97k-p855j508", "value_id": "rqvyx6wq"}
+				]
 			},
-			"handheld_octofecta_any": {
-				"var_id": "p855j508",
-				"value": "0136xw31",
-				"h": "Handheld_Octofecta-Any"
+			"fs_any": {
+				"board": "Full Series",
+				"subcategory": "any",
+				"variables": [
+					{"var_id": "mke49r82-38dm1m18", "value_id": "5lexn3zq"}
+				]
 			},
-			"handheld_octofecta_100": {
-				"var_id": "p855j508",
-				"value": "rqvyx6wq",
-				"h": "Handheld_Octofecta-100"
+			"fs_100": {
+				"board": "Full Series",
+				"subcategory": "100",
+				"variables": [
+					{"var_id": "mke49r82-38dm1m18", "value_id": "0q534xn1"}
+				]
 			}
 		}
 	}
