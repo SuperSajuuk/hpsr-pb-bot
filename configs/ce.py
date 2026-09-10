@@ -125,98 +125,106 @@ BOARD_TOKEN_ALIASES = {
 CATEGORY_ALIASES = {
 	"hpce": {
 		"1pc": {
-			"100gless": "100gless", "hundogless": "100gless", "100glitchless": "100gless", "hundoglitchless": "100gless",
-			"allchests": "allchests", "boostless": "boostless", "highjump": "highjump", "hj": "highjump", "lowcast": "lowcast",
-			"lc": "lowcast"
+			"100gless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
+			"allchests": ["allchests"],
+			"boostless": ["boostless"],
+			"highjump": ["highjump", "hj"],
+			"lowcast": ["lowcast", "lc"]
 		},
 		"2pc": {
-			"100gless": "100gless", "hundogless": "100gless", "100glitchless": "100gless", "hundoglitchless": "100gless", "allchests": "allchests",
-			"awcgless": "awcgless", "awcglitchless": "awcgless", "allwizardcardsgless": "awcgless", "allwizardcardsglitchless": "awcgless",
-			"boostless": "boostless", "chungus": "chungus", "chungus%": "chungus",
-			"cutscene": "cutscene", "cs": "cutscene", "cutscene%": "cs",
-			"hpwc": "hpwc", "hpwizardcard": "hpwc", "harrypotterwc": "hpwc", "harrypotterwizardcard": "hpwc",
-			"highjump": "highjump", "hj": "highjump", "jumpless": "jumpless", "jl": "jumpless",
-			"lowcast": "lowcast", "lc": "lowcast",
-			"ng": "ng", "ngplus": "ng", "newgameplus": "ng",
-			"nmg": "nmg", "nomajorglitches": "nmg"
+			"100gless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
+			"allchests": ["allchests"],
+			"awcgless": ["awcgless", "awcglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
+			"boostless": ["boostless"],
+			"chungus": ["chungus", "chungus%"],
+			"cutscene": ["cutscene", "cs", "cutscene%"],
+			"hpwc": ["hpwc", "hpwizardcard", "harrypotterwc", "harrypotterwizardcard"],
+			"highjump": ["highjump", "hj"],
+			"jumpless": ["jumpless", "jl"],
+			"lowcast": ["lowcast", "lc"],
+			"ng": ["ng", "ngplus", "newgameplus"],
+			"nmg": ["nmg", "nomajorglitches"]
 		},
 		"3pc": {
-			"any": "any"
+			"highjump": ["highjump", "hj"],
 		},
 		"4pc": {
-			"avc1p": "avc_1p", "allvanishingcards1p": "avc_1p", "avc1player": "avc_1p", "allvanishingcards1player": "avc_1p", "avc2p": "avc_2p",
-			"allvanishingcards2p": "avc_2p", "avc2player": "avc_2p", "allvanishingcards2player": "avc_2p", "avc2players": "avc_2p",
-			"allvanishingcards2players": "avc_2p", "avc3p": "avc_3p", "allvanishingcards3p": "avc_3p", "avc3player": "avc_3p",
-			"allvanishingcards3player": "avc_3p", "avc3players": "avc_3p", "allvanishingcards3players": "avc_3p"
+			"avc_1p": ["avc1p", "allvanishingcards1p", "avc1player", "allvanishingcards1player"],
+			"avc_2p": ["avc2p", "allvanishingcards2p", "avc2player", "allvanishingcards2player", "avc2players", "allvanishingcards2players"],
+			"avc_3p": ["avc3p", "allvanishingcards3p", "avc3player", "allvanishingcards3player", "avc3players", "allvanishingcards3players"]
 		},
 		"5pc": {
-			"amg": "amg", "allminigames": "amg",
-			"allportraits": "allportraits", "ap": "allportraits", "allp": "allportraits",
-			"allsymbols": "allsymbols", "as": "allsymbols",
-			"chess": "chess"
+			"amg": ["amg", "allminigames"],
+			"allportraits": ["ap", "allp", "allportraits"],
+			"allsymbols": ["as", "allsymbols"],
+			"chess": ["chess"]
 		},
 		"6pc": {
-			"pr": "pr", "potions": "pr", "potionsrush": "pr"
+			"pr": ["pr", "potions", "potionsrush"]
 		},
 		"1ps1": {
-			"awc": "awc", "allwizardcards": "awc", "ss": "ss", "superspeed": "ss", "ng": "ng", "ngplus": "ng", "newgameplus": "ng"
+			"awc": ["awc", "allwizardcards"],
+			"ss": ["ss", "superspeed"],
+			"ng": ["ng", "ngplus", "newgameplus"]
 		},
 		"2ps1": {
-			"awc": "awc", "allwizardcards": "awc", "ss": "ss", "superspeed": "ss"
+			"awc": ["awc", "allwizardcards"],
+			"ss": ["ss", "superspeed"],
 		},
 		"4psp": {
-			"any": "any", "100": "100", "hundo": "100"
+			"any": ["any"],
+			"100": ["100", "hundo"]
 		},
 		"5psp": {
-			"any": "any", "100": "100", "hundo": "100"
+			"any": ["any"],
+			"100": ["100", "hundo"]
 		},
 		"mr": {
-			"glessduo": "glessduo", "glessduofecta": "glessduo", "glitchlessduo": "glessduo", "glitchlessduofecta": "glessduo",
-			"pcglessduo": "glessduo", "pcglessduofecta": "glessduo", "pcglitchlessduo": "glessduo", "pcglitchlessduofecta": "glessduo",
-			"rpgtri": "rpgtri", "rpgtrifecta": "rpgtri"
+			"glessduo": ["glessduo", "glessduofecta", "glitchlessduo", "glitchlessduofecta", "pcglessduo", "pcglessduofecta", "pcglitchlessduo", "pcglitchlessduofecta"],
+			"rpgtri": ["rpgtri", "rpgtrifecta"]
 		},
 		"insane": {
-			"hp1pc": "hp1_pc", "1pc": "hp1_pc",
-			"hp2pc": "hp2_pc", "2pc": "hp2_pc",
-			"hp3pc": "hp3_pc", "3pc": "hp3_pc",
-			"hp4pc": "hp4_pc", "4pc": "hp4_pc",
-			"hp5pc": "hp5_pc", "5pc": "hp5_pc",
-			"hp6pc": "hp6_pc", "6pc": "hp6_pc",
-			"hp71pc": "hp71_pc", "71pc": "hp71_pc",
-			"hp72pc": "hp72_pc", "72pc": "hp72_pc",
-			"1ps1": "1ps1", "hp1ps1": "1ps1",
-			"2ps1": "2ps1", "hp2ps1": "2ps1",
-			"hp2_6th": "hp2_6th_gen", "hp2xbox": "hp2_6th_gen", "hp2gcn": "hp2_6th_gen",
-			"hp3_6th": "hp3_6th_gen", "hp3xbox": "hp3_6th_gen", "hp3gcn": "hp3_6th_gen", "hp3ps2": "hp3_6th_gen",
-			"hp1gba": "hp1_gba", "1gba": "hp1_gba",
-			"hp2gba": "hp2_gba", "2gba": "hp2_gba",
-			"hp3gba": "hp3_gba", "3gba": "hp3_gba",
-			"qwcgba": "qwc_gba", "quidditchworldcupgba": "qwc_gba",
-			"hp6ds": "hp6_ds", "6ds": "hp6_ds",
-			"hp71ds": "hp71_ds", "71ds": "hp71_ds",
-			"hp72ds": "hp72_ds", "72ds": "hp72_ds"
+			"hp1_pc": ["hp1pc", "1pc"],
+			"hp2_pc": ["hp2pc", "2pc"],
+			"hp3_pc": ["hp3pc", "3pc"],
+			"hp4_pc": ["hp4pc", "4pc"],
+			"hp5_pc": ["hp5pc", "5pc"],
+			"hp6_pc": ["hp6pc", "6pc"],
+			"hp71_pc": ["hp71pc", "71pc"],
+			"hp72_pc": ["hp72pc", "72pc"],
+			"1ps1": ["1ps1", "hp1ps1"],
+			"2ps1": ["2ps1", "hp2ps1"],
+			"hp2_6th_gen": ["hp2_6th", "hp26th", "hp26thgen", "hp2xbox", "hp2gcn"],
+			"hp3_6th_gen": ["hp3_6th", "hp36th", "hp36thgen", "hp3xbox", "hp3gcn", "hp3ps2"],
+			"hp1_gba": ["hp1gba", "1gba"],
+			"hp2_gba": ["hp2gba", "2gba"],
+			"hp3_gba": ["hp3gba", "3gba"],
+			"qwc_gba": ["qwcgba", "quidditchworldcupgba"],
+			"hp6_ds": ["hp6ds", "6ds"],
+			"hp71_ds": ["hp71ds", "71ds"],
+			"hp72_ds": ["hp72ds", "72ds"]
 		},
 		"sy": {
-			"hp1any": "hp1_any", "1any": "hp1_any",
-			"hp2any": "hp2_any", "2any": "hp2_any",
-			"hp3any": "hp3_any", "3any": "hp3_any",
-			"hp4any": "hp4_any", "4any": "hp4_any",
-			"hp5any": "hp5_any", "5any": "hp5_any",
-			"hp6any": "hp6_any", "6any": "hp6_any",
-			"hp71any": "hp71_any", "71any": "hp71_any",
-			"hp72any": "hp72_any", "72any": "hp72_any",
-			"hp1hundo": "hp1_100", "hp1100": "hp1_100", "1100": "hp1_100", "1hundo": "hp1_100",
-			"hp2hundo": "hp2_100", "hp2100": "hp2_100", "2100": "hp2_100", "2hundo": "hp2_100",
-			"hp3hundo": "hp3_100", "hp3100": "hp3_100", "3100": "hp3_100", "3hundo": "hp3_100",
-			"hp4hundo": "hp4_100", "hp4100": "hp4_100", "4100": "hp4_100", "4hundo": "hp4_100",
-			"hp5hundo": "hp5_100", "hp5100": "hp5_100", "5100": "hp5_100", "5hundo": "hp5_100",
-			"hp6hundo": "hp6_100", "hp6100": "hp6_100", "6100": "hp6_100", "6hundo": "hp6_100",
-			"hp71hundo": "hp71_100", "hp71100": "hp71_100", "71100": "hp71_100", "71hundo": "hp71_100",
-			"hp72hundo": "hp72_100", "hp72100": "hp72_100", "72100": "hp72_100", "72hundo": "hp72_100"
+			"hp1_any": ["hp1any", "1any"],
+			"hp2_any": ["hp2any", "2any"],
+			"hp3_any": ["hp3any", "3any"],
+			"hp4_any": ["hp4any", "4any"],
+			"hp5_any": ["hp5any", "5any"],
+			"hp6_any": ["hp6any", "6any"],
+			"hp71_any": ["hp71any", "71any"],
+			"hp72_any": ["hp72any", "72any"],
+			"hp1_100": ["hp1hundo", "hp1100", "1100", "1hundo"],
+			"hp2_100": ["hp2hundo", "hp2100", "2100", "2hundo"],
+			"hp3_100": ["hp3hundo", "hp3100", "3100", "3hundo"],
+			"hp4_100": ["hp4hundo", "hp4100", "4100", "4hundo"],
+			"hp5_100": ["hp5hundo", "hp5100", "5100", "5hundo"],
+			"hp6_100": ["hp6hundo", "hp6100", "6100", "6hundo"],
+			"hp71_100": ["hp71hundo", "hp71100", "71100", "71hundo"],
+			"hp72_100": ["hp72hundo", "hp72100", "72100", "72hundo"],
 		},
 		"dvd": {
-			"hc": "hc", "hogwartschallenge": "hc",
-			"ww": "ww", "wizardingworld": "ww"
+			"hc": ["hc", "hogwartschallenge"],
+			"ww": ["ww", "wizardingworld"]
 		}
 	}
 }

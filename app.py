@@ -166,14 +166,18 @@ def process_category_extension(base_game: str, ce_top_board: str, ce_category_bo
 		if ce_top_board is None:
 			return None
 
-	# Use the board_token (the top-level board) to find
+	# Use the board_token (the top-level board) to find the
 	# actual internal token name (this is needed to ensure
 	# random user input always maps to the correct internal
 	# value).
-	#
-	# If this returns None, then whatever token they provided
-	# does not exist in the alias table.
-	board_token = alias_table[ce_top_board].get(ce_category_board, None)
+	board_token = None
+	for name, aliases in alias_table.get(ce_top_board, {}).items():
+		if ce_category_board in aliases:
+			board_token = name
+			break
+
+	# After the loop above, if this is still None, then whatever
+	# token they provided does not exist in the alias table.
 	if board_token is None:
 		return None
 
