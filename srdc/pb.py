@@ -83,7 +83,7 @@ class PersonalBest:
 	# ---------------------------------------------------------
 	# PB FILTERING
 	# ---------------------------------------------------------
-	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None, flags: dict=None):
+	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None, flags: dict = None):
 		"""
 		Find PBs matching a category and optional variable filter.
 		variable_filter = ("variable_id", "expected_value")

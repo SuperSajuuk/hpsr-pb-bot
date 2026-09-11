@@ -4,7 +4,7 @@
 # This code processes a Normal Run object. A normal run is
 # defined as something belong to a primary board: ie it isn't
 # part of a category extension or a multi-run. These kind of runs
-# are the most common lookups we'll do in the code, as its covering
+# are the most common lookups we'll do in the code, as it's covering
 # the main boards. CE's are to be handled in ce.py and multiruns will
 # be in multi.py
 from model import SpeedRun

@@ -30,7 +30,11 @@ BOARD_ALIASES = {
 	"7PC Duofecta": ["7pcduo", "7pcduofecta"],
 	"PS1 Duofecta": ["ps1duo", "ps1duofecta"],
 	"PC Octofecta": ["pcocto", "pcoctofecta"],
-	"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"]
+	"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"],
+	"GBC Duofecta": ["gbcduo", "gbcduofecta"],
+	"GBA Pentafecta": ["gbapenta", "gbapentafecta"],
+	"Handheld Octofecta": ["hhocto", "hhoctofecta", "handheldocto", "handheldoctofecta"],
+	"Full Series": ["fs", "fullseries"]
 }
 
 # Board token aliases.
