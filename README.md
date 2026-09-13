@@ -132,73 +132,8 @@ ${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1 n
 ${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1 nogame}/${2 noplatform}/${3 noboard}/${urlencode ${fromindex4}}}
 ```
 
-## Games
-
-| Code    | Game                                        |
-|---------|---------------------------------------------|
-| `hp1`   | Harry Potter and the Philosopher's Stone    |
-| `hp2`   | Harry Potter and the Chamber of Secrets     |
-| `hp3`   | Harry Potter and the Prisoner of Azkaban    |
-| `hp4`   | Harry Potter and the Goblet of Fire         |
-| `hp5`   | Harry Potter and the Order of the Phoenix   |
-| `hp6`   | Harry Potter and the Half Blood Prince      |
-| `hp7.1` | Harry Potter and the Deathly Hallows Part 1 |
-| `hp7.2` | Harry Potter and the Deathly Hallows Part 2 |
-| `dbb`   | Disney's Brother Bear                       |
-| `ce`    | Category Extensions                         |
-| `multi` | Multiruns                                   |
-
-## Platforms
-These codes are based on a normal run. If ce or multi are provided for the "game" parameter above, the platform code is 
-the ID representing the relevant Category Extension or Multirun board for the series in question (eg if you are 
-looking for the Harry Potter CE board, then platform should be given as `hp`, if game is set to `ce`)
-
-| Code   | Platform             |
-|--------|----------------------|
-| `ps1`  | PlayStation 1        |
-| `ps2`  | PlayStation 2        |
-| `ps3`  | PlayStation 3        |
-| `psp`  | PlayStation Portable |
-| `gba`  | Game Boy Advance     |
-| `gbc`  | Game Boy Colour      |
-| `gcn`  | Nintendo GameCube    |
-| `xbox` | Microsoft XBOX 360   |
-| `pc`   | PC                   |
-
-## Categories
-
-| Code                         | Category                        |
-|------------------------------|---------------------------------|
-| `any`                        | Any%                            |
-| `100`                        | 100%                            |
-| `warpless`                   | Warpless                        |
-| `glitchless` / `gless`       | Glitchless                      |
-| `awc`                        | All Wizard Cards                |
-| `allreq`                     | All Requirements                |
-| `ng`                         | NG+                             |
-| `allshields`                 | All Shields                     |
-| `allcrests`                  | All Crests                      |
-| `boostless`                  | Boostless                       |
-| `trifecta`                   | PC Trifecta                     |
-| `octofecta`                  | PC Octofecta                    |
-| `7duo`                       | 7PC Duofecta                    |
-| `ps1duo`                     | PS1 Duofecta                    |
-| `6gentrifecta`               | 6th Gen Trifecta                |
-| `fs`                         | Full Series                     |
-| `gbcduo`                     | GBC Duofecta                    |
-| `gbapenta`                   | GBA Pentafecta                  |
-| `handheldocto`               | Handheld Octofecta              |
-| `chungus`                    | Chungus% (CE)                   |
-| `awcgless` / `awcglitchless` | AWC Glitchless (CE)             |
-| `pctri`                      | Harry Potter PC Trifecta        |
-| `7pcduo`                     | Harry Potter 7PC Duofecta       |
-| `pcocto`                     | Harry Potter PC Octofecta       |
-| `ps1duo`                     | Harry Potter PS1 Duofecta       |
-| `6gentri`                    | Harry Potter 6th Gen Trifecta   |
-| `gbcduo`                     | Harry Potter GBC Duofecta       |
-| `gbapenta`                   | Harry Potter GBA Pentafecta     |
-| `hhocto`                     | Harry Potter Handheld Octofecta |
-| `fs`                         | Harry Potter Full Series        |
+## Usage
+Please refer to the wiki for more details on how to use the commands, alongside supported values in various contexts and more.
 
 ## Examples
 ### !pb

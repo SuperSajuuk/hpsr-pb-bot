@@ -28,7 +28,7 @@ GAME_MAP = {
 # This is just for main boards: for CE's and Multiruns, use
 # the ce.py and multi.py files under the configs folder.
 CATEGORY_MAP = {
-	"Any": ["any"],
+	"Any%": ["any"],
 	"100%": ["100", "hundo"],
 	"Glitchless": ["gless", "glitchless"],
 	"No Major Skips": ["nms", "nomajorskips"],
