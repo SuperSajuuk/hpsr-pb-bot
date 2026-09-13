@@ -6,7 +6,9 @@
 # or multi-runs)
 #
 
-# Game mapping. This is used to define all known games that exist in the bot.
+# Game mapping.
+# This is used for main boards that have no separate
+# handler.
 GAME_MAP = {
 	# Harry Potter
 	"hp1": "Harry Potter and the Philosopher's Stone",

@@ -123,13 +123,12 @@ class MultiRun:
 
 		# Category metadata is necessary for Multiruns: if nothing is found, or the
 		# Multirun category cannot be found in the configuration, return an error.
-		mr_categories_cfg = cfg.get("categories", {})
-		if mr_category not in mr_categories_cfg:
+		if mr_category not in cfg:
 			raise ValueError(f"Unknown Multirun category key: {mr_category}")
 
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
-		category_meta = mr_categories_cfg[mr_category]
+		category_meta = cfg[mr_category]
 		category_obj = None
 		for cat in game_obj.categories:
 			if cat.name == category_meta["board"]:

@@ -20,6 +20,7 @@ import srcomapi
 
 # Import the config data.
 import configs.ce as ce_config
+import configs.lego as lego_config
 import configs.multi as mr_config
 import configs.normal as nm_config
 import configs.leaderboard as lb_config
@@ -28,10 +29,12 @@ import configs.generic as config
 
 # Import everything else that is needed
 import utils
+import urllib.parse as url_parse
 import srdc.normal as normal_run
 import srdc.ce as ce_run
 import srdc.pb as pb
 import srdc.multi as multi
+import srdc.lego as lego
 from model import SpeedRun
 
 # Instantiate Flask and the SRDC API
@@ -42,6 +45,7 @@ srdc_api.debug = 1
 # Instantiate all our internal code for powering the actual program.
 utils = utils.Utilities(srdc_api, lb_config.LEADERBOARD_CONFIG)
 normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
+lg = lego.LEGONormalRun(srdc_api, lego_config.GAME_MAP, lego_config.BOARD_ALIASES, utils)
 cat_ext = ce_run.CategoryExtension(srdc_api, ce_config.GAME_MAP, config.PLATFORM_MAP, ce_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
 multirun = multi.MultiRun(srdc_api, mr_config.GAME_MAP, config.PLATFORM_MAP, mr_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
 per_best = pb.PersonalBest(
@@ -58,6 +62,85 @@ per_best = pb.PersonalBest(
 # channel_owner is always provided, but player may not be:
 def resolve_player(channel_owner: str, player: str | None) -> str:
 	return channel_owner if player is None or player.strip() == "" else player
+
+
+# Process a LEGO Games main board run.
+def process_lego_main_board(game: str, board_name: str, flags: dict, player: str):
+	# Check if the game provided is in the game map.
+	lego_key = lego_config.GAME_MAP.get(game)
+	if not lego_key:
+		return None
+
+	# Check if there is an alias table for this game.
+	alias_table = lego_config.CATEGORY_ALIASES.get(game, {})
+	if not alias_table:
+		return None
+
+	# Check if the top board is defined in the alias list.
+	# If it isn't, the user might have provided an alternative
+	# name, which needs to be checked
+	if board_name not in alias_table:
+		token_aliases = lego_config.BOARD_TOKEN_ALIASES.get(lego_key["slug"], None)
+		if token_aliases is None:
+			return None
+		for name, aliases in token_aliases.items():
+			if board_name in aliases:
+				board_name = name
+				break
+
+		# Still not found, so just exit.
+		if board_name is None:
+			return None
+
+	# Use the board_token (the top-level board) to find
+	# actual internal token name (this is needed to ensure
+	# random user input always maps to the correct internal
+	# value).
+	#
+	# If this returns None, then whatever token they provided
+	# does not exist in the alias table.
+	sub_category_board = flags.get("main_sub_category", None)
+	board_token = alias_table[board_name].get(sub_category_board, None)
+	if not board_token:
+		return None
+
+	# Build an internal key based on the values of flags.
+	is_nocut5_mode = flags.get("nocut_mode", None)
+	is_restricted = flags.get("restricted_mode", None)
+	ik_nocut_mode = ""
+	ik_restricted_mode = ""
+	scn_nocut_mode = ""
+	scn_restricted_mode = ""
+	if is_nocut5_mode is not None:
+		ik_nocut_mode = "_nocut" if is_nocut5_mode else "_standard"
+		scn_nocut_mode = " N0CUT5" if is_nocut5_mode else " Standard"
+	if is_restricted is not None:
+		ik_restricted_mode = "_restricted" if is_restricted else "_unrestricted"
+		scn_restricted_mode = " Restricted" if is_restricted else " Unrestricted"
+
+	internal_key = f"{board_name}_{sub_category_board}{ik_nocut_mode}{ik_restricted_mode}"
+	run = lg.lookup_lego_run(game, internal_key, lego_key["slug"], board_name, player)
+
+	# Produce a clean category name based on the alias value. This
+	# allows one "output" name against lots of aliases for tidiness
+	# of the board aliases.
+	alias_name = None
+	for name, aliases in lego_config.BOARD_ALIASES[game].items():
+		if board_name in aliases:
+			alias_name = name
+			break
+
+	# Unlike other boards, cat_clean_name can be derived from user flags
+	sub_cat_name = None
+	for name, aliases in lego_config.SUB_CATEGORY_ALIASES[game].items():
+		if sub_category_board in aliases:
+			sub_cat_name = name
+			break
+
+	# Produce the necessary alias name for the attempted category
+	# solely based on various flags.
+	new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}{scn_restricted_mode}"
+	return run, new_sub_cat_name, alias_name
 
 
 # Process a normal run.
@@ -203,10 +286,15 @@ def process_category_extension(base_game: str, ce_top_board: str, ce_category_bo
 	return run, cat_alias_name, alias_name
 
 
-# Parse the list of extra data in the arguments.
-# Used by latest_run and personal_best.
+# Parse the list of extra data in the arguments for handling
+# by the extract_flags. This will split by the encoded plus
+# signs first, then unquote individual values if they're also
+# url-encoded (such as --player=someone).
 def split_extras(argstr: str) -> list[str]:
-	return [] if not argstr else [p.strip().lower() for p in argstr.split('+') if p.strip()]
+	if not argstr:
+		return []
+	token_list = [p.strip().lower() for p in argstr.split('+') if p.strip()]
+	return [url_parse.unquote(token) for token in token_list]
 
 
 # Parse all arguments from "args"
@@ -217,13 +305,20 @@ def extract_flags(tokens: list[str]) -> dict:
 	# These will then be used by the program to decide certain things
 	flags = {
 		"emulator": False, "player": None,
-		"ce_board": None, "mr_board": None
+		"ce_board": None, "mr_board": None,
+		"lego_md": {},
+		"additional_metadata": {}
 	}
+	key_num = 1
 
 	# Parse all the tokens and map them to things.
+	#
 	# For CE/MR tokens, we ignore the key name of each iteration
 	# as that is only for output text: here we just care about
 	# alias checks.
+	#
+	# Invalid tokens will be silently discarded by the program
+	# and will not be processed.
 	for token in tokens:
 		# Check if the token is set to emulator
 		if token == "emulator":
@@ -250,9 +345,31 @@ def extract_flags(tokens: list[str]) -> dict:
 		if mr_match:
 			continue
 
-		# The token did not match anything in the defined list.
-		# Assuming that the token means a player override.
-		flags["player"] = token
+		# Check if the token contains the string --player=
+		# or its alias --p=. If no value is provided, it will
+		# still be set to None and thus ignored.
+		if "--player=" in token or "--p=" in token:
+			p_name = token.split("=")[1]
+			flags["player"] = p_name if len(p_name) > 0 else None
+
+		# Check if the token is a string connected to LEGO boards
+		# At the moment, this is a fairly restricted list, but plan
+		# is to make this handler better in the future.
+		if token in lego_config.FLAG_TOKEN_MATCHES:
+			# Check which token it matched.
+			match token:
+				case _ if token in ["solo", "co-op", "coop"]:
+					flags["lego_md"]["main_sub_category"] = token
+				case _ if token in ["nocut5", "n0cut5", "standard"]:
+					flags["lego_md"]["nocut_mode"] = True if token != "standard" else False
+				case _ if token in ["restricted", "unrestricted"]:
+					flags["lego_md"]["restricted_mode"] = True if token == "restricted" else False
+
+		# Nothing was found. Perhaps its additional metadata:
+		# add an incrementing key number value pair to the
+		# metadata list
+		flags["additional_metadata"][f"key_{key_num}"] = token
+		key_num += 1
 
 	return flags
 
@@ -296,9 +413,17 @@ def latest_run(owner, game, platform, board, args):
 			# the processor and store the result in a variable.
 			result, cat_clean_name, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
 			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
+		case "lego":
+			# This is a LEGO main-board game.
+			# Due to LEGO games having more sub-categories than regular
+			# main board categories, they're handled separately due to
+			# extra metadata being needed.
+			result, cat_clean_name, alias_name = process_lego_main_board(platform, board, flags["lego_md"], player)
+			clean_name = f'{lego_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
-			# This is a normal main board run: check if game, platform
-			# and board represent real entities and show an error if not.
+			# This is a normal main board run which is not a LEGO game:
+			# check if game, platform and board represent real entities
+			# and show an error if not.
 			if game not in nm_config.GAME_MAP:
 				return f"Unknown game: '{game}'. Refer to the docs for the supported games: {config.COMMAND_USAGE_DOC}", 400
 			if platform not in config.PLATFORM_MAP:
@@ -405,7 +530,7 @@ def personal_best(owner, game, platform, board, args):
 				return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
 			# Capture the internal key based on board_name
-			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
+			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
 				if data["board"] == board_name:
 					internal_key = key
 					break
@@ -423,7 +548,7 @@ def personal_best(owner, game, platform, board, args):
 				return f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 
 			# Capture the internal key based on board_name
-			for key, data in lb_config.LEADERBOARD_CONFIG[game]["categories"].items():
+			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
 				if data["board"] == board_name:
 					internal_key = key
 					break

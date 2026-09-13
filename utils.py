@@ -67,19 +67,15 @@ class Utilities:
 		# Check to see if there is a config key under the game_key
 		game_cfg = self.lb_config.get(game_key)
 		if game_cfg:
-			categories = game_cfg.get("categories")
-			if categories:
-				if internal_key in categories:
-					return categories[internal_key]
-				if cat_key in categories:
-					return categories[cat_key]
+			if internal_key in game_cfg:
+				return game_cfg[internal_key]
+			if cat_key in game_cfg:
+				return game_cfg[cat_key]
 
 		# Didn't find it under game_key, so perhaps look under the internal key
 		internal_cfg = self.lb_config.get(internal_key)
 		if internal_cfg:
-			categories = internal_cfg.get("categories")
-			if categories:
-				return categories
+			return internal_cfg
 
 		# Found nothing, so return None.
 		return None
@@ -119,23 +115,30 @@ class Utilities:
 		# To avoid looking silly in some places, millisecond precision will only be
 		# given if the API returns it.
 		seconds = run_obj["times"]["primary_t"]
-		td = datetime.timedelta(seconds=seconds)
-		total_ms = int(td.total_seconds() * 1000)
-		hours, remainder = divmod(total_ms, 3600_000)
+		total_ms = round(seconds * 1000)
+		days, remainder = divmod(total_ms, 86_400_000)
+		hours, remainder = divmod(remainder, 3_600_000)
 		minutes, remainder = divmod(remainder, 60_000)
 		secs, ms = divmod(remainder, 1000)
 
-		# Decide whether to show milliseconds
-		# If this is an integer, time will be HH:MM:SS.
-		# If it's a float, then it'll be HH:MM:SS.mmm
-		time = f"{hours}:{minutes:02d}:{secs:02d}" if seconds.is_integer() else f"{hours}:{minutes:02d}:{secs:02d}.{ms:03d}"
+		# Return a time string that is dependent on the highest level of data.
+		if days:
+			time_str = f"{days}d {hours:02d}:{minutes:02d}:{secs:02d}"
+		elif hours:
+			time_str = f"{hours}:{minutes:02d}:{secs:02d}"
+		else:
+			time_str = f"{minutes}:{secs:02d}"
+
+		# If there is milliseconds, append it.
+		if ms:
+			time_str += f".{ms:03d}"
 
 		# Create a SpeedRun model and return it.
 		return SpeedRun(
 			player=player_name,
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
-			time=time,
+			time=time_str,
 			raw=None,
 			platform=run_obj["system"]["platform"],
 			emulator=run_obj["system"]["emulated"],

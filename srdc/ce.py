@@ -36,8 +36,10 @@ class CategoryExtension:
 		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
 		if var_filters is not None:
 			for var in var_filters:
-				for var_id, value_id in var.items():
-					base_q += f"&var-{var_id}={value_id}"
+				for key, val in var.items():
+					# Ignore the "name" variable because that is internal.
+					if key != "name":
+						base_q += f"&var-{key}={val}"
 
 		# Paginate the results until all are found.
 		all_runs: list[Dict[str, Any]] = []
@@ -121,13 +123,12 @@ class CategoryExtension:
 
 		# Category metadata is necessary for CEs: if nothing is found, or the
 		# CE category cannot be found in the configuration, return an error.
-		ce_categories_cfg = cfg.get("categories", {})
-		if ce_category not in ce_categories_cfg:
+		if ce_category not in cfg:
 			raise ValueError(f"Unknown CE category key: {ce_category}")
 
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
-		category_meta = ce_categories_cfg[ce_category]
+		category_meta = cfg[ce_category]
 		category_obj = None
 		for cat in game_obj.categories:
 			if cat.name == category_meta["board"]:

@@ -11,6 +11,7 @@
 # keys: a human-readable name and the Slug URL ID.
 GAME_MAP = {
 	"hp": {"name": "Harry Potter Category Extensions", "id": "hpce"},
+	"legohp": {"name": "LEGO Harry Potter Category Extensions", "id": "lhpce"},
 	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"}
 }
 
@@ -34,7 +35,6 @@ SUB_CATEGORY_MAP = {
 	"All Vanishing Cards - 1P": ["avc1p", "allvanishingcards1p", "avc1player", "allvanishingcards1player"],
 	"All Vanishing Cards - 2P": ["avc2p", "allvanishingcards2p", "avc2player", "allvanishingcards2player", "avc2players", "allvanishingcards2players"],
 	"All Vanishing Cards - 3P": ["avc3p", "allvanishingcards3p", "avc3player", "allvanishingcards3player", "avc3players", "allvanishingcards3players"],
-	"All Crests": ["allcrests"],
 	"All Minigames": ["amg", "allmg", "allminigames"],
 	"All Portraits": ["ap", "allp", "allportraits"],
 	"All Requirements": ["allreq", "allreqs", "allrequirements"],
