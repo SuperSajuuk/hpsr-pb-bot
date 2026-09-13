@@ -6,7 +6,7 @@ command and returns the run matching the search parameters, allowing the streame
 PB submission was.
 
 Currently, this only supports Harry Potter leaderboards: support for searching up other games will be implemented in 
-the future, please refer to the [games section below](#Games) for the list of supported games.
+the future. To see what games are supported in the web app today, refer to [Supported Games](https://github.com/SuperSajuuk/hpsr-pb-bot/wiki/LR-Games) on the wiki.
 
 An upcoming update will improve the functionality of these commands, such as:
 * Game names will lose the inclusion of platforms, simplifying it to just "hp1".
@@ -36,13 +36,13 @@ extensions by their full URL slugs.
 
 #### Platform
 The platform parameter is used as a filter to target the specific game version that is needed. All platforms 
-supported are listed in the [platforms section](#Platforms) below.
+supported are listed in the platforms section of the wiki.
 
 When doing this for a CE, you should use the full name: eg `hp1pc`.
 
 #### Category
 The category parameter is used as a filter to target the specific primary category of the game and platform that is 
-defined. All categories supported here are listed in the [categories section](#Categories) below.
+defined. All categories supported here are listed in the categories section of the wiki.
 
 When doing this for a CE board, the alias name for the sub-category should be used: eg `100gless`.
 
