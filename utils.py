@@ -129,8 +129,8 @@ class Utilities:
 		else:
 			time_str = f"{minutes}:{secs:02d}"
 
-		# If there is milliseconds, append it.
-		if ms:
+		# If there is milliseconds and the original time is a float, append it.
+		if ms and not seconds.is_integer():
 			time_str += f".{ms:03d}"
 
 		# Create a SpeedRun model and return it.
