@@ -23,7 +23,7 @@ GAME_MAP = {
 SUB_CATEGORY_MAP = {
 	"100% Glitchless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
 	"AWC Glitchless": ["awcgless", "awcglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
-	"Boostless": ["boostless"],
+	"Boostless": ["bl", "boostless"],
 	"Cutscene%": ["cs", "cutscene", "cutscene%"],
 	"Chungus%": ["chungus", "chungus%"],
 	"Harry Potter Wizard Card": ["hpwc", "hpwizardcard", "harrypotterwc", "harrypotterwizardcard"],

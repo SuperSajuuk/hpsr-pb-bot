@@ -34,7 +34,8 @@ CATEGORY_MAP = {
 	"No Major Skips": ["nms", "nomajorskips"],
 	"Any% No EDS": ["noeds", "anynoeds"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
-	"Warpless": ["warpless"]
+	"Warpless": ["wl", "warpless"],
+	"Boostless": ["bl", "boostless"]
 }
 
 # Board slug mapping. This is used to map the values produced by
@@ -81,5 +82,6 @@ BOARD_GAME_SLUG = {
 	"hp5_ds": "hp5gbads",
 	"hp6_ds": "hp6ds",
 	"hp7.1_ds": "hp7p1ds",
-	"hp7.2_ds": "hp7p2ds"
+	"hp7.2_ds": "hp7p2ds",
+	"dbb_pc": "disneys_brother_bear"
 }
