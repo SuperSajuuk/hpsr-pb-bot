@@ -152,7 +152,7 @@ class CategoryExtension:
 		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
 		# of additional runs. The list of runs must be filtered to get the correct
 		# run that the user asked for.
-		required_variables = {var["var_id"].split("-")[-1]: var["value_id"] for var in ce_cat_vars}
+		required_variables = {var["var_id"]: var["value_id"] for var in ce_cat_vars}
 		filtered_runs = []
 		for r in runs:
 			ok = True

@@ -114,11 +114,11 @@ class NormalRun:
 			var_filters = {}
 			for x in variable_data:
 				if "name" not in x:
-					var_id = x["var_id"].split("-")[1]
+					var_id = x["var_id"]
 					var_filters[var_id] = x["value_id"]
 			for x in variable_data:
 				if x.get("name") == active_slice:
-					var_id = x["var_id"].split("-")[1]
+					var_id = x["var_id"]
 					var_filters[var_id] = x["value_id"]
 
 		# With the provided data, search SRDC for runs.
@@ -137,7 +137,7 @@ class NormalRun:
 				# Check if this run matches the chosen slice
 				for x in variable_data:
 					if x.get("name") == active_slice:
-						var_id = x["var_id"].split("-")[1]
+						var_id = x["var_id"]
 						if r["values"].get(var_id) == x["value_id"]:
 							filtered_runs.append(r)
 							break

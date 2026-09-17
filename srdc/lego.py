@@ -114,7 +114,7 @@ class LEGONormalRun:
 		# LEGO runs contain a significant number of variables, which require
 		# the returned list of runs to be filtered. This ensures only the
 		# run the user asked for is returned by the system.
-		required_variables = {var["var_id"].split("-")[-1]: var["value_id"] for var in var_filters}
+		required_variables = {var["var_id"]: var["value_id"] for var in var_filters}
 		filtered_runs = []
 		for r in runs:
 			ok = True

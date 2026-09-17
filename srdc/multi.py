@@ -152,7 +152,7 @@ class MultiRun:
 		# Unlike category extensions, multi-runs tends to have very few sub-boards
 		# However, as they're still a form of category extension, we do need to ensure
 		# all returned runs are filtered to get the correct run that the user asked for.
-		required_variables = {var["var_id"].split("-")[-1]: var["value_id"] for var in mr_cat_vars}
+		required_variables = {var["var_id"]: var["value_id"] for var in mr_cat_vars}
 		filtered_runs = []
 		for r in runs:
 			ok = True

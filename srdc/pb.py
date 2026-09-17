@@ -118,7 +118,7 @@ class PersonalBest:
 					# Now parse just the variable that we need.
 					all_match = True
 					for x in variable_data:
-						var_id = x.get("var_id").split("-")[1]
+						var_id = x.get("var_id")
 						expected = x.get("value_id", None)
 						if run["values"].get(var_id) == expected:
 							break
