@@ -33,11 +33,8 @@ class LEGONormalRun:
 		user requested is returned (this is due to the way SRDC returns runs from the API)
 		"""
 		# Get the game object from the slug.
-		game_obj = self.utils.get_game_code(slug)
-		if not game_obj:
-			raise ValueError("Invalid game object, make sure the slug URL is defined correctly in the configuration files.")
-
 		# Obtain the relevant category name from the category map.
+		game_id, game_Cats = self.utils.get_game_code(slug)
 		category_meta = None
 		for category_name, aliases in self.category_map[game].items():
 			if cat_key in aliases:
@@ -49,14 +46,14 @@ class LEGONormalRun:
 			return None
 
 		# Check that there is a category matching the one we asked for.
-		category_obj = None
-		for cat in game_obj.categories:
-			if cat.name == category_meta:
-				category_obj = cat
+		category_id = None
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == category_meta:
+				category_id = cat_id
 				break
 
 		# If no category exists with the given name, raise ValueError and quit.
-		if not category_obj:
+		if not category_id:
 			raise ValueError("Category not found in game")
 
 		# Resolve user ID and pull in all variables for the game.
@@ -68,7 +65,7 @@ class LEGONormalRun:
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
 		var_filters = cfg.get("variables", None)
-		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
+		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
@@ -98,7 +95,7 @@ class LEGONormalRun:
 		best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], required_variables)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

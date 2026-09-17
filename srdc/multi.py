@@ -76,12 +76,9 @@ class MultiRun:
 		# then resolve the slug to find the game object.
 		mr_slug = self.resolve_multirun_game_slug(base_game)
 		slug_id = mr_slug.get("id", None)
-		game_obj = self.utils.get_game_code(slug_id)
-		if game_obj is None:
-			raise ValueError(f"Could not find the game `{base_game}`. Check for typos and try again.")
+		game_id, game_cats = self.utils.get_game_code(slug_id)
 
 		# Find the leaderboard config for this category.
-		slug_id = mr_slug.get("id")
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise ValueError(f"No leaderboard config found for Multirun game slug: {slug_id}")
@@ -94,20 +91,20 @@ class MultiRun:
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
 		category_meta = cfg[mr_category]
-		category_obj = None
-		for cat in game_obj.categories:
-			if cat.name == category_meta["board"]:
-				category_obj = cat
+		category_id = None
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == category_meta["board"]:
+				category_id = cat_id
 				break
 
 		# If category_obj is still None, then the category does not exist.
-		if not category_obj:
+		if not category_id:
 			raise ValueError("Multirun category not found in Multirun game")
 
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)
 		mr_cat_vars = category_meta.get("variables", [])
-		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, mr_cat_vars)
+		runs = self.utils.search_runs(game_id, category_id, user_id, mr_cat_vars)
 		if not runs:
 			return None
 
@@ -135,7 +132,7 @@ class MultiRun:
 		# The only run that we have is the one that the user asked form.
 		# Lookup the placement and extract run data, using the same helper as normal runs
 		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], required_variables)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

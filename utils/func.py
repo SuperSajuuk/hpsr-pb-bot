@@ -12,36 +12,59 @@ from utils.model import SpeedRun
 
 
 class Utilities:
-	def __init__(self, api, lb_config):
+	def __init__(self, api, cache, lb_config):
 		self.api = api
+		self.cache = cache
 		self.lb_config = lb_config
 		self.game_code_cache = {}
 
 	def get_game_code(self, game_key: str):
 		"""
-		Return the srcomapi Game object for a given game code.
-		Returns a game object that is then cached. If the game
-		is already cached, return that automatically and do not
-		query SRDC.
-		"""
-		if game_key in self.game_code_cache:
-			return self.game_code_cache[game_key]
+		Returns details about the game needing to be searched for.
 
-		# Query SRDC. If nothing found, return a ValueError
+		If the Game ID exists in Redis, then the ID and the categories
+		stored there will be returned. If nothing was found, then SRDC
+		will be queried for a result. That result will be cached in Redis
+		to remove the requirement to query further.
+		"""
+		# Check to see if the game exists in Redis
+		key = self.cache.get_key(f"run-finder:game:{game_key}")
+		if key is not None:
+			# Check if the categories data exists. If it doesn't, then it may have been
+			# evicted automatically, so we would have to re-query SRDC anyway.
+			cats = self.cache.get_hash_data(f"run-finder:game:{game_key}:categories")
+			if cats:
+				return key, cats
+
+		# Not found in Redis. Therefore, we need to look it up in SRDC.
 		result = self.api.search(dt.Game, {"abbreviation": game_key})
 		if not result:
-			raise ValueError(f"Game not found on SRDC: {game_key}")
+			raise ValueError(f"Could not find the game `{game_key}`. Check for typos, and try again. If you are confident there are no typos, this might be a bug.")
 
-		# Cache the result and return it.
+		# Store the game ID and category list in Redis and return those values.
 		game_obj = result[0]
-		self.game_code_cache[game_key] = game_obj
-		return game_obj
+		cats = {x.id: x.name for x in game_obj.categories}
+		self.cache.create_key(f"run-finder:game:{game_key}", game_obj.id)
+		self.cache.create_multiple_in_hash(f"run-finder:game:{game_key}:categories", cats)
+		self.cache.key_expiry(f"run-finder:game:{game_key}:categories", 604800)
+		return game_obj.id, cats
 
 	def get_user_id(self, username: str) -> str:
-		"""Resolve a Speedrun.com username to a user ID."""
+		"""
+		Returns the user ID for the identified user.
+		Checks Redis first before querying SRDC.
+		"""
+		key = self.cache.get_key(f"run-finder:users:{username}")
+		if key is not None:
+			return key
+
+		# Not found in Redis, query SRDC instead
 		result = self.api.search(dt.User, {"name": username})
 		if not result:
 			raise ValueError(f"User not found on SRDC: {username}")
+
+		# Cache the users' ID so we don't have to query SRDC again
+		self.cache.create_key(f"run-finder:users:{username}", result[0].id)
 		return result[0].id
 
 	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: dict | None = None):

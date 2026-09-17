@@ -34,7 +34,7 @@ class NormalRun:
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = self.board_slugs[internal_key]
-		game_obj = self.utils.get_game_code(slug)
+		game_id, game_cats = self.utils.get_game_code(slug)
 
 		# Obtain the relevant category name from the category map.
 		category_meta = None
@@ -47,14 +47,14 @@ class NormalRun:
 			return None
 
 		# Check that there is a category matching the one we asked for.
-		category_obj = None
-		for cat in game_obj.categories:
-			if cat.name == category_meta:
-				category_obj = cat
+		category_id = None
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == category_meta:
+				category_id = cat_id
 				break
 
 		# If no category exists with the given name, raise ValueError and quit.
-		if not category_obj:
+		if not category_id:
 			raise ValueError("Category not found in game")
 
 		# Resolve user ID, then check for variables in case we have one.
@@ -105,7 +105,7 @@ class NormalRun:
 
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
-		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
+		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
@@ -135,7 +135,7 @@ class NormalRun:
 		best_run = runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], var_filters[0] if var_filters is not None else None)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters[0] if var_filters is not None else None)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

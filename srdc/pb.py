@@ -159,7 +159,7 @@ class PersonalBest:
 			raise ValueError("An error has occurred with an internal function: the slug URL couldn't be found for this combination of inputs.")
 
 		# Pull game object and category information if needed
-		game_obj = self.utils.get_game_code(slug)
+		game_id, game_cats = self.utils.get_game_code(slug)
 		category_meta = None
 		ce_category_meta = None
 		for board_name, aliases in category_map.items():
@@ -177,19 +177,19 @@ class PersonalBest:
 		# Find the actual category object inside the game
 		# This may be a normal run board or a CE board, so
 		# check for either one.
-		category_obj = None
-		for cat in game_obj.categories:
-			if cat.name == category_meta or (ce_category_meta is not None and cat.name == ce_category_meta):
-				category_obj = cat
+		category_id = None
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == category_meta or (ce_category_meta is not None and cat_name == ce_category_meta):
+				category_id = cat_id
 				break
 
 		# Raise ValueError if the category object does not exist for this game.
-		if not category_obj:
+		if not category_id:
 			raise ValueError("Category not found in game")
 
 		# Fetch PBs for this player based on this game ID.
 		# Also, load unified leaderboard config for this game (if present)
-		pbs = self.search_pbs(player, game_obj.id)
+		pbs = self.search_pbs(player, game_id)
 		variables = self.utils.resolve_leaderboard_config(game_key, internal_key)
 		variables_2 = None
 		if variables is not None:
@@ -197,7 +197,7 @@ class PersonalBest:
 
 		# Filter the PB list to try and find the PB the user asked for.
 		# If no PB found, return None.
-		result = self.find_pbs(player, pbs, category_obj.id, variables if variables_2 is None else variables_2, flags)
+		result = self.find_pbs(player, pbs, category_id, variables if variables_2 is None else variables_2, flags)
 		if not result:
 			return None
 
