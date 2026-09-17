@@ -34,7 +34,7 @@ class LEGONormalRun:
 		"""
 		# Get the game object from the slug.
 		# Obtain the relevant category name from the category map.
-		game_id, game_Cats = self.utils.get_game_code(slug)
+		game_id, game_cats = self.utils.get_game_code(slug)
 		category_meta = None
 		for category_name, aliases in self.category_map[game].items():
 			if cat_key in aliases:
