@@ -138,7 +138,7 @@ class NormalRun:
 		best_run = runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], var_filters[0])
+		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], var_filters[0] if var_filters is not None else None)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr
