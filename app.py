@@ -10,9 +10,11 @@
 # and debugging, if something goes wrong. It is also far more
 # readable and modular when we do this.
 #
-# The modular aspects of the code are in data.py. A future commit
-# will split up data.py into more logical pieces so everything is much
-# more understandable.
+# app.py only handles the Flask routes: all the specific program
+# codes can be found in the configs and srdc sub-folders. Some
+# program-specific code below (namely around processing user input
+# in the routes) will move into the respective classes in future
+# commits.
 
 # Import the core packages
 import flask
@@ -616,4 +618,4 @@ def timeout_error(error):
 
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run()
