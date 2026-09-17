@@ -105,6 +105,45 @@ class Utilities:
 				return entry["place"]
 		return None
 
+	def search_runs(self, game_id, category_id, user_id, var_filters=None):
+		"""
+		Builds a base query from the provided game_id, category_id and user_id
+		to find runs on a specific leaderboard of SRDC.
+
+		This also supports appending variables - in key/value pairs of var_id
+		and value_id - to perform server-side filtering, which reduces how
+		many rows are returned. Pagination is also used if the result set has
+		more than 20 records.
+
+		Returns a list, which may be empty or contain a list of Run objects.
+		"""
+		# Build a base query, which we can then paginate against.
+		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
+		if var_filters is not None:
+			for var in var_filters:
+				for key, val in var.items():
+					# Ignore the "name" variable because that is internal.
+					if key != "name":
+						base_q += f"&var-{key}={val}"
+
+		# Paginate the results until all are found.
+		all_runs = []
+		offset = 0
+		while True:
+			# Start at 20, then increase the offset per loop.
+			# If the batch returns nothing, break the loop.
+			q = f"{base_q}&max=20&offset={offset}"
+			batch = self.api.get(q)
+			if not batch:
+				break
+
+			# Append the runs, then increase the offset and continue.
+			all_runs.extend(batch)
+			offset += 20
+
+		# Return the full list.
+		return all_runs
+
 	@staticmethod
 	def extract_run(run_obj, player_name) -> SpeedRun:
 		"""

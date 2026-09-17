@@ -27,20 +27,6 @@ class NormalRun:
 		self.utils = utils
 
 	# ---------------------------------------------------------
-	# RUN FETCH
-	# ---------------------------------------------------------
-	def search_runs(self, game_id, category_id, user_id, variables=None):
-		"""
-		Search SRDC for runs matching game/category/user.
-		Also includes variables, if any are given.
-		"""
-		q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
-		if variables is not None:
-			for var_id, value_id in variables.items():
-				q += f"&var-{var_id}={value_id}"
-		return self.api.get(q)
-
-	# ---------------------------------------------------------
 	# LOOKUP RUN
 	# ---------------------------------------------------------
 	def lookup_run(self, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
@@ -111,34 +97,32 @@ class NormalRun:
 				active_slice = next(iter(slice_names), None)
 
 			# Build var_filters
-			var_filters = {}
+			var_filters = []
 			for x in variable_data:
 				if "name" not in x:
-					var_id = x["var_id"]
-					var_filters[var_id] = x["value_id"]
-			for x in variable_data:
+					var_filters.append({x["var_id"]: x["value_id"]})
+					continue
 				if x.get("name") == active_slice:
-					var_id = x["var_id"]
-					var_filters[var_id] = x["value_id"]
+					var_filters.append({x["var_id"]: x["value_id"]})
+					continue
 
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
-		runs = self.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
+		print(var_filters)
+		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
 		if not runs:
 			return None
 
 		# After returning runs, you may receive more than you asked for: this
 		# is a limitation of SRDC. Thus, to just have "one run", we need to do
 		# some filtering here.
-		# Client-side filtering based on selected slice
 		if active_slice is not None:
 			filtered_runs = []
 			for r in runs:
 				# Check if this run matches the chosen slice
-				for x in variable_data:
-					if x.get("name") == active_slice:
-						var_id = x["var_id"]
-						if r["values"].get(var_id) == x["value_id"]:
+				for x in var_filters:
+					for key, val in x.items():
+						if r["values"].get(key) == val:
 							filtered_runs.append(r)
 							break
 			runs = filtered_runs
@@ -155,7 +139,7 @@ class NormalRun:
 		best_run = runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], var_filters)
+		place = self.utils.lookup_run_place(game_obj.id, category_obj.id, best_run["id"], var_filters[0])
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

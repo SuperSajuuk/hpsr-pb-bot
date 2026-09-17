@@ -27,42 +27,6 @@ class LEGONormalRun:
 		self.utils = utils
 
 	# ---------------------------------------------------------
-	# RUN FETCH
-	# ---------------------------------------------------------
-	def search_runs(self, game_id, category_id, user_id, var_filters=None):
-		"""
-		Search SRDC for runs matching game/category/user. LEGO boards
-		are often very "variable-based" so we'll often get more runs
-		than we need, so to keep things light, we'll paginate.
-		"""
-		# Build a base query, which we can then paginate against.
-		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
-		if var_filters is not None:
-			for var in var_filters:
-				for key, val in var.items():
-					# Ignore the "name" variable because that is internal.
-					if key != "name":
-						base_q += f"&var-{key}={val}"
-
-		# Paginate the results until all are found.
-		all_runs: list[Dict[str, Any]] = []
-		offset = 0
-		while True:
-			# Start at 20, then increase the offset per loop.
-			# If the batch returns nothing, break the loop.
-			q = f"{base_q}&max=20&offset={offset}"
-			batch = self.api.get(q)
-			if not batch:
-				break
-
-			# Append the runs, then increase the offset and continue.
-			all_runs.extend(batch)
-			offset += 20
-
-		# Return the full list.
-		return all_runs
-
-	# ---------------------------------------------------------
 	# LOOKUP RUN
 	# ---------------------------------------------------------
 	def lookup_lego_run(self, game: str, internal_key: str, slug: str, cat_key: str, player: str) -> SpeedRun | None:
@@ -107,7 +71,7 @@ class LEGONormalRun:
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
 		var_filters = cfg.get("variables", None)
-		runs = self.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
+		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
 		if not runs:
 			return None
 

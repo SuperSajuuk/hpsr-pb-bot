@@ -25,40 +25,6 @@ class CategoryExtension:
 		self.lb_config = lb_config
 		self.utils = utils
 
-	def search_runs(self, game_id: str, category_id: str, user_id: str, var_filters: Dict[str, str] | None = None) -> list[Dict[str, Any]]:
-		"""
-		Search SRDC for runs matching game/category/user. Also includes variable filters, if any are given.
-
-		Due to some quirks, this can return a lot of irrelevant runs we are not looking for. Consequently,
-		this will be paginated to bring back all the matching runs, which can then be filtered appropriately.
-		"""
-		# Build a base query, which we can then paginate against.
-		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
-		if var_filters is not None:
-			for var in var_filters:
-				for key, val in var.items():
-					# Ignore the "name" variable because that is internal.
-					if key != "name":
-						base_q += f"&var-{key}={val}"
-
-		# Paginate the results until all are found.
-		all_runs: list[Dict[str, Any]] = []
-		offset = 0
-		while True:
-			# Start at 20, then increase the offset per loop.
-			# If the batch returns nothing, break the loop.
-			q = f"{base_q}&max=20&offset={offset}"
-			batch = self.api.get(q)
-			if not batch:
-				break
-
-			# Append the runs, then increase the offset and continue.
-			all_runs.extend(batch)
-			offset += 20
-
-		# Return the full list.
-		return all_runs
-
 	# Resolve the Game Slug for a CE
 	# Using just the game code provided, check our
 	# local config for that code. If it's not there,
@@ -142,7 +108,7 @@ class CategoryExtension:
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)
 		ce_cat_vars = category_meta.get("variables", [])
-		runs = self.search_runs(game_obj.id, category_obj.id, user_id, ce_cat_vars)
+		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, ce_cat_vars)
 		if not runs:
 			return None
 
