@@ -15,11 +15,14 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CategoryExtension:
-	def __init__(self, api, game_map, platform_map, category_map, lb_config, utils):
+	def __init__(self, api, game_map, platform_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.category_map = category_map
+		self.category_aliases = category_aliases
+		self.board_aliases = board_aliases
+		self.token_aliases = token_aliases
 		self.lb_config = lb_config
 		self.utils = utils
 
@@ -65,6 +68,73 @@ class CategoryExtension:
 
 		# Return the game object for this category extension board.
 		return game
+
+	def process_category_extension(self, base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> (SpeedRun | None, str | None):
+		"""
+		Using the provided variables, determine if the category
+		extension is configured and whether there is a valid
+		category_board value.
+
+		If all above board, pass the data over to lookup_ce_run,
+		alongside the player and internal_key and find the run.
+
+		Returns a SpeedRun object or None.
+		"""
+		# Parse the base_game to see if we have a supported CE
+		# board in the code. If not, there is an error.
+		ce_key = self.game_map.get(base_game)
+		if not ce_key:
+			return None
+
+		# Parse the ce_key (which contains the game name) to see
+		# if it exists. If not, there is an error.
+		alias_table = self.category_aliases.get(ce_key["id"])
+		if not alias_table:
+			return None
+
+		# Check if the top board is defined in the alias list.
+		# If it isn't, the user might have provided an alternative
+		# name, which needs to be checked
+		if ce_top_board not in alias_table:
+			ce_top_board = self.token_aliases[ce_key["id"]].get(ce_top_board, None)
+			if ce_top_board is None:
+				return None
+
+		# Use the board_token (the top-level board) to find the
+		# actual internal token name (this is needed to ensure
+		# random user input always maps to the correct internal
+		# value).
+		board_token = None
+		for name, aliases in alias_table.get(ce_top_board, {}).items():
+			if ce_category_board in aliases:
+				board_token = name
+				break
+
+		# After the loop above, if this is still None, then whatever
+		# token they provided does not exist in the alias table.
+		if board_token is None:
+			return None
+
+		# Build the internal key and lookup the CE.
+		internal_key = f"{ce_top_board}_{board_token}"
+		run = self.lookup_ce_run(base_game, internal_key, player)
+
+		# Produce a clean name based on the alias value. This allows one
+		# "output" name against lots of aliases for tidiness of the
+		# board aliases.
+		alias_name = None
+		cat_alias_name = None
+		for name, aliases in self.board_aliases.items():
+			if ce_top_board in aliases:
+				alias_name = name
+				break
+		for name, aliases in self.category_map.items():
+			if ce_category_board in aliases:
+				cat_alias_name = name
+				break
+
+		# Return the run object and the alias_name produced.
+		return run, cat_alias_name, alias_name
 
 	def lookup_ce_run(self, base_game: str,	ce_category: str, player: str) -> SpeedRun | None:
 		"""

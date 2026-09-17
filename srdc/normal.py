@@ -23,9 +23,17 @@ class NormalRun:
 		self.board_slugs = board_slugs
 		self.utils = utils
 
-	# ---------------------------------------------------------
-	# LOOKUP RUN
-	# ---------------------------------------------------------
+	def process_normal_run(self, game: str, platform: str, board: str, player: str, flags: dict):
+		"""
+		This method simply produces the internal key from game and platform
+		parameters, then passes everything over to the lookup_run method.
+
+		Returns a SpeedRun object or None.
+		"""
+		internal_key = f"{game}_{platform}"
+		run = self.lookup_run(internal_key, board, player, flags)
+		return run
+
 	def lookup_run(self, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in a specific game/category.
@@ -68,7 +76,6 @@ class NormalRun:
 		# If so, capture all variables and build a var_filters list
 		# for use in the query.
 		var_filters = None
-		variable_data = None
 		active_slice = None
 		if (cfg and "variables" in cfg) or (cfg_2 and "variables" in cfg_2):
 			# All the variable data is stored in the "variables" key.

@@ -61,11 +61,39 @@ pool = redis.ConnectionPool(
 cache = caching.Caching(redis.Redis(connection_pool=pool))
 utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG)
 normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
-lg = lego.LEGONormalRun(srdc_api, lego_config.GAME_MAP, lego_config.BOARD_ALIASES, utils)
-cat_ext = ce_run.CategoryExtension(srdc_api, ce_config.GAME_MAP, config.PLATFORM_MAP, ce_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
-multirun = multi.MultiRun(srdc_api, mr_config.GAME_MAP, config.PLATFORM_MAP, mr_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)
+lg = lego.LEGONormalRun(
+	api=srdc_api,
+	game_map=lego_config.GAME_MAP,
+	category_map=lego_config.BOARD_ALIASES,
+	category_aliases=lego_config.CATEGORY_ALIASES,
+	sub_category_aliases=lego_config.SUB_CATEGORY_ALIASES,
+	token_aliases=lego_config.BOARD_TOKEN_ALIASES,
+	utils=utils
+)
+cat_ext = ce_run.CategoryExtension(
+	api=srdc_api,
+	game_map=ce_config.GAME_MAP,
+	platform_map=config.PLATFORM_MAP,
+	category_map=ce_config.SUB_CATEGORY_MAP,
+	category_aliases=ce_config.CATEGORY_ALIASES,
+	board_aliases=ce_config.BOARD_ALIASES,
+	token_aliases=ce_config.BOARD_TOKEN_ALIASES,
+	lb_config=lb_config.LEADERBOARD_CONFIG,
+	utils=utils
+)
+multirun = multi.MultiRun(
+	api=srdc_api,
+	game_map=mr_config.GAME_MAP,
+	platform_map=config.PLATFORM_MAP,
+	category_map=mr_config.SUB_CATEGORY_MAP,
+	category_aliases=mr_config.CATEGORY_ALIASES,
+	board_aliases=mr_config.BOARD_ALIASES,
+	token_aliases=mr_config.BOARD_TOKEN_ALIASES,
+	lb_config=lb_config.LEADERBOARD_CONFIG,
+	utils=utils
+)
 per_best = pb.PersonalBest(
-	srdc_api=srdc_api,
+	api=srdc_api,
 	game_map=(nm_config.GAME_MAP, ce_config.GAME_MAP, mr_config.GAME_MAP),
 	category_map=(nm_config.CATEGORY_MAP, ce_config.SUB_CATEGORY_MAP, mr_config.SUB_CATEGORY_MAP),
 	board_aliases=(ce_config.BOARD_ALIASES, mr_config.BOARD_ALIASES),
@@ -78,228 +106,6 @@ per_best = pb.PersonalBest(
 # channel_owner is always provided, but player may not be:
 def resolve_player(channel_owner: str, player: str | None) -> str:
 	return channel_owner if player is None or player.strip() == "" else player
-
-
-# Process a LEGO Games main board run.
-def process_lego_main_board(game: str, board_name: str, flags: dict, player: str):
-	# Check if the game provided is in the game map.
-	lego_key = lego_config.GAME_MAP.get(game)
-	if not lego_key:
-		return None
-
-	# Check if there is an alias table for this game.
-	alias_table = lego_config.CATEGORY_ALIASES.get(game, {})
-	if not alias_table:
-		return None
-
-	# Check if the top board is defined in the alias list.
-	# If it isn't, the user might have provided an alternative
-	# name, which needs to be checked
-	if board_name not in alias_table:
-		token_aliases = lego_config.BOARD_TOKEN_ALIASES.get(lego_key["slug"], None)
-		if token_aliases is None:
-			return None
-		for name, aliases in token_aliases.items():
-			if board_name in aliases:
-				board_name = name
-				break
-
-		# Still not found, so just exit.
-		if board_name is None:
-			return None
-
-	# Use the board_token (the top-level board) to find
-	# actual internal token name (this is needed to ensure
-	# random user input always maps to the correct internal
-	# value).
-	#
-	# If this returns None, then whatever token they provided
-	# does not exist in the alias table.
-	sub_category_board = flags.get("main_sub_category", None)
-	board_token = alias_table[board_name].get(sub_category_board, None)
-	if not board_token:
-		return None
-
-	# Build an internal key based on the values of flags.
-	is_nocut5_mode = flags.get("nocut_mode", None)
-	is_restricted = flags.get("restricted_mode", None)
-	ik_nocut_mode = ""
-	ik_restricted_mode = ""
-	scn_nocut_mode = ""
-	scn_restricted_mode = ""
-	if is_nocut5_mode is not None:
-		ik_nocut_mode = "_nocut" if is_nocut5_mode else "_standard"
-		scn_nocut_mode = " N0CUT5" if is_nocut5_mode else " Standard"
-	if is_restricted is not None:
-		ik_restricted_mode = "_restricted" if is_restricted else "_unrestricted"
-		scn_restricted_mode = " Restricted" if is_restricted else " Unrestricted"
-
-	internal_key = f"{board_name}_{sub_category_board}{ik_nocut_mode}{ik_restricted_mode}"
-	run = lg.lookup_lego_run(game, internal_key, lego_key["slug"], board_name, player)
-
-	# Produce a clean category name based on the alias value. This
-	# allows one "output" name against lots of aliases for tidiness
-	# of the board aliases.
-	alias_name = None
-	for name, aliases in lego_config.BOARD_ALIASES[game].items():
-		if board_name in aliases:
-			alias_name = name
-			break
-
-	# Unlike other boards, cat_clean_name can be derived from user flags
-	sub_cat_name = None
-	for name, aliases in lego_config.SUB_CATEGORY_ALIASES[game].items():
-		if sub_category_board in aliases:
-			sub_cat_name = name
-			break
-
-	# Produce the necessary alias name for the attempted category
-	# solely based on various flags.
-	new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}{scn_restricted_mode}"
-	return run, new_sub_cat_name, alias_name
-
-
-# Process a normal run.
-def process_normal_run(game: str, platform: str, board: str, player: str, flags: dict):
-	"""
-	Call SRDC via the lookup_run method.
-	"""
-	# Produce an internal key and search SRDC.
-	# Return the value of lookup_run, directly to the caller.
-	internal_key = f"{game}_{platform}"
-	run = normal.lookup_run(internal_key, board, player, flags)
-	return run
-
-
-def process_multi_run(base_game: str, mr_board: str, mr_category_board: str, player: str) -> (SpeedRun | None, str | None):
-	"""
-	Using the provided variables, determine if the multi-run board
-	is configured and whether there is a valid mr_board value.
-
-	If all above board, pass the data over to lookup_ce_run,
-	alongside the player and internal_key and find the run.
-
-	Returns a SpeedRun object or None.
-	"""
-	# Parse the base_game to see if we have a supported multi-run
-	# board in the code. If not, there is an error.
-	mr_key = mr_config.GAME_MAP.get(base_game)
-	if not mr_key:
-		return None
-
-	# Parse the mr_key (which contains the game name) to see
-	# if it exists. If not, there is an error.
-	alias_table = mr_config.CATEGORY_ALIASES.get(mr_key["id"])
-	if not alias_table:
-		return None
-
-	# Check if the top board is defined in the alias list.
-	# If it isn't, the user might have provided an alternative
-	# name, which needs to be checked
-	if mr_board not in alias_table:
-		mr_board = mr_config.BOARD_TOKEN_ALIASES[mr_key["id"]].get(mr_board, None)
-		if mr_board is None:
-			return None
-
-	# Use the board_token (the top-level board) to find
-	# actual internal token name (this is needed to ensure
-	# random user input always maps to the correct internal
-	# value).
-	#
-	# If this returns None, then whatever token they provided
-	# does not exist in the alias table.
-	board_token = alias_table[mr_board].get(mr_category_board, None)
-	if board_token is None:
-		return None
-
-	# Build the internal key and lookup the multi-run.
-	internal_key = f"{mr_board}_{board_token}"
-	run = multirun.lookup_multi_run(base_game, internal_key, player)
-
-	# Produce a clean name based on the alias value. This allows one
-	# "output" name against lots of aliases for tidiness of the
-	# board aliases.
-	alias_name = None
-	cat_clean_name = None
-	for name, aliases in mr_config.BOARD_ALIASES.items():
-		if mr_board in aliases:
-			alias_name = name
-			break
-	for name, aliases in mr_config.SUB_CATEGORY_MAP.items():
-		if mr_category_board in aliases:
-			cat_clean_name = name
-			break
-
-	# Return the run object and the alias_name produced.
-	return run, cat_clean_name, alias_name
-
-
-def process_category_extension(base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> (SpeedRun | None, str | None):
-	"""
-	Using the provided variables, determine if the category
-	extension is configured and whether there is a valid
-	category_board value.
-
-	If all above board, pass the data over to lookup_ce_run,
-	alongside the player and internal_key and find the run.
-
-	Returns a SpeedRun object or None.
-	"""
-	# Parse the base_game to see if we have a supported CE
-	# board in the code. If not, there is an error.
-	ce_key = ce_config.GAME_MAP.get(base_game)
-	if not ce_key:
-		return None
-
-	# Parse the ce_key (which contains the game name) to see
-	# if it exists. If not, there is an error.
-	alias_table = ce_config.CATEGORY_ALIASES.get(ce_key["id"])
-	if not alias_table:
-		return None
-
-	# Check if the top board is defined in the alias list.
-	# If it isn't, the user might have provided an alternative
-	# name, which needs to be checked
-	if ce_top_board not in alias_table:
-		ce_top_board = ce_config.BOARD_TOKEN_ALIASES[ce_key["id"]].get(ce_top_board, None)
-		if ce_top_board is None:
-			return None
-
-	# Use the board_token (the top-level board) to find the
-	# actual internal token name (this is needed to ensure
-	# random user input always maps to the correct internal
-	# value).
-	board_token = None
-	for name, aliases in alias_table.get(ce_top_board, {}).items():
-		if ce_category_board in aliases:
-			board_token = name
-			break
-
-	# After the loop above, if this is still None, then whatever
-	# token they provided does not exist in the alias table.
-	if board_token is None:
-		return None
-
-	# Build the internal key and lookup the CE.
-	internal_key = f"{ce_top_board}_{board_token}"
-	run = cat_ext.lookup_ce_run(base_game, internal_key, player)
-
-	# Produce a clean name based on the alias value. This allows one
-	# "output" name against lots of aliases for tidiness of the
-	# board aliases.
-	alias_name = None
-	cat_alias_name = None
-	for name, aliases in ce_config.BOARD_ALIASES.items():
-		if ce_top_board in aliases:
-			alias_name = name
-			break
-	for name, aliases in ce_config.SUB_CATEGORY_MAP.items():
-		if ce_category_board in aliases:
-			cat_alias_name = name
-			break
-
-	# Return the run object and the alias_name produced.
-	return run, cat_alias_name, alias_name
 
 
 # Parse the list of extra data in the arguments for handling
@@ -422,12 +228,12 @@ def latest_run(owner, game, platform, board, args):
 		case _ if game in ("ce", "catext"):
 			# This is a category extension: pass everything to
 			# the processor and store the result in a variable.
-			result, cat_clean_name, alias_name = process_category_extension(platform, board, flags["ce_board"], player)
+			result, cat_clean_name, alias_name = cat_ext.process_category_extension(platform, board, flags["ce_board"], player)
 			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi", "mr"):
 			# This is a multi-run: pass everything to
 			# the processor and store the result in a variable.
-			result, cat_clean_name, alias_name = process_multi_run(platform, board, flags["mr_board"], player)
+			result, cat_clean_name, alias_name = multirun.process_multi_run(platform, board, flags["mr_board"], player)
 			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case "lego":
 			# This is a LEGO main-board game.
@@ -458,7 +264,7 @@ def latest_run(owner, game, platform, board, args):
 				return f"Unknown category/board: '{board}'.  Refer to the docs for the supported categories: {config.COMMAND_USAGE_DOC}", 400
 
 			# Process the data and return SpeedRun or None.
-			result = process_normal_run(game, platform, board, player, flags)
+			result = normal.process_normal_run(game, platform, board, player, flags)
 			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
 
 	# Check if a run object was returned, or if it is None.
@@ -632,4 +438,9 @@ def timeout_error(error):
 
 
 if __name__ == "__main__":
-	app.run()
+	try:
+		prod_mode = int(os.getenv("PRODUCTION_MODE"))
+		debug_mode = False if prod_mode > 0 else True
+	except ValueError:
+		debug_mode = False
+	app.run(debug=debug_mode)

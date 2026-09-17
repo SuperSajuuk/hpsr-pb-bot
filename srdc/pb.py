@@ -18,8 +18,8 @@ import datetime
 # API for a Personal Best from a single user.
 # This is used by !pb only.
 class PersonalBest:
-	def __init__(self, srdc_api, game_map, category_map, board_aliases, board_slugs, utils):
-		self.api = srdc_api
+	def __init__(self, api, game_map, category_map, board_aliases, board_slugs, utils):
+		self.api = api
 		self.nm_game_map, self.ce_game_map, self.mr_game_map = game_map
 		self.nm_category_map, self.ce_category_map, self.mr_category_map = category_map
 		self.ce_board_aliases, self.mr_board_aliases = board_aliases

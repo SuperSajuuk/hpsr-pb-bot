@@ -16,11 +16,14 @@ import srcomapi.datatypes as dt
 # API for a Multirun submission.
 # This is used by !run only.
 class MultiRun:
-	def __init__(self, api, game_map, platform_map, category_map, lb_config, utils):
+	def __init__(self, api, game_map, platform_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.category_map = category_map
+		self.category_aliases = category_aliases
+		self.board_aliases = board_aliases
+		self.token_aliases = token_aliases
 		self.lb_config = lb_config
 		self.utils = utils
 
@@ -66,6 +69,68 @@ class MultiRun:
 
 		# Return the game object for this multi-run board.
 		return game
+
+	def process_multi_run(self, base_game: str, mr_board: str, mr_category_board: str, player: str) -> (SpeedRun | None, str | None):
+		"""
+		Using the provided variables, determine if the multi-run board
+		is configured and whether there is a valid mr_board value.
+
+		If all above board, pass the data over to lookup_ce_run,
+		alongside the player and internal_key and find the run.
+
+		Returns a SpeedRun object or None.
+		"""
+		# Parse the base_game to see if we have a supported multi-run
+		# board in the code. If not, there is an error.
+		mr_key = self.game_map.get(base_game)
+		if not mr_key:
+			return None
+
+		# Parse the mr_key (which contains the game name) to see
+		# if it exists. If not, there is an error.
+		alias_table = self.category_aliases.get(mr_key["id"])
+		if not alias_table:
+			return None
+
+		# Check if the top board is defined in the alias list.
+		# If it isn't, the user might have provided an alternative
+		# name, which needs to be checked
+		if mr_board not in alias_table:
+			mr_board = self.token_aliases[mr_key["id"]].get(mr_board, None)
+			if mr_board is None:
+				return None
+
+		# Use the board_token (the top-level board) to find
+		# actual internal token name (this is needed to ensure
+		# random user input always maps to the correct internal
+		# value).
+		#
+		# If this returns None, then whatever token they provided
+		# does not exist in the alias table.
+		board_token = alias_table[mr_board].get(mr_category_board, None)
+		if board_token is None:
+			return None
+
+		# Build the internal key and lookup the multi-run.
+		internal_key = f"{mr_board}_{board_token}"
+		run = self.lookup_multi_run(base_game, internal_key, player)
+
+		# Produce a clean name based on the alias value. This allows one
+		# "output" name against lots of aliases for tidiness of the
+		# board aliases.
+		alias_name = None
+		cat_clean_name = None
+		for name, aliases in self.board_aliases.items():
+			if mr_board in aliases:
+				alias_name = name
+				break
+		for name, aliases in self.category_map.items():
+			if mr_category_board in aliases:
+				cat_clean_name = name
+				break
+
+		# Return the run object and the alias_name produced.
+		return run, cat_clean_name, alias_name
 
 	def lookup_multi_run(self, base_game: str, mr_category: str, player: str) -> SpeedRun | None:
 		"""
