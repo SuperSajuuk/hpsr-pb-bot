@@ -108,7 +108,6 @@ class NormalRun:
 
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
-		print(var_filters)
 		runs = self.utils.search_runs(game_obj.id, category_obj.id, user_id, var_filters)
 		if not runs:
 			return None
