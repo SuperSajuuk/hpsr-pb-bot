@@ -19,6 +19,8 @@
 # Import the core packages
 import flask
 import srcomapi
+import redis
+import os
 
 # Import the config data.
 import configs.ce as ce_config
@@ -30,22 +32,32 @@ import configs.generic as config
 # import config
 
 # Import everything else that is needed
-import utils
+import utils.func as func
 import urllib.parse as url_parse
 import srdc.normal as normal_run
 import srdc.ce as ce_run
 import srdc.pb as pb
 import srdc.multi as multi
 import srdc.lego as lego
-from model import SpeedRun
 
 # Instantiate Flask and the SRDC API
 app = flask.Flask(__name__)
 srdc_api = srcomapi.SpeedrunCom()
 srdc_api.debug = 1
 
+# Configure Redis client support with a connection pool.
+pool = redis.ConnectionPool(
+	host=os.getenv("REDIS_HOST"),
+	port=int(os.getenv("REDIS_PORT")),
+	db=int(os.getenv("REDIS_DATABASE")),
+	username=os.getenv("REDIS_USERNAME"),
+	password=os.getenv("REDIS_PASSWORD"),
+	max_connections=8
+)
+redis_client = redis.Redis(connection_pool=pool, decode_responses=True)
+
 # Instantiate all our internal code for powering the actual program.
-utils = utils.Utilities(srdc_api, lb_config.LEADERBOARD_CONFIG)
+utils = func.Utilities(srdc_api, lb_config.LEADERBOARD_CONFIG)
 normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
 lg = lego.LEGONormalRun(srdc_api, lego_config.GAME_MAP, lego_config.BOARD_ALIASES, utils)
 cat_ext = ce_run.CategoryExtension(srdc_api, ce_config.GAME_MAP, config.PLATFORM_MAP, ce_config.CATEGORY_ALIASES, lb_config.LEADERBOARD_CONFIG, utils)

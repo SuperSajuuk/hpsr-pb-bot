@@ -7,10 +7,7 @@
 # are the most common lookups we'll do in the code, as it's covering
 # the main boards. CE's are to be handled in ce.py and multiruns will
 # be in multi.py
-from model import SpeedRun
-import datetime
-import configs.generic as config
-from typing import Dict
+from utils.model import SpeedRun
 
 
 # NormalRun

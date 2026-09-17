@@ -9,10 +9,7 @@
 # is due to the required number of parameters used on such boards: these
 # include things like NOCUT5, Solo/Co-Op, Restricted/Unrestricted and so
 # on.
-from model import SpeedRun
-import datetime
-import configs.generic as config
-from typing import Dict
+from utils.model import SpeedRun
 
 
 # LEGONormalRun

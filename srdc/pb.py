@@ -9,10 +9,8 @@
 # by the endpoint on SRDC, this is often slower because it has to be
 # heavily filtered. In normal cases, it is better to look up runs directly
 # using the /run/ route.
-from model import SpeedRun
+from utils.model import SpeedRun
 import datetime
-from typing import Dict
-import srcomapi.datatypes as dt
 
 
 # PersonalBest

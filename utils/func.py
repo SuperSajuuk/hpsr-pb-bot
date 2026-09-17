@@ -8,7 +8,7 @@
 # methods being duplicated several times.
 import srcomapi.datatypes as dt
 import datetime
-from model import SpeedRun
+from utils.model import SpeedRun
 
 
 class Utilities:

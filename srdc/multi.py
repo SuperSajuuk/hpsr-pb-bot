@@ -7,11 +7,8 @@
 # the "Multi-game" tag on them. Should a user provide a game which we
 # do not have a hard-coded value for, the system will look up SRDC and
 # then fail if no board exists.
-from model import SpeedRun
+from utils.model import SpeedRun
 import srcomapi.datatypes as dt
-import datetime
-import config
-from typing import Any, Dict
 
 
 # MultiRun

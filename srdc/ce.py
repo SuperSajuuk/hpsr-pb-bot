@@ -6,10 +6,8 @@
 # such boards have the "Category Extension" tag on them. Should a
 # user provide a game which we do not have a hard-coded value for,
 # the system will look up SRDC and then fail if no board exists.
-from model import SpeedRun
+from utils.model import SpeedRun
 import srcomapi.datatypes as dt
-import datetime
-from typing import Any, Dict
 
 
 # CategoryExtension
@@ -72,6 +70,8 @@ class CategoryExtension:
 		"""
 		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
 		but with CE-specific variables.
+
+		Returns a SpeedRun object or None if nothing was found.
 		"""
 		# Find the required Slug URL for this category extension board,
 		# then resolve the slug to find the game object.
