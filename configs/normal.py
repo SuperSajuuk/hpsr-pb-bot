@@ -19,6 +19,7 @@ GAME_MAP = {
 	"hp6": "Harry Potter and the Half Blood Prince",
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
+	"qwc": "Harry Potter: Quidditch World Cup",
 
 	# Selection of other games. Extend appropriately.
 	"dbb": "Disney's Brother Bear"
@@ -35,13 +36,19 @@ CATEGORY_MAP = {
 	"Any% No EDS": ["noeds", "anynoeds"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
 	"Warpless": ["wl", "warpless"],
-	"Boostless": ["bl", "boostless"]
+	"Boostless": ["bl", "boostless"],
+	"Beat Hogwarts Cup": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"],
+	"Beat World Cup": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"],
+	"Beat the Tutorial": ["btt", "tutorial", "beattutorial", "beatthetutorial"]
 }
 
 # Board slug mapping. This is used to map the values produced by
 # concatenating platform and game in the code. The ordering of the
 # keys is to ensure they are grouped by platform commonalities for
 # easier reading.
+#
+# TO-DO: Make board slugs the key name, with internal keys being the
+# values in a list of aliases.
 BOARD_GAME_SLUG = {
 	"hp1_ps1": "hp1ps1",
 	"hp2_ps1": "hp2ps1",
@@ -83,5 +90,10 @@ BOARD_GAME_SLUG = {
 	"hp6_ds": "hp6ds",
 	"hp7.1_ds": "hp7p1ds",
 	"hp7.2_ds": "hp7p2ds",
+	"qwc_pc": "hpquidditch",
+	"qwc_ps2": "hpquidditch",
+	"qwc_gcn": "hpquidditch",
+	"qwc_xbox": "hpquidditch",
+	"qwc_gba": "quidditch_gba",
 	"dbb_pc": "disneys_brother_bear"
 }

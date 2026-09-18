@@ -126,9 +126,9 @@ def extract_flags(tokens: list[str]) -> dict:
 	# Set default flag values
 	# These will then be used by the program to decide certain things
 	flags = {
-		"emulator": False, "player": None,
-		"ce_board": None, "mr_board": None,
-		"lego_md": {},
+		"emulator": False, "world_record": False,
+		"player": None,	"ce_board": None,
+		"mr_board": None, "lego_md": {},
 		"additional_metadata": {}
 	}
 	key_num = 1
@@ -174,6 +174,13 @@ def extract_flags(tokens: list[str]) -> dict:
 			p_name = token.split("=")[1]
 			flags["player"] = p_name if len(p_name) > 0 else None
 
+		# Check if the token contains either --world-record or
+		# the alias --wr. This tells the system only to look
+		# for the current world record run. For now, this is only
+		# usable in the /il/ route.
+		if token in ["--world-record", "--wr"]:
+			flags["world_record"] = True
+
 		# Check if the token is a string connected to LEGO boards
 		# At the moment, this is a fairly restricted list, but plan
 		# is to make this handler better in the future.
@@ -196,8 +203,40 @@ def extract_flags(tokens: list[str]) -> dict:
 	return flags
 
 
+# Given a specific player, game, level and category, return either
+# - the requested players' level submission for game and category OR
+# - return the current world record IL submission for game and category.
+#
+# The IL route borrows heavily from latest_run, but with tweaks to accommodate
+# that the IL system is much more primitive and doesn't have as many drilldown
+# variables compared to regular boards.
+@app.route('/il/<owner>/<game>/<platform>/<level>/<category>/', defaults={'args': None})
+@app.route('/il/<owner>/<game>/<platform>/<level>/<category>/<path:args>')
+def individual_level(owner, game, platform, level, category, args):
+	# I can't imagine that these will be in upper-case,
+	# but just make sure everything is lower-case.
+	owner = owner.strip().lower()
+	game = game.strip().lower()
+	platform = platform.strip().lower()
+	level = level.strip().lower()
+	category = category.strip().lower()
+
+	# Parse everything in the arguments, if anything is there.
+	extras = split_extras(args)
+	flags = extract_flags(extras)
+	is_wr = flags.get("world_record", False)
+	runner_override = flags.get("player", None)
+
+	# Resolve the player. This will always be the channel owner,
+	# unless the player flag has been set.
+	player = runner_override if runner_override is not None else owner
+	player = resolve_player(owner, player)
+	return "This endpoint is not implemented yet.", 500
+
+
 # Given a specific player, game and category, return the most
 # recently verified run that the player has submitted.
+#
 # This code is much more efficient than parsing out every PB
 # the user has submitted, particularly if you just want to look
 # at one game.

@@ -18,7 +18,7 @@ class Utilities:
 		self.lb_config = lb_config
 		self.game_code_cache = {}
 
-	def get_game_code(self, game_key: str):
+	def get_game_code(self, game_key: str, redis_key: str = "categories", type_filter: str = "per-game"):
 		"""
 		Returns details about the game needing to be searched for.
 
@@ -26,13 +26,18 @@ class Utilities:
 		stored there will be returned. If nothing was found, then SRDC
 		will be queried for a result. That result will be cached in Redis
 		to remove the requirement to query further.
+
+		The parameters redis_key and type_filter are optional values which
+		determine if the system should look for IL categories or the main
+		board categories. If these are not provided, the code will just assume
+		you're looking for the main boards.
 		"""
 		# Check to see if the game exists in Redis
 		key = self.cache.get_key(f"run-finder:game:{game_key}")
 		if key is not None:
 			# Check if the categories data exists. If it doesn't, then it may have been
 			# evicted automatically, so we would have to re-query SRDC anyway.
-			cats = self.cache.get_hash_data(f"run-finder:game:{game_key}:categories")
+			cats = self.cache.get_hash_data(f"run-finder:game:{game_key}:{redis_key}")
 			if cats:
 				return key, cats
 
@@ -43,10 +48,10 @@ class Utilities:
 
 		# Store the game ID and category list in Redis and return those values.
 		game_obj = result[0]
-		cats = {x.id: x.name for x in game_obj.categories}
+		cats = {x.id: x.name for x in game_obj.categories if x.type == type_filter}
 		self.cache.create_key(f"run-finder:game:{game_key}", game_obj.id)
-		self.cache.create_multiple_in_hash(f"run-finder:game:{game_key}:categories", cats)
-		self.cache.key_expiry(f"run-finder:game:{game_key}:categories", 604800)
+		self.cache.create_multiple_in_hash(f"run-finder:game:{game_key}:{redis_key}", cats)
+		self.cache.key_expiry(f"run-finder:game:{game_key}:{redis_key}", 604800)
 		return game_obj.id, cats
 
 	def get_user_id(self, username: str) -> str:
@@ -63,7 +68,7 @@ class Utilities:
 		if not result:
 			raise ValueError(f"User not found on SRDC: {username}")
 
-		# Cache the users' ID so we don't have to query SRDC again
+		# Cache the users' ID, so we don't have to query SRDC again
 		self.cache.create_key(f"run-finder:users:{username}", result[0].id)
 		return result[0].id
 
