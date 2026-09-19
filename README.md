@@ -38,12 +38,12 @@ text that is below:
 
 !pb:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1 nogame}/${2 noplatform}/${pathencode ${3 noboard}}/${urlencode ${fromindex4}}}
+$(customapi https://<your-render-instance-name>.onrender.com/pb/$(channel)/$(1 nogame)/$(2 noplatform)/$(pathencode $(3 noboard))/$(urlencode $(fromindex4)))
 ```
 
 !run:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1 nogame}/${2 noplatform}/${pathencode ${3 noboard}}/${urlencode ${fromindex4}}}
+$(customapi https://<your-render-instance-name>.onrender.com/run/$(channel)/$(1 nogame)/$(2 noplatform)/$(pathencode $(3 noboard))/$(urlencode $(fromindex4)))
 ```
 
 ## Usage
