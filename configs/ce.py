@@ -38,8 +38,6 @@ SUB_CATEGORY_MAP = {
 	"All Chests": ["ac", "allchests"],
 	"All Minigames": ["amg", "allmg", "allminigames"],
 	"All Portraits": ["ap", "allp", "allportraits"],
-	"All Requirements": ["allreq", "allreqs", "allrequirements"],
-	"All Shields": ["allshields"],
 	"All Symbols": ["as", "allsymbols"],
 	"Chess%": ["chess", "chess%"],
 	"Potions Rush": ["pr", "potions", "potionsrush"],

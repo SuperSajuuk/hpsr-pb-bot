@@ -35,11 +35,15 @@ CATEGORY_MAP = {
 	"No Major Skips": ["nms", "nomajorskips"],
 	"Any% No EDS": ["noeds", "anynoeds", "any%noeds"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
+	"All Requirements": ["allreq", "allreqs", "allrequirements"],
+	"All Crests": ["ac", "allcrests"],
 	"Warpless": ["wl", "warpless"],
 	"Boostless": ["bl", "boostless"],
+	"All Shields": ["as", "allshields"],
 	"Beat Hogwarts Cup": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"],
 	"Beat World Cup": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"],
-	"Beat the Tutorial": ["btt", "tutorial", "beattutorial", "beatthetutorial"]
+	"Beat the Tutorial": ["btt", "tutorial", "beattutorial", "beatthetutorial"],
+	"NG+": ["ng", "ngplus", "newgameplus", "ng+"]
 }
 
 # Board slug mapping. This is used to map the values produced by
