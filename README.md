@@ -32,6 +32,11 @@ replace `${channel}` with the appropriate SRDC username.
 !command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogame}/${2|noplatform}/${pathescape ${3|noboard}}/${queryescape ${4:}}}
 ```
 
+!il:
+```
+!command add !il ${customapi.https://<your-render-instance-name>.onrender.com/il/${channel}/${1|nogame}/${2|noplatform}/${3|nolevel}/${pathescape ${4|noboard}}/${queryescape ${5:}}}
+```
+
 ### Fossabot
 FossaBot commands can be managed from their web interface, simply create two commands with the response being the 
 text that is below:
@@ -44,6 +49,11 @@ $(customapi https://<your-render-instance-name>.onrender.com/pb/$(channel)/$(1 n
 !run:
 ```
 $(customapi https://<your-render-instance-name>.onrender.com/run/$(channel)/$(1 nogame)/$(2 noplatform)/$(pathencode $(3 noboard))/$(urlencode $(fromindex4)))
+```
+
+!il:
+```
+$(customapi https://<your-render-instance-name>.onrender.com/il/$(channel)/$(1 nogame)/$(2 noplatform)/$(3 nolevel)/$(pathencode $(4 noboard))/$(urlencode $(fromindex5)))
 ```
 
 ## Usage
