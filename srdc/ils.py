@@ -13,13 +13,14 @@ from utils.model import SpeedRun
 # API for an individual level submission. This is
 # used by !run only.
 class IndividualLevel:
-	def __init__(self, api, game_map, platform_map, levels_map, category_map, board_slugs, utils):
+	def __init__(self, api, game_map, platform_map, levels_map, category_map, board_slugs, ik_mapping, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.levels_map = levels_map
 		self.category_map = category_map
 		self.board_slugs = board_slugs
+		self.ik_mapping = ik_mapping
 		self.utils = utils
 
 	def search_il_wrs(self, game_id: str):
@@ -46,15 +47,23 @@ class IndividualLevel:
 		# Return the full list.
 		return all_runs
 
-	def process_il(self, game: str, platform: str, level: str, category: str, player: str, flags: dict):
+	def process_il(self, game: str, platform: str, level: str, category: str, player: str, is_wr: bool):
 		"""
 		This method will capture all the requirements of finding an IL, which is
 		then passed over to lookup_il to find it.
 
 		Returns a SpeedRun object or None.
 		"""
-		# Check if the internal key is in the levels_map.
+		# Normalise the internal key, in case game/platform
+		# is for a different platform. If this key isn't in
+		# the alias list, we just use it as is.
 		internal_key = f"{game}_{platform}"
+		for ik, aliases in self.ik_mapping.items():
+			if internal_key in aliases:
+				internal_key = ik
+				break
+
+		# Check if this internal key is in the aliases map.
 		level_aliases = self.levels_map.get(internal_key)
 		if not level_aliases:
 			raise ValueError("This combination of game and platform does not map to any configuration. Perhaps this game isn't supported in config yet, or it doesn't have any ILs supported.")
@@ -86,7 +95,7 @@ class IndividualLevel:
 
 		# If the flag "world_record" has been set, lookup only the WR on these parameters.
 		# Otherwise, look up the users' specific IL submission.
-		if flags.get("world_record", False):
+		if is_wr:
 			run = self.lookup_il_world_record(internal_key, ind_level_id, category_meta)
 		else:
 			run = self.lookup_il(internal_key, ind_level_id, category_meta, player)

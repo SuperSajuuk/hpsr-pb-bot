@@ -68,6 +68,7 @@ il = ind_lvl.IndividualLevel(
 	levels_map=il_config.LEVELS_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	board_slugs=nm_config.BOARD_GAME_SLUG,
+	ik_mapping=il_config.INTERNAL_KEY_MAPPING,
 	utils=utils
 )
 lg = lego.LEGONormalRun(
@@ -243,14 +244,14 @@ def individual_level(owner, game, platform, level, category, args):
 
 	# Hand over results processing to the processor. This will either
 	# return a SpeedRun object or None, if nothing was found.
-	result, il_cat_name = il.process_il(game, platform, level, category, player, flags)
+	result, il_cat_name = il.process_il(game, platform, level, category, player, is_wr)
 	if not result:
 		return "No individual level submission could be found with these parameters."
 
 	# Output the relevant text, after minor processing.
 	# Note that the output will be dependent on the flag "--world-record".
 	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {il_cat_name})'
-	if flags.get("world_record", False):
+	if is_wr:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
 
