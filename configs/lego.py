@@ -23,20 +23,20 @@ GAME_MAP = {
 # user input choices to display the appropriate label.
 BOARD_ALIASES = {
 	"hp14": {
-		"Any%": ["any"],
+		"Any%": ["any", "any%"],
 		"No Levels Early": ["nle", "noearly", "noearlylevels", "nolevelsearly"],
 		"Free Play": ["fp", "freeplay"],
 		"Replay Story": ["rs", "replay", "replaystory"],
 		"All Crests": ["ac", "allcrests"],
-		"100%": ["100", "hundo"]
+		"100%": ["100", "hundo", "100%"]
 	},
 	"hp57": {
-		"Any%": ["any"],
+		"Any%": ["any", "any%"],
 		"No Levels Early": ["nle", "noearly", "noearlylevels", "nolevelsearly"],
 		"Free Play": ["fp", "freeplay"],
 		"Replay Story": ["rs", "replay", "replaystory"],
 		"All Crests": ["ac", "allcrests"],
-		"100%": ["100", "hundo"]
+		"100%": ["100", "hundo", "100%"]
 	}
 }
 

@@ -17,8 +17,8 @@ GAME_MAP = {
 # Sub-category mapping.
 # This refers to the second board under the top level board.
 SUB_CATEGORY_MAP = {
-	"Any%": ["any"],
-	"100%": ["100", "hundo"],
+	"Any%": ["any", "any%"],
+	"100%": ["100", "hundo", "100%"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
 	"No Major Skips": ["nms", "nomajorskips"]
 }
@@ -68,14 +68,14 @@ BOARD_TOKEN_ALIASES = {
 # a specific sub-board for a category extension.
 CATEGORY_ALIASES = {
 	"hpmulti": {
-		"pctri": {"any": "any", "100": "100", "hundo": "100", "awc": "awc", "allwizardcards": "awc"},
-		"7pcduo": {"any": "any", "100": "100", "hundo": "100"},
-		"pcocto": {"any": "any", "100": "100", "hundo": "100"},
-		"ps1duo": {"any": "any", "100": "100", "hundo": "100", "nms": "nms", "nomajorskips": "nms"},
-		"6thgentri": {"any": "any", "100": "100", "hundo": "100"},
-		"gbcduo": {"any": "any", "100": "100", "hundo": "100"},
-		"gbapenta": {"any": "any", "100": "100", "hundo": "100"},
-		"hhocto": {"any": "any", "100": "100", "hundo": "100"},
-		"fs": {"any": "any", "100": "100", "hundo": "100"}
+		"pctri": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100", "awc": "awc", "allwizardcards": "awc"},
+		"7pcduo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"pcocto": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"ps1duo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100", "nms": "nms", "nomajorskips": "nms"},
+		"6thgentri": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"gbcduo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"gbapenta": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"hhocto": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
+		"fs": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"}
 	}
 }

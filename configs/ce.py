@@ -21,7 +21,7 @@ GAME_MAP = {
 # of each key is a list containing aliases that get mapped by
 # user input.
 SUB_CATEGORY_MAP = {
-	"100% Glitchless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
+	"100% Glitchless": ["100gless", "hundogless", "100%gless", "100glitchless", "hundoglitchless", "100%glitchless"],
 	"AWC Glitchless": ["awcgless", "awcglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
 	"Boostless": ["bl", "boostless"],
 	"Cutscene%": ["cs", "cutscene", "cutscene%"],
@@ -30,17 +30,18 @@ SUB_CATEGORY_MAP = {
 	"High Jump": ["hj", "highjump"],
 	"Jumpless": ["jl", "jumpless"],
 	"Lowcast": ["lc", "lowcast"],
-	"NG+": ["ng", "ngplus", "newgameplus"],
+	"NG+": ["ng", "ngplus", "newgameplus", "ng+"],
 	"No Major Glitches": ["nmg", "nomajorglitches"],
 	"All Vanishing Cards - 1P": ["avc1p", "allvanishingcards1p", "avc1player", "allvanishingcards1player"],
 	"All Vanishing Cards - 2P": ["avc2p", "allvanishingcards2p", "avc2player", "allvanishingcards2player", "avc2players", "allvanishingcards2players"],
 	"All Vanishing Cards - 3P": ["avc3p", "allvanishingcards3p", "avc3player", "allvanishingcards3player", "avc3players", "allvanishingcards3players"],
+	"All Chests": ["ac", "allchests"],
 	"All Minigames": ["amg", "allmg", "allminigames"],
 	"All Portraits": ["ap", "allp", "allportraits"],
 	"All Requirements": ["allreq", "allreqs", "allrequirements"],
 	"All Shields": ["allshields"],
 	"All Symbols": ["as", "allsymbols"],
-	"Chess%": ["chess"],
+	"Chess%": ["chess", "chess%"],
 	"Potions Rush": ["pr", "potions", "potionsrush"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
 	"Superspeed": ["ss", "superspeed"],
@@ -65,22 +66,22 @@ SUB_CATEGORY_MAP = {
 	"HP6 DS": ["hp6ds", "6ds"],
 	"HP7.1 DS": ["hp71ds", "71ds"],
 	"HP7.2 DS": ["hp72ds", "72ds"],
-	"HP1 Any%": ["hp1any", "1any"],
-	"HP2 Any%": ["hp2any", "2any"],
-	"HP3 Any%": ["hp3any", "3any"],
-	"HP4 Any%": ["hp4any", "4any"],
-	"HP5 Any%": ["hp5any", "5any"],
-	"HP6 Any%": ["hp6any", "6any"],
-	"HP7.1 Any%": ["hp71any", "71any"],
-	"HP7.2 Any%": ["hp72any", "72any"],
-	"HP1 100%": ["hp1100", "hp1hundo", "1100", "1hundo"],
-	"HP2 100%": ["hp2100", "hp2hundo", "2100", "2hundo"],
-	"HP3 100%": ["hp3100", "hp3hundo", "3100", "3hundo"],
-	"HP4 100%": ["hp4100", "hp4hundo", "4100", "4hundo"],
-	"HP5 100%": ["hp5100", "hp5hundo", "5100", "5hundo"],
-	"HP6 100%": ["hp6100", "hp6hundo", "6100", "6hundo"],
-	"HP7.1 100%": ["hp71100", "hp71hundo", "71100", "71hundo"],
-	"HP7.2 100%": ["hp72100", "hp72hundo", "72100", "72hundo"],
+	"HP1 Any%": ["hp1any", "hp1any%", "1any", "1any%"],
+	"HP2 Any%": ["hp2any", "hp2any%", "2any", "2any%"],
+	"HP3 Any%": ["hp3any", "hp3any%", "3any", "3any%"],
+	"HP4 Any%": ["hp4any", "hp4any%", "4any", "4any%"],
+	"HP5 Any%": ["hp5any", "hp5any%", "5any", "5any%"],
+	"HP6 Any%": ["hp6any", "hp6any%", "6any", "6any%"],
+	"HP7.1 Any%": ["hp71any", "hp71any%", "71any", "71any%"],
+	"HP7.2 Any%": ["hp72any", "hp72any%", "72any", "72any%"],
+	"HP1 100%": ["hp1100", "hp1100%", "hp1hundo", "1100", "1100%", "1hundo"],
+	"HP2 100%": ["hp2100", "hp2100%", "hp2hundo", "2100", "2100%", "2hundo"],
+	"HP3 100%": ["hp3100", "hp3100%", "hp3hundo", "3100", "3100%", "3hundo"],
+	"HP4 100%": ["hp4100", "hp4100%", "hp4hundo", "4100", "4100%", "4hundo"],
+	"HP5 100%": ["hp5100", "hp5100%", "hp5hundo", "5100", "5100%", "5hundo"],
+	"HP6 100%": ["hp6100", "hp6100%", "hp6hundo", "6100", "6100%", "6hundo"],
+	"HP7.1 100%": ["hp71100", "hp71100%", "hp71hundo", "71100", "71100%", "71hundo"],
+	"HP7.2 100%": ["hp72100", "hp72100%", "hp72hundo", "72100", "72100%", "72hundo"],
 	"Hogwarts Challenge": ["hc", "hogwartschallenge"],
 	"Wizarding World": ["ww", "wizardingworld"]
 }
@@ -95,7 +96,7 @@ BOARD_ALIASES = {
 	"5PC": ["5pc", "hp5pc"],
 	"6PC": ["6pc", "hp6pc"],
 	"Single Year": ["sy", "singleyear"],
-	"Insane%": ["insane", "ins"],
+	"Insane%": ["insane", "ins", "insane%"],
 	"Multiruns": ["mr", "hpmr", "multiruns", "hpmultiruns"],
 	"1PS1": ["1ps1", "hp1ps1"],
 	"2PS1": ["2ps1", "hp2ps1"],
@@ -125,24 +126,24 @@ BOARD_TOKEN_ALIASES = {
 CATEGORY_ALIASES = {
 	"hpce": {
 		"1pc": {
-			"100gless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
-			"allchests": ["allchests"],
-			"boostless": ["boostless"],
-			"highjump": ["highjump", "hj"],
-			"lowcast": ["lowcast", "lc"]
+			"100gless": ["100gless", "100%gless", "hundogless", "100glitchless", "100%glitchless", "hundoglitchless"],
+			"allchests": ["ac", "allchests"],
+			"boostless": ["bl", "boostless"],
+			"highjump": ["hj", "highjump"],
+			"lowcast": ["lc", "lowcast"]
 		},
 		"2pc": {
-			"100gless": ["100gless", "hundogless", "100glitchless", "hundoglitchless"],
-			"allchests": ["allchests"],
+			"100gless": ["100gless", "100%gless", "hundogless", "100glitchless", "100%glitchless", "hundoglitchless"],
+			"allchests": ["ac", "allchests"],
 			"awcgless": ["awcgless", "awcglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
-			"boostless": ["boostless"],
+			"boostless": ["bl", "boostless"],
 			"chungus": ["chungus", "chungus%"],
 			"cutscene": ["cutscene", "cs", "cutscene%"],
 			"hpwc": ["hpwc", "hpwizardcard", "harrypotterwc", "harrypotterwizardcard"],
 			"highjump": ["highjump", "hj"],
 			"jumpless": ["jumpless", "jl"],
 			"lowcast": ["lowcast", "lc"],
-			"ng": ["ng", "ngplus", "newgameplus"],
+			"ng": ["ng", "ngplus", "newgameplus", "ng+"],
 			"nmg": ["nmg", "nomajorglitches"]
 		},
 		"3pc": {
@@ -157,7 +158,7 @@ CATEGORY_ALIASES = {
 			"amg": ["amg", "allminigames"],
 			"allportraits": ["ap", "allp", "allportraits"],
 			"allsymbols": ["as", "allsymbols"],
-			"chess": ["chess"]
+			"chess": ["chess", "chess%"]
 		},
 		"6pc": {
 			"pr": ["pr", "potions", "potionsrush"]
@@ -165,19 +166,19 @@ CATEGORY_ALIASES = {
 		"1ps1": {
 			"awc": ["awc", "allwizardcards"],
 			"ss": ["ss", "superspeed"],
-			"ng": ["ng", "ngplus", "newgameplus"]
+			"ng": ["ng", "ngplus", "newgameplus", "ng+"]
 		},
 		"2ps1": {
 			"awc": ["awc", "allwizardcards"],
 			"ss": ["ss", "superspeed"],
 		},
 		"4psp": {
-			"any": ["any"],
-			"100": ["100", "hundo"]
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
 		},
 		"5psp": {
-			"any": ["any"],
-			"100": ["100", "hundo"]
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
 		},
 		"mr": {
 			"glessduo": ["glessduo", "glessduofecta", "glitchlessduo", "glitchlessduofecta", "pcglessduo", "pcglessduofecta", "pcglitchlessduo", "pcglitchlessduofecta"],
@@ -205,22 +206,22 @@ CATEGORY_ALIASES = {
 			"hp72_ds": ["hp72ds", "72ds"]
 		},
 		"sy": {
-			"hp1_any": ["hp1any", "1any"],
-			"hp2_any": ["hp2any", "2any"],
-			"hp3_any": ["hp3any", "3any"],
-			"hp4_any": ["hp4any", "4any"],
-			"hp5_any": ["hp5any", "5any"],
-			"hp6_any": ["hp6any", "6any"],
-			"hp71_any": ["hp71any", "71any"],
-			"hp72_any": ["hp72any", "72any"],
-			"hp1_100": ["hp1hundo", "hp1100", "1100", "1hundo"],
-			"hp2_100": ["hp2hundo", "hp2100", "2100", "2hundo"],
-			"hp3_100": ["hp3hundo", "hp3100", "3100", "3hundo"],
-			"hp4_100": ["hp4hundo", "hp4100", "4100", "4hundo"],
-			"hp5_100": ["hp5hundo", "hp5100", "5100", "5hundo"],
-			"hp6_100": ["hp6hundo", "hp6100", "6100", "6hundo"],
-			"hp71_100": ["hp71hundo", "hp71100", "71100", "71hundo"],
-			"hp72_100": ["hp72hundo", "hp72100", "72100", "72hundo"],
+			"hp1_any": ["hp1any", "hp1any%", "1any", "1any%"],
+			"hp2_any": ["hp2any", "hp2any%", "2any", "2any%"],
+			"hp3_any": ["hp3any", "hp3any%", "3any", "3any%"],
+			"hp4_any": ["hp4any", "hp4any%", "4any", "4any%"],
+			"hp5_any": ["hp5any", "hp5any%", "5any", "5any%"],
+			"hp6_any": ["hp6any", "hp6any%", "6any", "6any%"],
+			"hp71_any": ["hp71any", "hp71any%", "71any", "71any%"],
+			"hp72_any": ["hp72any", "hp72any%", "72any", "72any%"],
+			"hp1_100": ["hp1100", "hp1100%", "hp1hundo", "1100", "1100%", "1hundo"],
+			"hp2_100": ["hp2100", "hp2100%", "hp2hundo", "2100", "2100%", "2hundo"],
+			"hp3_100": ["hp3100", "hp3100%", "hp3hundo", "3100", "3100%", "3hundo"],
+			"hp4_100": ["hp4100", "hp4100%", "hp4hundo", "4100", "4100%", "4hundo"],
+			"hp5_100": ["hp5100", "hp5100%", "hp5hundo", "5100", "5100%", "5hundo"],
+			"hp6_100": ["hp6100", "hp6100%", "hp6hundo", "6100", "6100%", "6hundo"],
+			"hp71_100": ["hp71100", "hp71100%", "hp71hundo", "71100", "71100%", "71hundo"],
+			"hp72_100": ["hp72100", "hp72100%", "hp72hundo", "72100", "72100%", "72hundo"]
 		},
 		"dvd": {
 			"hc": ["hc", "hogwartschallenge"],
