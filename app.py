@@ -21,6 +21,7 @@ import redis
 import os
 
 # Import the config data.
+import configs.ils as il_config
 import configs.ce as ce_config
 import configs.lego as lego_config
 import configs.multi as mr_config
@@ -32,6 +33,7 @@ import configs.generic as config
 import utils.func as func
 import utils.cache as caching
 import urllib.parse as url_parse
+import srdc.ils as ind_lvl
 import srdc.normal as normal_run
 import srdc.ce as ce_run
 import srdc.pb as pb
@@ -59,6 +61,15 @@ pool = redis.ConnectionPool(
 cache = caching.Caching(redis.Redis(connection_pool=pool))
 utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG)
 normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
+il = ind_lvl.IndividualLevel(
+	api=srdc_api,
+	game_map=nm_config.GAME_MAP,
+	platform_map=config.PLATFORM_MAP,
+	levels_map=il_config.LEVELS_MAP,
+	category_map=nm_config.CATEGORY_MAP,
+	board_slugs=nm_config.BOARD_GAME_SLUG,
+	utils=utils
+)
 lg = lego.LEGONormalRun(
 	api=srdc_api,
 	game_map=lego_config.GAME_MAP,
@@ -217,7 +228,7 @@ def individual_level(owner, game, platform, level, category, args):
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	level = level.strip().lower()
-	category = category.strip().lower()
+	category = url_parse.unquote(category.strip().lower())
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
@@ -229,7 +240,19 @@ def individual_level(owner, game, platform, level, category, args):
 	# unless the player flag has been set.
 	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
-	return "This endpoint is not implemented yet.", 500
+
+	# Hand over results processing to the processor. This will either
+	# return a SpeedRun object or None, if nothing was found.
+	result, il_cat_name = il.process_il(game, platform, level, category, player, flags)
+	if not result:
+		return "No individual level submission could be found with these parameters."
+
+	# Output the relevant text, after minor processing.
+	# Note that the output will be dependent on the flag "--world-record".
+	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {il_cat_name})'
+	if flags.get("world_record", False):
+		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
+	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
 
 
 # Given a specific player, game and category, return the most

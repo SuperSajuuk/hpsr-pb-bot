@@ -72,12 +72,12 @@ class Utilities:
 		self.cache.create_key(f"run-finder:users:{username}", result[0].id)
 		return result[0].id
 
-	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: dict | None = None):
+	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: dict | None = None, alt_url: str = None):
 		"""
 		Fetch leaderboard for a game/category.
 		If max_runs is provided, only that many runs are returned.
 		"""
-		url = f"leaderboards/{game_id}/category/{category_id}?embed=players"
+		url = f"leaderboards/{game_id}/category/{category_id}?embed=players" if alt_url is None else alt_url
 		if max_runs is not None:
 			url += f"&max={max_runs}"
 		if variables:
@@ -108,13 +108,13 @@ class Utilities:
 		# Found nothing, so return None.
 		return None
 
-	def lookup_run_place(self, game_id, category_id, run_id, variables: dict | None):
+	def lookup_run_place(self, game_id, category_id, run_id, variables: dict | None, alt_url: str = None):
 		"""
 		Looks up the leaderboard for a game and returns the
 		place number representing the provided run.
 		"""
 		# Try partial leaderboard first
-		lb_partial = self.get_leaderboard(game_id, category_id, max_runs=100, variables=variables)
+		lb_partial = self.get_leaderboard(game_id, category_id, max_runs=100, variables=variables, alt_url=alt_url)
 		place = self.find_run_placement(lb_partial, run_id)
 
 		# If place is None here, the run wasn't in the top 100.
@@ -133,7 +133,7 @@ class Utilities:
 				return entry["place"]
 		return None
 
-	def search_runs(self, game_id, category_id, user_id, var_filters=None):
+	def search_runs(self, game_id, category_id, user_id, var_filters=None, base_query=None):
 		"""
 		Builds a base query from the provided game_id, category_id and user_id
 		to find runs on a specific leaderboard of SRDC.
@@ -146,7 +146,7 @@ class Utilities:
 		Returns a list, which may be empty or contain a list of Run objects.
 		"""
 		# Build a base query, which we can then paginate against.
-		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players"
+		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players" if base_query is None else base_query
 		if var_filters is not None:
 			for var in var_filters:
 				for key, val in var.items():
