@@ -83,25 +83,25 @@ class IndividualLevel:
 
 		# Check that the category actually exists for this IL.
 		# Obtain the relevant category name from the category map.
-		category_meta = None
+		cat_name = None
 		for category_name, aliases in self.category_map.items():
 			if category in aliases:
-				category_meta = category_name
+				cat_name = category_name
 				break
 
 		# If nothing found, just raise an error.
-		if not category_meta:
+		if not cat_name:
 			raise ValueError("The category you have requested could not be found for this IL. Check your spelling and try again. If this persists, it might be a bug.")
 
 		# If the flag "world_record" has been set, lookup only the WR on these parameters.
 		# Otherwise, look up the users' specific IL submission.
 		if is_wr:
-			run = self.lookup_il_world_record(internal_key, ind_level_id, category_meta)
+			run = self.lookup_il_world_record(internal_key, ind_level_id, cat_name)
 		else:
-			run = self.lookup_il(internal_key, ind_level_id, category_meta, player)
+			run = self.lookup_il(internal_key, ind_level_id, cat_name, player)
 
 		# Set the clean name and return the run that was found.
-		cat_clean_name = f"{ind_level_name} {category_meta}"
+		cat_clean_name = f"{ind_level_name} {cat_name}"
 		return run, cat_clean_name
 
 	def lookup_il(self, internal_key: str, level_id: str, category_meta: str, player: str) -> SpeedRun | None:
@@ -147,7 +147,7 @@ class IndividualLevel:
 		sr.place = place
 		return sr
 
-	def lookup_il_world_record(self, internal_key, level_id, category_meta):
+	def lookup_il_world_record(self, internal_key, level_id, category_meta) -> SpeedRun | None:
 		"""
 		Queries SRDC to find the current world record submission
 		for an IL.
