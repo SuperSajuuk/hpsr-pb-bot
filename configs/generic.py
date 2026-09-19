@@ -25,4 +25,4 @@ PLATFORM_MAP = {
 # Putting it as a constant means we don't need multiple
 # references to it, and updating it just requires changing
 # this one constant.
-COMMAND_USAGE_DOC = "https://github.com/supersajuuk/hpsr-pb-bot/blob/main/README.md"
+COMMAND_USAGE_DOC = "https://github.com/SuperSajuuk/hpsr-pb-bot/wiki"
