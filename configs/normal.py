@@ -29,11 +29,11 @@ GAME_MAP = {
 # This is just for main boards: for CE's and Multiruns, use
 # the ce.py and multi.py files under the configs folder.
 CATEGORY_MAP = {
-	"Any%": ["any"],
-	"100%": ["100", "hundo"],
+	"Any%": ["any", "any%"],
+	"100%": ["100", "hundo", "100%"],
 	"Glitchless": ["gless", "glitchless"],
 	"No Major Skips": ["nms", "nomajorskips"],
-	"Any% No EDS": ["noeds", "anynoeds"],
+	"Any% No EDS": ["noeds", "anynoeds", "any%noeds"],
 	"All Wizard Cards": ["awc", "allwizardcards"],
 	"Warpless": ["wl", "warpless"],
 	"Boostless": ["bl", "boostless"],

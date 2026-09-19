@@ -24,12 +24,12 @@ replace `${channel}` with the appropriate SRDC username.
 ### StreamElements
 !pb:
 ```
-!command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogame}/${2|noplatform}/${3|noboard}/${queryescape ${4:|' '}}}
+!command add !pb ${customapi.https://<your-render-instance-name>.onrender.com/pb/${channel}/${1|nogame}/${2|noplatform}/${pathescape ${3|noboard}}/${queryescape ${4:}}}
 ```
 
 !run:
 ```
-!command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogame}/${2|noplatform}/${3|noboard}/${queryescape ${4:|' '}}}
+!command add !run ${customapi.https://<your-render-instance-name>.onrender.com/run/${channel}/${1|nogame}/${2|noplatform}/${pathescape ${3|noboard}}/${queryescape ${4:}}}
 ```
 
 ### Fossabot
@@ -38,12 +38,12 @@ text that is below:
 
 !pb:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1 nogame}/${2 noplatform}/${3 noboard}/${urlencode ${fromindex4}}}
+${customapi https://<your-render-instance-name>.onrender.com/pb/${channel}/${1 nogame}/${2 noplatform}/${pathencode ${3 noboard}}/${urlencode ${fromindex4}}}
 ```
 
 !run:
 ```
-${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1 nogame}/${2 noplatform}/${3 noboard}/${urlencode ${fromindex4}}}
+${customapi https://<your-render-instance-name>.onrender.com/run/${channel}/${1 nogame}/${2 noplatform}/${pathencode ${3 noboard}}/${urlencode ${fromindex4}}}
 ```
 
 ## Usage

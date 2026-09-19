@@ -11,10 +11,8 @@
 # readable and modular when we do this.
 #
 # app.py only handles the Flask routes: all the specific program
-# codes can be found in the configs and srdc sub-folders. Some
-# program-specific code below (namely around processing user input
-# in the routes) will move into the respective classes in future
-# commits.
+# codes can be found in the configs and srdc sub-folders.
+#
 
 # Import the core packages
 import flask
@@ -248,7 +246,7 @@ def latest_run(owner, game, platform, board, args):
 	owner = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
-	board = board.strip().lower()
+	board = url_parse.unquote(board.strip().lower())
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
@@ -332,7 +330,7 @@ def personal_best(owner, game, platform, board, args):
 	owner = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
-	board = board.strip().lower()
+	board = url_parse.unquote(board.strip().lower())
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
@@ -344,33 +342,40 @@ def personal_best(owner, game, platform, board, args):
 	player = runner_override if runner_override is not None else owner
 	player = resolve_player(owner, player)
 
-	# Parse the board value in both the CE and MR category maps.
-	not_main = True
-	not_in_ce = True
-	not_in_mr = True
+	# Determine the mode that we are in, derived from game key mapping.
+	# By default, if mode is None, then it is a normal board: otherwise,
+	# other values determine what the relevant mode is.
 	mode = None
+	alias_table = None
+	for key, val in nm_config.GAME_MAP.items():
+		if game == key:
+			mode = "main"
+			alias_table = nm_config.CATEGORY_MAP
+			break
+	if mode is None:
+		for key, val in ce_config.GAME_MAP.items():
+			if game == val["id"]:
+				mode = "ce"
+				alias_table = ce_config.SUB_CATEGORY_MAP
+				break
+	if mode is None:
+		for key, val in mr_config.GAME_MAP.items():
+			if game == val["id"]:
+				mode = "mr"
+				alias_table = mr_config.SUB_CATEGORY_MAP
+				break
+
+	# Parse the board value in both the CE and MR category maps.
 	category_name = None
-	for main_cat_name, aliases in nm_config.CATEGORY_MAP.items():
-		if board in aliases:
-			not_main = False
-			category_name = main_cat_name
-			break
-	for sub_cat_name, aliases in ce_config.SUB_CATEGORY_MAP.items():
-		if board in aliases:
-			not_in_ce = False
-			category_name = sub_cat_name
-			mode = "ce"
-			break
-	for sub_cat_name, aliases in mr_config.SUB_CATEGORY_MAP.items():
-		if board in aliases:
-			not_in_mr = False
-			category_name = sub_cat_name
-			mode = "mr"
-			break
+	if alias_table is not None:
+		for cat_name, aliases in alias_table.items():
+			if board in aliases:
+				category_name = cat_name
+				break
 
 	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
-	if not_main and not_in_ce and not_in_mr:
+	if mode is None:
 		return f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
 
 	# Produce an internal key.
