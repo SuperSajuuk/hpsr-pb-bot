@@ -33,8 +33,22 @@ class NormalRun:
 
 		Returns a SpeedRun object or None.
 		"""
-		if game not in self.game_map:
+		no_game = True
+		is_unsupported = False
+		game_int_name = None
+		game_name = None
+		for key_name, data in self.game_map.items():
+			if game == key_name or game in data.get("aliases", []):
+				no_game = False
+				game_int_name = key_name
+				game_name = data["name"]
+				is_unsupported = data.get("unsupported", False)
+				break
+
+		if no_game:
 			raise ValueError(f"Unknown game: '{game}'. Refer to the docs for the supported games: {COMMAND_USAGE_DOC}")
+		if is_unsupported:
+			raise ValueError(f"Game code '{game}' is currently unsupported in the bot due to technical limitations. This will be resolved in the future.")
 		if platform not in self.platform_map:
 			raise ValueError(f"Unknown platform: '{platform}'. Refer to the docs for the supported platforms: {COMMAND_USAGE_DOC}")
 
@@ -66,9 +80,9 @@ class NormalRun:
 				category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
 
 		# Create an internal key, look up the run, and return the result.
-		internal_key = f"{game}_{platform}"
+		internal_key = f"{game_int_name}_{platform}"
 		run = self.lookup_run(internal_key, board, player, flags)
-		return run, category_name
+		return run, category_name, game_name
 
 	def lookup_run(self, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
@@ -77,10 +91,15 @@ class NormalRun:
 		user requested is returned (this is due to the way SRDC returns runs from the API)
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
-		slug = self.board_slugs[internal_key]
-		game_id, game_cats = self.utils.get_game_code(slug)
+		slug = None
+		for slug_url, aliases in self.board_slugs.items():
+			if internal_key in aliases:
+				slug = slug_url
+				break
 
-		# Obtain the relevant category name from the category map.
+		# Get the Game ID and its top category list. Then,
+		# obtain the relevant category name from the category map.
+		game_id, game_cats = self.utils.get_game_code(slug)
 		category_meta = None
 		for category_name, aliases in self.category_map.items():
 			if cat_key in aliases:

@@ -20,7 +20,11 @@ PLATFORM_MAP = {
 	"gbc": "gbc",
 	"ds": "ds",
 	"xbox": "6thgen",
-	"gcn": "6thgen"
+	"x360": "6thgen",
+	"xboxss": "xss",
+	"xss": "xss",
+	"gcn": "6thgen",
+	"wii": "wii"
 }
 
 # Point to the docs if there is an error.
