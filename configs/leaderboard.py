@@ -99,16 +99,16 @@ LEADERBOARD_CONFIG = {
 		},
 		"100": {
 			"variables": [
-				{"name": "1p", "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
-				{"name": "2p", "var_id": "dlo3pjrl", "value_id": "klr786oq"},
-				{"name": "3p", "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
+				{"name": "1p", "aliases": ["1player"], "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
+				{"name": "2p", "aliases": ["2players"], "var_id": "dlo3pjrl", "value_id": "klr786oq"},
+				{"name": "3p", "aliases": ["3players"], "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
 			]
 		},
 		"allshields": {
 			"variables": [
-				{"name": "1p", "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
-				{"name": "2p", "var_id": "dlo3pjrl", "value_id": "klr786oq"},
-				{"name": "3p", "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
+				{"name": "1p", "aliases": ["1player"], "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
+				{"name": "2p", "aliases": ["2players"], "var_id": "dlo3pjrl", "value_id": "klr786oq"},
+				{"name": "3p", "aliases": ["3players"], "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
 			]
 		}
 	},
