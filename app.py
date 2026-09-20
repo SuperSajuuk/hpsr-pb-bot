@@ -319,8 +319,8 @@ def latest_run(owner, game, platform, board, args):
 			# This is a normal main board run which didn't meet any of
 			# the specific conditions above. Pass to the processor and
 			# store the result in a variable.
-			result, category_name = normal.process_normal_run(game, platform, board, player, flags)
-			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
+			result, category_name, game_name = normal.process_normal_run(game, platform, board, player, flags)
+			clean_name = f'{game_name} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
 
 	# Check if a run object was returned, or if it is None.
 	if result is None:
