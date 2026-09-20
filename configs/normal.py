@@ -108,3 +108,15 @@ BOARD_GAME_SLUG = {
 	"legacy_ps4": "legacy",
 	"legacy_ps5": "legacy"
 }
+
+# Additional metadata aliases
+# Converts the value of the key_1 key in the additional
+# metadata to a human-readable value. Very small list for
+# a rare number of instances
+METADATA_ALIASES = {
+	"Story": ["story"],
+	"Hard": ["hard"],
+	"1 Player": ["1p", "1player"],
+	"2 Players": ["2p", "2players"],
+	"3 Players": ["3p", "3players"]
+}

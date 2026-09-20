@@ -172,10 +172,14 @@ class CategoryExtension:
 		if not category_id:
 			raise ValueError("CE category not found in CE game")
 
-		# Resolve the user ID, capture the category vars and then search for runs.
+		# Resolve the user ID and capture the category vars.
 		user_id = self.utils.get_user_id(player)
-		ce_cat_vars = category_meta.get("variables", [])
-		runs = self.utils.search_runs(game_id, category_id, user_id, ce_cat_vars)
+		required_variables = category_meta.get("variables", [])
+		if required_variables:
+			required_variables = {var["var_id"]: var["value_id"] for var in required_variables}
+
+		# Search for runs, if none found then return.
+		runs = self.utils.search_runs(game_id, category_id, user_id, required_variables)
 		if not runs:
 			return None
 
@@ -185,7 +189,6 @@ class CategoryExtension:
 		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
 		# of additional runs. The list of runs must be filtered to get the correct
 		# run that the user asked for.
-		required_variables = {var["var_id"]: var["value_id"] for var in ce_cat_vars}
 		filtered_runs = []
 		for r in runs:
 			ok = True

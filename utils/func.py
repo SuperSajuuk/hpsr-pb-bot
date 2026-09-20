@@ -147,12 +147,14 @@ class Utilities:
 		"""
 		# Build a base query, which we can then paginate against.
 		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players" if base_query is None else base_query
-		if var_filters is not None:
-			for var in var_filters:
-				for key, val in var.items():
-					# Ignore the "name" variable because that is internal.
-					if key != "name":
+		if var_filters:
+			if isinstance(var_filters, list):
+				for var in var_filters:
+					for key, val in var.items():
 						base_q += f"&var-{key}={val}"
+			else:
+				for key, val in var_filters.items():
+					base_q += f"&var-{key}={val}"
 
 		# Paginate the results until all are found.
 		all_runs = []

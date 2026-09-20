@@ -60,7 +60,15 @@ pool = redis.ConnectionPool(
 # Instantiate all our internal code for powering the actual program.
 cache = caching.Caching(redis.Redis(connection_pool=pool))
 utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG)
-normal = normal_run.NormalRun(srdc_api, nm_config.GAME_MAP, config.PLATFORM_MAP, nm_config.CATEGORY_MAP, nm_config.BOARD_GAME_SLUG, utils)
+normal = normal_run.NormalRun(
+	api=srdc_api,
+	game_map=nm_config.GAME_MAP,
+	platform_map=config.PLATFORM_MAP,
+	category_map=nm_config.CATEGORY_MAP,
+	board_slugs=nm_config.BOARD_GAME_SLUG,
+	md_aliases=nm_config.METADATA_ALIASES,
+	utils=utils
+)
 il = ind_lvl.IndividualLevel(
 	api=srdc_api,
 	game_map=nm_config.GAME_MAP,

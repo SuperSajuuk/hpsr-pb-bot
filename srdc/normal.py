@@ -16,12 +16,13 @@ from configs.generic import COMMAND_USAGE_DOC
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, category_map, board_slugs, utils):
+	def __init__(self, api, game_map, platform_map, category_map, board_slugs, md_aliases, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.category_map = category_map
 		self.board_slugs = board_slugs
+		self.md_aliases = md_aliases
 		self.utils = utils
 
 	def process_normal_run(self, game: str, platform: str, board: str, player: str, flags: dict):
@@ -54,7 +55,15 @@ class NormalRun:
 		# category name for output. There would usually only be
 		# a single key here, hence the hard coding for just key_1.
 		if flags.get("additional_metadata", {}):
-			category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
+			key_val = flags['additional_metadata'].get('key_1')
+			found_alias = False
+			for human_name, aliases in self.md_aliases.items():
+				if key_val in aliases:
+					found_alias = True
+					category_name += f" {human_name}"
+					break
+			if not found_alias:
+				category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
 
 		# Create an internal key, look up the run, and return the result.
 		internal_key = f"{game}_{platform}"
@@ -78,6 +87,7 @@ class NormalRun:
 				category_meta = category_name
 				break
 
+		# Didn't find anything, so returning.
 		if not category_meta:
 			return None
 
@@ -91,13 +101,6 @@ class NormalRun:
 		# If no category exists with the given name, raise ValueError and quit.
 		if not category_id:
 			raise ValueError("Category not found in game")
-
-		# # Done the checks, but need to do a small additive to cat_key.
-		# # If additional metadata exists, append key as suffix.
-		# print(cat_key)
-		# if flags["additional_metadata"]:
-		# 	for key, val in flags["additional_metadata"].items():
-		# 		cat_key += f"_{val}"
 
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.utils.get_user_id(player)
@@ -145,7 +148,7 @@ class NormalRun:
 				if "name" not in x:
 					var_filters.append({x["var_id"]: x["value_id"]})
 					continue
-				if x.get("name") == active_slice:
+				if x.get("name") == active_slice or active_slice in x.get("aliases", []):
 					var_filters.append({x["var_id"]: x["value_id"]})
 					continue
 
@@ -174,11 +177,25 @@ class NormalRun:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top)
+		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
+
+		# In some cases, the run order above will not be the run we needed. Do
+		# some additional filtering, then capture the top run.
+		#
 		# The run at the top of the index will then be used to get its placement
 		# in the leaderboard. To avoid duplication, leaderboard placement is
 		# parsed by a helper function.
-		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = runs[0]
+		if var_filters is not None:
+			filtered_runs = []
+			for r in runs:
+				for x in var_filters:
+					for key, val in x.items():
+						if r["values"].get(key) == val:
+							filtered_runs.append(r)
+							break
+			filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
+			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters[0] if var_filters is not None else None)
