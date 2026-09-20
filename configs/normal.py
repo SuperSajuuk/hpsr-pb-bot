@@ -20,6 +20,7 @@ GAME_MAP = {
 	"hp7.1": "Harry Potter and the Deathly Hallows Part 1",
 	"hp7.2": "Harry Potter and the Deathly Hallows Part 2",
 	"qwc": "Harry Potter: Quidditch World Cup",
+	"legacy": "Hogwarts Legacy",
 
 	# Selection of other games. Extend appropriately.
 	"dbb": "Disney's Brother Bear"
@@ -34,16 +35,18 @@ CATEGORY_MAP = {
 	"Glitchless": ["gless", "glitchless"],
 	"No Major Skips": ["nms", "nomajorskips"],
 	"Any% No EDS": ["noeds", "anynoeds", "any%noeds"],
-	"All Wizard Cards": ["awc", "allwizardcards"],
-	"All Requirements": ["allreq", "allreqs", "allrequirements"],
-	"All Crests": ["ac", "allcrests"],
+	"All Wizard Cards": ["awc", "wizardcards", "allwizardcards"],
+	"All Requirements": ["allreq", "allreqs", "requirements", "allrequirements"],
+	"All Crests": ["ac", "crests", "allcrests"],
 	"Warpless": ["wl", "warpless"],
 	"Boostless": ["bl", "boostless"],
-	"All Shields": ["as", "allshields"],
+	"All Shields": ["as", "shields", "allshields"],
 	"Beat Hogwarts Cup": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"],
 	"Beat World Cup": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"],
 	"Beat the Tutorial": ["btt", "tutorial", "beattutorial", "beatthetutorial"],
-	"NG+": ["ng", "ngplus", "newgameplus", "ng+"]
+	"NG+": ["ng", "ngplus", "newgameplus", "ng+"],
+	"Kill Ranrok": ["ranrok", "killranrok"],
+	"All Quests": ["aq", "quests", "allquests"]
 }
 
 # Board slug mapping. This is used to map the values produced by
@@ -99,5 +102,9 @@ BOARD_GAME_SLUG = {
 	"qwc_gcn": "hpquidditch",
 	"qwc_xbox": "hpquidditch",
 	"qwc_gba": "quidditch_gba",
-	"dbb_pc": "disneys_brother_bear"
+	"dbb_pc": "disneys_brother_bear",
+	"hp2_cc": "hpcc",
+	"legacy_pc": "legacy",
+	"legacy_ps4": "legacy",
+	"legacy_ps5": "legacy"
 }

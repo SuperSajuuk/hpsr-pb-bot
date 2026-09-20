@@ -13,6 +13,8 @@ PLATFORM_MAP = {
 	"ps1": "ps1",
 	"ps2": "ps2",
 	"ps3": "ps3",
+	"ps4": "ps4",
+	"ps5": "ps5",
 	"psp": "psp",
 	"gba": "gba",
 	"gbc": "gbc",

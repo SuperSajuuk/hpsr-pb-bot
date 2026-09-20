@@ -8,6 +8,7 @@
 # the main boards. CE's are to be handled in ce.py and multiruns will
 # be in multi.py
 from utils.model import SpeedRun
+from configs.generic import COMMAND_USAGE_DOC
 
 
 # NormalRun
@@ -25,14 +26,40 @@ class NormalRun:
 
 	def process_normal_run(self, game: str, platform: str, board: str, player: str, flags: dict):
 		"""
-		This method simply produces the internal key from game and platform
-		parameters, then passes everything over to the lookup_run method.
+		This method will confirm that the game, platform and category
+		can be found in the config data, then creates an internal key
+		for use within the lookup.
 
 		Returns a SpeedRun object or None.
 		"""
+		if game not in self.game_map:
+			raise ValueError(f"Unknown game: '{game}'. Refer to the docs for the supported games: {COMMAND_USAGE_DOC}")
+		if platform not in self.platform_map:
+			raise ValueError(f"Unknown platform: '{platform}'. Refer to the docs for the supported platforms: {COMMAND_USAGE_DOC}")
+
+		# Check if the board name is in the category list.
+		not_board = True
+		category_name = None
+		for board_name, aliases in self.category_map.items():
+			if board in aliases:
+				not_board = False
+				category_name = board_name
+				break
+
+		# If not found, then raise an error
+		if not_board:
+			raise ValueError(f"Unknown category/board: '{board}'.  Refer to the docs for the supported categories: {COMMAND_USAGE_DOC}")
+
+		# If there are additional metadata flags, then append it to
+		# category name for output. There would usually only be
+		# a single key here, hence the hard coding for just key_1.
+		if flags.get("additional_metadata", {}):
+			category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
+
+		# Create an internal key, look up the run, and return the result.
 		internal_key = f"{game}_{platform}"
 		run = self.lookup_run(internal_key, board, player, flags)
-		return run
+		return run, category_name
 
 	def lookup_run(self, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
@@ -65,6 +92,13 @@ class NormalRun:
 		if not category_id:
 			raise ValueError("Category not found in game")
 
+		# # Done the checks, but need to do a small additive to cat_key.
+		# # If additional metadata exists, append key as suffix.
+		# print(cat_key)
+		# if flags["additional_metadata"]:
+		# 	for key, val in flags["additional_metadata"].items():
+		# 		cat_key += f"_{val}"
+
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.utils.get_user_id(player)
 		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, cat_key)
@@ -94,7 +128,12 @@ class NormalRun:
 				if true_flags:
 					active_slice = next(iter(true_flags))
 				else:
-					active_slice = next((name for name in slice_names if name not in flags), None)
+					# Perhaps check in the additional metadata in case there's something there.
+					additional_flags = {name for key, name in flags["additional_metadata"].items()}
+					if additional_flags:
+						active_slice = next(iter(additional_flags))
+					else:
+						active_slice = next((name for name in slice_names if name not in flags), None)
 
 			# This might still be None: in which case, just pick the first slice.
 			if active_slice is None:

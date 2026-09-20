@@ -89,6 +89,36 @@ LEADERBOARD_CONFIG = {
 			],
 		}
 	},
+	"legacy_pc": {
+		"ranrok": {
+			"variables": [
+				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"any": {
+			"variables": [
+				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"allquests": {
+			"variables": [
+				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		}
+	},
 	"hpce": {
 		"1pc_100gless": {
 			"board": "1PC",

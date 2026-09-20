@@ -183,6 +183,7 @@ def extract_flags(tokens: list[str]) -> dict:
 		if "--player=" in token or "--p=" in token:
 			p_name = token.split("=")[1]
 			flags["player"] = p_name if len(p_name) > 0 else None
+			continue
 
 		# Check if the token contains either --world-record or
 		# the alias --wr. This tells the system only to look
@@ -190,6 +191,7 @@ def extract_flags(tokens: list[str]) -> dict:
 		# usable in the /il/ route.
 		if token in ["--world-record", "--wr"]:
 			flags["world_record"] = True
+			continue
 
 		# Check if the token is a string connected to LEGO boards
 		# At the moment, this is a fairly restricted list, but plan
@@ -250,7 +252,9 @@ def individual_level(owner, game, platform, level, category, args):
 
 	# Output the relevant text, after minor processing.
 	# Note that the output will be dependent on the flag "--world-record".
-	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {il_cat_name})'
+	# platform_repl is a bodge to support a specific set of ILs.
+	platform_repl = platform.replace("cc", "pc")
+	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform_repl].upper()} - {il_cat_name})'
 	if is_wr:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
@@ -304,28 +308,10 @@ def latest_run(owner, game, platform, board, args):
 			result, cat_clean_name, alias_name = process_lego_main_board(platform, board, flags["lego_md"], player)
 			clean_name = f'{lego_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
-			# This is a normal main board run which is not a LEGO game:
-			# check if game, platform and board represent real entities
-			# and show an error if not.
-			if game not in nm_config.GAME_MAP:
-				return f"Unknown game: '{game}'. Refer to the docs for the supported games: {config.COMMAND_USAGE_DOC}", 400
-			if platform not in config.PLATFORM_MAP:
-				return f"Unknown platform: '{platform}'. Refer to the docs for the supported platforms: {config.COMMAND_USAGE_DOC}", 400
-
-			# Check if the board name is in the category list.
-			not_board = True
-			category_name = None
-			for board_name, aliases in nm_config.CATEGORY_MAP.items():
-				if board in aliases:
-					not_board = False
-					category_name = board_name
-					break
-
-			if not_board:
-				return f"Unknown category/board: '{board}'.  Refer to the docs for the supported categories: {config.COMMAND_USAGE_DOC}", 400
-
-			# Process the data and return SpeedRun or None.
-			result = normal.process_normal_run(game, platform, board, player, flags)
+			# This is a normal main board run which didn't meet any of
+			# the specific conditions above. Pass to the processor and
+			# store the result in a variable.
+			result, category_name = normal.process_normal_run(game, platform, board, player, flags)
 			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
 
 	# Check if a run object was returned, or if it is None.

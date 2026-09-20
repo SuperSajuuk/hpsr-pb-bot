@@ -219,6 +219,27 @@ LEVELS_MAP = {
 		"Voldemort's Last Stand": {
 			"level_id": "owo4egv9", "aliases": ["voldemort", "laststand", "voldemortslaststand"]
 		}
+	},
+	"hp2_cc": {
+		"Jumpking 1": {
+			"level_id": "o9x8xlpw", "aliases": ["jk1", "jumpking1"]
+		},
+		"Jumpking 2 v1.0": {
+			"level_id": "4953m83d",
+			"aliases": ["jk2v1", "jumpking2v1"],
+			"variables": [{"var_id": "ql6wm1xn", "value_id": "1dk6584l"}]
+		},
+		"Jumpking 2 v1.1": {
+			"level_id": "4953m83d",
+			"aliases": ["jk2v11", "jumpking2v11", "jk2v1.1", "jumpking2v1.1"],
+			"variables": [{"var_id": "ql6wm1xn", "value_id": "q8k4pvgq"}]
+		},
+		"Jumpking 3": {
+			"level_id": "rdqpn129", "aliases": ["jk3", "jumpking3"]
+		},
+		"Wetstorage": {
+			"level_id": "5d7n2v6w", "aliases": ["ws", "wetstorage", "storage"]
+		}
 	}
 }
 
@@ -227,6 +248,7 @@ LEVELS_MAP = {
 # internal key value. Used for some game boards where the game is the
 # same on multiple platforms.
 INTERNAL_KEY_MAPPING = {
+	"hp2_cc": ["hp2_cc", "cc_hp2", "cc_2pc", "2pc_cc"],
 	"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
 	"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_wii"],
 	"hp72": ["hp72_pc", "hp72_ps3", "hp71_xbox", "hp71_wii", "hp7.1_pc", "hp7.1_ps3", "hp7.1_xbox", "hp7.1_wii"]

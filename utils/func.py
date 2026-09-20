@@ -120,7 +120,7 @@ class Utilities:
 		# If place is None here, the run wasn't in the top 100.
 		# Return all runs and then find it.
 		if place is None:
-			lb_full = self.get_leaderboard(game_id, category_id, max_runs=None, variables=variables)
+			lb_full = self.get_leaderboard(game_id, category_id, max_runs=None, variables=variables, alt_url=alt_url)
 			place = self.find_run_placement(lb_full, run_id)
 
 		return place

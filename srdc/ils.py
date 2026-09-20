@@ -69,12 +69,14 @@ class IndividualLevel:
 			raise ValueError("This combination of game and platform does not map to any configuration. Perhaps this game isn't supported in config yet, or it doesn't have any ILs supported.")
 
 		# Check if the category alias is in the alias table.
+		variables = None
 		ind_level_id = None
 		ind_level_name = None
 		for level_name, data in level_aliases.items():
 			if level in data["aliases"]:
 				ind_level_id = data["level_id"]
 				ind_level_name = level_name
+				variables = data.get("variables", [])
 				break
 
 		# If none, then this IL does not exist.
@@ -98,13 +100,13 @@ class IndividualLevel:
 		if is_wr:
 			run = self.lookup_il_world_record(internal_key, ind_level_id, cat_name)
 		else:
-			run = self.lookup_il(internal_key, ind_level_id, cat_name, player)
+			run = self.lookup_il(internal_key, ind_level_id, cat_name, player, variables)
 
 		# Set the clean name and return the run that was found.
 		cat_clean_name = f"{ind_level_name} {cat_name}"
 		return run, cat_clean_name
 
-	def lookup_il(self, internal_key: str, level_id: str, category_meta: str, player: str) -> SpeedRun | None:
+	def lookup_il(self, internal_key: str, level_id: str, category_meta: str, player: str, variables: dict = None) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in an individual level submission.
 		As ILs are much simpler in SRDC due to lesser options, the code similarly
@@ -129,20 +131,31 @@ class IndividualLevel:
 		# If nothing there, just return None.
 		user_id = self.utils.get_user_id(player)
 		q = f"runs?game={game_id}&level={level_id}&category={category_id}&user={user_id}&status=verified&embed=players"
-		runs = self.utils.search_runs(game_id, category_id, user_id, base_query=q)
+		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters=variables, base_query=q)
 		if not runs:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top)
-		# The run at the top of the index will then be used to get its placement
-		# in the leaderboard. To avoid duplication, leaderboard placement is
-		# parsed by a helper function.
+		# Then, filter the returned runs so only the ones matching the correct
+		# value are return (
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = runs[0]
+		required_variables = {var["var_id"]: var["value_id"] for var in variables}
+		filtered_runs = []
+		if required_variables:
+			for run in runs:
+				for var_id, value_id in required_variables.items():
+					if run["values"].get(var_id) == value_id:
+						filtered_runs.append(run)
+
+			# For some reason, this filtered list will be in reverse.
+			# Simply reverse the order and return the top value.
+			filtered_runs.reverse()
+			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=players"
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=None, alt_url=lb_q)
+		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=players,variables"
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=required_variables, alt_url=lb_q)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr
