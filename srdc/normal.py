@@ -16,10 +16,11 @@ from configs.generic import COMMAND_USAGE_DOC
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, category_map, board_slugs, md_aliases, utils):
+	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, board_slugs, md_aliases, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
+		self.plat_cat_map = plat_category_map
 		self.category_map = category_map
 		self.board_slugs = board_slugs
 		self.md_aliases = md_aliases
@@ -37,12 +38,14 @@ class NormalRun:
 		is_unsupported = False
 		game_int_name = None
 		game_name = None
+		ordering_mode = None
 		for key_name, data in self.game_map.items():
 			if game == key_name or game in data.get("aliases", []):
 				no_game = False
 				game_int_name = key_name
 				game_name = data["name"]
 				is_unsupported = data.get("unsupported", False)
+				ordering_mode = data.get("ordering", "cf")
 				break
 
 		if no_game:
@@ -55,10 +58,12 @@ class NormalRun:
 		# Check if the board name is in the category list.
 		not_board = True
 		category_name = None
-		for board_name, aliases in self.category_map.items():
-			if board in aliases:
+		int_name = None
+		for board_name, data in self.category_map.items():
+			if board in data["aliases"]:
 				not_board = False
 				category_name = board_name
+				int_name = data["internal_name"]
 				break
 
 		# If not found, then raise an error
@@ -68,27 +73,32 @@ class NormalRun:
 		# If there are additional metadata flags, then append it to
 		# category name for output. There would usually only be
 		# a single key here, hence the hard coding for just key_1.
+		internal_key = f"{game_int_name}_{platform}"
 		if flags.get("additional_metadata", {}):
 			key_val = flags['additional_metadata'].get('key_1')
-			found_alias = False
-			for human_name, aliases in self.md_aliases.items():
-				if key_val in aliases:
-					found_alias = True
-					category_name += f" {human_name}"
-					break
-			if not found_alias:
-				category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
+			if key_val is not None:
+				found_alias = False
+				for human_name, data in self.md_aliases.items():
+					if key_val in data["aliases"]:
+						found_alias = True
+						category_name += f" {human_name}"
+						internal_key += f"_{data['int_key']}"
+						break
+				if not found_alias:
+					category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
 
-		# Create an internal key, look up the run, and return the result.
-		internal_key = f"{game_int_name}_{platform}"
-		run = self.lookup_run(internal_key, board, player, flags)
+		# Look up the run, and return the result.
+		run = self.lookup_run(internal_key, board, ordering_mode, int_name, player, flags)
 		return run, category_name, game_name
 
-	def lookup_run(self, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
+	def lookup_run(self, internal_key: str, cat_key: str, order_mode: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in a specific game/category.
 		Uses SRDC variable filters and client-side filtering to ensure only the run the
 		user requested is returned (this is due to the way SRDC returns runs from the API)
+
+		Please be aware that the returned run object from this method may not necessarily
+		be a PB run. In most cases, it will be, but keep that in mind.
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = None
@@ -101,8 +111,8 @@ class NormalRun:
 		# obtain the relevant category name from the category map.
 		game_id, game_cats = self.utils.get_game_code(slug)
 		category_meta = None
-		for category_name, aliases in self.category_map.items():
-			if cat_key in aliases:
+		for category_name, data in self.category_map.items():
+			if cat_key in data["aliases"]:
 				category_meta = category_name
 				break
 
@@ -112,10 +122,36 @@ class NormalRun:
 
 		# Check that there is a category matching the one we asked for.
 		category_id = None
-		for cat_id, cat_name in game_cats.items():
-			if cat_name == category_meta:
-				category_id = cat_id
-				break
+		match order_mode:
+			case "cf":
+				for cat_id, cat_name in game_cats.items():
+					if cat_name == category_meta:
+						category_id = cat_id
+						break
+			case "pf":
+				# Use the internal key to get the pieces.
+				codes = internal_key.split("_")
+				pm = self.plat_cat_map[codes[0]]
+				wanted_category = None
+				for cat_name, aliases in pm.items():
+					if codes[1] not in aliases:
+						continue
+					if flags.get("emulator", False):
+						if "emu" in cat_name.lower() or cat_name == "emulator":
+							wanted_category = cat_name
+							break
+					else:
+						if "emu" not in cat_name.lower():
+							wanted_category = cat_name
+							break
+
+				# Now do the same category loop we normally do
+				# but using the wanted_category because we are in
+				# pf mode.
+				for cat_id, cat_name in game_cats.items():
+					if cat_name == wanted_category:
+						category_id = cat_id
+						break
 
 		# If no category exists with the given name, raise ValueError and quit.
 		if not category_id:
@@ -123,10 +159,10 @@ class NormalRun:
 
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.utils.get_user_id(player)
-		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, cat_key)
+		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, int_name)
 		cfg_2 = None
 		if cfg is not None:
-			cfg_2 = cfg.get(cat_key, None)
+			cfg_2 = cfg.get(int_name, None)
 
 		# Check if either cfg or cfg_2 contains a variables key.
 		# If so, capture all variables and build a var_filters list
@@ -213,11 +249,15 @@ class NormalRun:
 						if r["values"].get(key) == val:
 							filtered_runs.append(r)
 							break
+
+			# If the filtered runs are empty, there were no runs matching conditions.
 			filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
+			if len(filtered_runs) == 0:
+				return None
 			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters[0] if var_filters is not None else None)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

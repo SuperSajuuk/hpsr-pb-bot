@@ -15,14 +15,14 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CategoryExtension:
-	def __init__(self, api, game_map, platform_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, token_aliases, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.platform_map = platform_map
 		self.category_map = category_map
 		self.category_aliases = category_aliases
 		self.board_aliases = board_aliases
 		self.token_aliases = token_aliases
+		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
 
@@ -69,7 +69,7 @@ class CategoryExtension:
 		# Return the game object for this category extension board.
 		return game
 
-	def process_category_extension(self, base_game: str, ce_top_board: str, ce_category_board: str, player: str) -> (SpeedRun | None, str | None):
+	def process_category_extension(self, base_game: str, ce_top_board: str, ce_category_board: str, player: str, flags: dict) -> (SpeedRun | None, str | None):
 		"""
 		Using the provided variables, determine if the category
 		extension is configured and whether there is a valid
@@ -94,7 +94,7 @@ class CategoryExtension:
 
 		# Check if the top board is defined in the alias list.
 		# If it isn't, the user might have provided an alternative
-		# name, which needs to be checked
+		# name, which needs to be checked.
 		if ce_top_board not in alias_table:
 			ce_top_board = self.token_aliases[ce_key["id"]].get(ce_top_board, None)
 			if ce_top_board is None:

@@ -16,10 +16,9 @@ import srcomapi.datatypes as dt
 # API for a Multirun submission.
 # This is used by !run only.
 class MultiRun:
-	def __init__(self, api, game_map, platform_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.platform_map = platform_map
 		self.category_map = category_map
 		self.category_aliases = category_aliases
 		self.board_aliases = board_aliases

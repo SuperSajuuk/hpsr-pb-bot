@@ -12,11 +12,11 @@ from utils.model import SpeedRun
 
 
 class Utilities:
-	def __init__(self, api, cache, lb_config):
+	def __init__(self, api, cache, lb_config, platform_map):
 		self.api = api
 		self.cache = cache
 		self.lb_config = lb_config
-		self.game_code_cache = {}
+		self.platform_map = platform_map
 
 	def get_game_code(self, game_key: str, redis_key: str = "categories", type_filter: str = "per-game"):
 		"""
@@ -81,8 +81,9 @@ class Utilities:
 		if max_runs is not None:
 			url += f"&max={max_runs}"
 		if variables:
-			for var_id, var_value in variables.items():
-				url += f"&var-{var_id}={var_value}"
+			for var in variables:
+				for var_id, var_value in var.items():
+					url += f"&var-{var_id}={var_value}"
 
 		return self.api.get(url)
 
@@ -124,6 +125,21 @@ class Utilities:
 			place = self.find_run_placement(lb_full, run_id)
 
 		return place
+
+	def resolve_platform_id(self, platform_id):
+		"""
+		Resolves the platform_id obtained from extract_run to
+		get the platform details that the platform code references.
+
+		Returns None if platform_id already equals None: this will
+		use the old behaviour of simply uppercasing the users' input.
+		"""
+		if platform_id is None:
+			return None
+		for key, data in self.platform_map.items():
+			if data["id"] == platform_id:
+				return data
+		return None
 
 	@staticmethod
 	def find_run_placement(leaderboard, run_id: str) -> int | None:

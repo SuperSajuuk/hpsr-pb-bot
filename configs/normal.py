@@ -24,34 +24,58 @@ GAME_MAP = {
 
 	# Selection of other games. Extend appropriately.
 	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
-	"r3": {"name": "Rayman 3: Hoodlum Havoc", "aliases": ["rayman3"], "unsupported": True}
+	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
+	"ssbfbbr": {"name": "Spongebob Squarepants: Battle for Bikini Bottom Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 }
 
 # Map abbreviations passed by users to human-readable names.
 # This is just for main boards: for CE's and Multiruns, use
 # the ce.py and multi.py files under the configs folder.
 CATEGORY_MAP = {
-	"Any%": ["any", "any%"],
-	"100%": ["100", "hundo", "100%"],
-	"Glitchless": ["gless", "glitchless"],
-	"No Major Skips": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"],
-	"No Major Glitches": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"],
-	"Any% No EDS": ["noeds", "anynoeds", "any%noeds"],
-	"All Wizard Cards": ["awc", "wizardcards", "allwizardcards"],
-	"All Requirements": ["allreq", "allreqs", "requirements", "allrequirements"],
-	"All Crests": ["ac", "crests", "allcrests"],
-	"Warpless": ["wl", "warpless"],
-	"Boostless": ["bl", "boostless"],
-	"All Shields": ["as", "shields", "allshields"],
-	"Beat Hogwarts Cup": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"],
-	"Beat World Cup": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"],
-	"Beat the Tutorial": ["btt", "tutorial", "beattutorial", "beatthetutorial"],
-	"NG+": ["ng", "ngplus", "newgameplus", "ng+"],
-	"Kill Ranrok": ["ranrok", "killranrok"],
-	"All Quests": ["aq", "quests", "allquests"],
-	"Glitched": ["glitched"],
-	"All Teensies": ["at", "allteensies"],
-	"No Teensies": ["not", "noteensies"]
+	"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+	"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
+	"Glitchless": {"aliases": ["gless", "glitchless"], "internal_name": "gless"},
+	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
+	"Any% No EDS": {"aliases": ["noeds", "anynoeds", "any%noeds"], "internal_name": "noeds"},
+	"All Wizard Cards": {"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"},
+	"All Requirements": {"aliases": ["allreq", "allreqs", "requirements", "allrequirements"], "internal_name": "allreq"},
+	"All Crests": {"aliases": ["ac", "crests", "allcrests"], "internal_name": "allc"},
+	"Warpless": {"aliases": ["wl", "warpless"], "internal_name": "warpless"},
+	"Boostless": {"aliases": ["bl", "boostless"], "internal_name": "boostless"},
+	"All Shields": {"aliases": ["as", "shields", "allshields"], "internal_name": "allshields"},
+	"Beat Hogwarts Cup": {"aliases": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"], "internal_name": "bhc"},
+	"Beat World Cup": {"aliases": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"], "internal_name": "bwc"},
+	"Beat the Tutorial": {"aliases": ["btt", "tutorial", "beattutorial", "beatthetutorial"], "internal_name": "btt"},
+	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"},
+	"Kill Ranrok": {"aliases": ["ranrok", "killranrok"], "internal_name": "ranrok"},
+	"All Quests": {"aliases": ["aq", "quests", "allquests"], "internal_name": "allq"},
+	"Glitched": {"aliases": ["glitched"], "internal_name": "glitched"},
+	"All Teensies": {"aliases": ["at", "allt", "allteensies"], "internal_name": "allt"},
+	"No Teensies": {"aliases": ["not", "noteensies"], "internal_name": "not"},
+	"1 Spatula": {"aliases": ["1s", "1spat", "1spatula"], "internal_name": "1s"},
+	"2 Spatulas": {"aliases": ["2s", "2spat", "2spatulas"], "internal_name": "2s"},
+	"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
+	"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"},
+}
+
+# Platform category map
+# This is an alternative version of CATEGORY_MAP, but designed
+# for game boards which set the top category to platform names
+PLATFORM_CATEGORY_MAP = {
+	"r3": {
+		"GCN": ["gcn", "wii"],
+		"GCN Emu": ["gcn"],
+		"HD": ["hd", "ps3", "x360", "xss"],
+		"PC": ["pc"],
+		"PS2": ["ps2"],
+		"Xbox": ["xbox"]
+	},
+	"ssbfbbr": {
+		"PC": ["pc"],
+		"Console": ["ps4", "ps5", "xbone", "xboxone"],
+		"Mobile": ["iOS", "ios", "android"]
+	}
 }
 
 # Board slug mapping. This is used to map the values produced by
@@ -88,18 +112,7 @@ BOARD_GAME_SLUG = {
 	"quidditch_gba": ["qwc_gba"],
 	"disneys_brother_bear": ["dbb_pc"],
 	"hpcc": ["hp2_cc"],
-	"legacy": ["legacy_pc", "legacy_ps4", "legacy_ps5"],
-	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"]
-}
-
-# Additional metadata aliases
-# Converts the value of the key_1 key in the additional
-# metadata to a human-readable value. Very small list for
-# a rare number of instances
-METADATA_ALIASES = {
-	"Story": ["story"],
-	"Hard": ["hard"],
-	"1 Player": ["1p", "1player"],
-	"2 Players": ["2p", "2players"],
-	"3 Players": ["3p", "3players"]
+	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
+	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
+	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"]
 }

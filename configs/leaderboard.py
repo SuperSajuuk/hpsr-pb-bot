@@ -134,35 +134,60 @@ LEADERBOARD_CONFIG = {
 			]
 		}
 	},
-	"legacy_pc": {
+	"legacy_pc_story": {
 		"ranrok": {
 			"variables": [
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
 				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
 			]
 		},
 		"any": {
 			"variables": [
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
 				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
 			]
 		},
 		"100": {
 			"variables": [
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
 				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
 			]
 		},
 		"allquests": {
 			"variables": [
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		}
+	},
+	"legacy_pc_hard": {
+		"ranrok": {
+			"variables": [
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"any": {
+			"variables": [
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
+			]
+		},
+		"allquests": {
+			"variables": [
 				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
 				{"name": "platform", "var_id": "e8mqwzvn", "value_id": "10vomkpl"}
 			]
 		}
+	},
+	"legacy_ce": {
+		"first_day": {},
 	},
 	"hpce": {
 		"1pc_100gless": {
@@ -1201,6 +1226,68 @@ LEADERBOARD_CONFIG = {
 				{"var_id": "38dmm4z8", "value_id": "z19wjnyq"},
 				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
 				{"var_id": "yn2w4m0n", "value_id": "81w66k5l"}
+			]
+		}
+	},
+	"r3": {
+		"any": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "gq75p5r1"}
+			]
+		},
+		"allt": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "5q8kv5yq"}
+			]
+		},
+		"not": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "jqzn9nkq"}
+			]
+		},
+		"nmg": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "z19xm8k1"}
+			]
+		},
+		"glitched": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "klrxvn2l"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"var_id": "6nj2zjl4", "value_id": "21gn5nol"}
+			]
+		}
+	},
+	"rehydrated": {
+		"1s": {
+			"variables": [
+				{"var_id": "onvj5pwn", "value_id": "9qj9mgel"},
+				{"name": "nla", "var_id": "0nwowprl", "value_id": "jq6r80nq"},
+				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
+			]
+		},
+		"2s": {
+			"variables": [
+				{"var_id": "onvj5pwn", "value_id": "4qyepy31"},
+				{"name": "nla", "var_id": "0nwowprl", "value_id": "jq6r80nq"},
+				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
+			]
+		},
+		"77s": {
+			"variables": [
+				{"var_id": "onvj5pwn", "value_id": "mln6w06q"},
+				{"name": "nla", "var_id": "0nwowprl", "value_id": "jq6r80nq"},
+				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
+			]
+		},
+		"100s_nla": {
+			"variables": [
+				{"var_id": "onvj5pwn", "value_id": "810ezmjq"},
+				{"name": "nla", "var_id": "0nwowprl", "value_id": "jq6r80nq"},
+				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
 			]
 		}
 	}

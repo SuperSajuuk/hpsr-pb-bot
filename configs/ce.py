@@ -12,7 +12,8 @@
 GAME_MAP = {
 	"hp": {"name": "Harry Potter Category Extensions", "id": "hpce"},
 	"legohp": {"name": "LEGO Harry Potter Category Extensions", "id": "lhpce"},
-	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"}
+	"rac": {"name": "Ratchet & Clank Category Extensions", "id": "racextras"},
+	"legacy": {"name": "Hogwarts Legacy Category Extensions", "id": "legacy_ce"}
 }
 
 # Sub-category mapping.
@@ -81,7 +82,9 @@ SUB_CATEGORY_MAP = {
 	"HP7.1 100%": ["hp71100", "hp71100%", "hp71hundo", "71100", "71100%", "71hundo"],
 	"HP7.2 100%": ["hp72100", "hp72100%", "hp72hundo", "72100", "72100%", "72hundo"],
 	"Hogwarts Challenge": ["hc", "hogwartschallenge"],
-	"Wizarding World": ["ww", "wizardingworld"]
+	"Wizarding World": ["ww", "wizardingworld"],
+	"Intro": ["intro"],
+	"No Intro": ["nointro", "noint"]
 }
 
 # Board aliases. Useful if you want multiple
@@ -100,7 +103,17 @@ BOARD_ALIASES = {
 	"2PS1": ["2ps1", "hp2ps1"],
 	"4PSP": ["4psp", "hp4psp"],
 	"5PSP": ["5psp", "hp5psp"],
-	"DVD Games": ["dvd", "dvdgames", "hpdvdgames"]
+	"DVD Games": ["dvd", "dvdgames", "hpdvdgames"],
+	"First Day": ["fd", "first", "firstday"],
+	"All Beasts": ["ab", "allb", "allbeasts"],
+	"All Achievements": ["aa", "alla", "allachievements"],
+	"Dark Arts%": ["da", "darkarts", "darkarts%"],
+	"Flight School": ["fs", "flight", "flightschool"],
+	"Map Chamber": ["mc", "map", "chamber", "mapchamber"],
+	"First Trial": ["ft1", "trial1", "firsttrial", "1sttrial", "percival", "rackham"],
+	"Second Trial": ["st", "trial2", "secondtrial", "2ndtrial", "charles", "rookwood"],
+	"Third Trial": ["tt", "trial3", "thirdtrial", "3rdtrial", "niamh", "fitzgerland"],
+	"Fourth Trial": ["ft4", "trial4", "fourthtrial", "4thtrial", "sanbakar", "bakar"]
 }
 
 # Board token aliases.
@@ -114,6 +127,9 @@ BOARD_TOKEN_ALIASES = {
 		"singleyear": "sy",
 		"dvdgames": "dvd",
 		"hpdvdgames": "dvd"
+	},
+	"legacy_ce": {
+		"firstday": "fd"
 	}
 }
 
@@ -224,6 +240,11 @@ CATEGORY_ALIASES = {
 		"dvd": {
 			"hc": ["hc", "hogwartschallenge"],
 			"ww": ["ww", "wizardingworld"]
+		}
+	},
+	"legacy_ce": {
+		"fd": {
+
 		}
 	}
 }

@@ -13,10 +13,9 @@ from utils.model import SpeedRun
 # API for an individual level submission. This is
 # used by !run only.
 class IndividualLevel:
-	def __init__(self, api, game_map, platform_map, levels_map, category_map, board_slugs, ik_mapping, utils):
+	def __init__(self, api, game_map, levels_map, category_map, board_slugs, ik_mapping, utils):
 		self.api = api
 		self.game_map = game_map
-		self.platform_map = platform_map
 		self.levels_map = levels_map
 		self.category_map = category_map
 		self.board_slugs = board_slugs

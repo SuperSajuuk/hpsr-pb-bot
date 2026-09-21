@@ -59,20 +59,20 @@ pool = redis.ConnectionPool(
 
 # Instantiate all our internal code for powering the actual program.
 cache = caching.Caching(redis.Redis(connection_pool=pool))
-utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG)
+utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG, config.PLATFORM_MAP)
 normal = normal_run.NormalRun(
 	api=srdc_api,
 	game_map=nm_config.GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
+	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
 	board_slugs=nm_config.BOARD_GAME_SLUG,
-	md_aliases=nm_config.METADATA_ALIASES,
+	md_aliases=config.METADATA_ALIASES,
 	utils=utils
 )
 il = ind_lvl.IndividualLevel(
 	api=srdc_api,
 	game_map=nm_config.GAME_MAP,
-	platform_map=config.PLATFORM_MAP,
 	levels_map=il_config.LEVELS_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	board_slugs=nm_config.BOARD_GAME_SLUG,
@@ -91,18 +91,17 @@ lg = lego.LEGONormalRun(
 cat_ext = ce_run.CategoryExtension(
 	api=srdc_api,
 	game_map=ce_config.GAME_MAP,
-	platform_map=config.PLATFORM_MAP,
 	category_map=ce_config.SUB_CATEGORY_MAP,
 	category_aliases=ce_config.CATEGORY_ALIASES,
 	board_aliases=ce_config.BOARD_ALIASES,
 	token_aliases=ce_config.BOARD_TOKEN_ALIASES,
+	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
 multirun = multi.MultiRun(
 	api=srdc_api,
 	game_map=mr_config.GAME_MAP,
-	platform_map=config.PLATFORM_MAP,
 	category_map=mr_config.SUB_CATEGORY_MAP,
 	category_aliases=mr_config.CATEGORY_ALIASES,
 	board_aliases=mr_config.BOARD_ALIASES,
@@ -262,7 +261,7 @@ def individual_level(owner, game, platform, level, category, args):
 	# Note that the output will be dependent on the flag "--world-record".
 	# platform_repl is a bodge to support a specific set of ILs.
 	platform_repl = platform.replace("cc", "pc")
-	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform_repl].upper()} - {il_cat_name})'
+	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
 	if is_wr:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
@@ -301,7 +300,7 @@ def latest_run(owner, game, platform, board, args):
 		case _ if game in ("ce", "catext"):
 			# This is a category extension: pass everything to
 			# the processor and store the result in a variable.
-			result, cat_clean_name, alias_name = cat_ext.process_category_extension(platform, board, flags["ce_board"], player)
+			result, cat_clean_name, alias_name = cat_ext.process_category_extension(platform, board, flags["ce_board"], player, flags)
 			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi", "mr"):
 			# This is a multi-run: pass everything to
@@ -313,14 +312,16 @@ def latest_run(owner, game, platform, board, args):
 			# Due to LEGO games having more sub-categories than regular
 			# main board categories, they're handled separately due to
 			# extra metadata being needed.
-			result, cat_clean_name, alias_name = process_lego_main_board(platform, board, flags["lego_md"], player)
+			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_md"], player)
 			clean_name = f'{lego_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# This is a normal main board run which didn't meet any of
 			# the specific conditions above. Pass to the processor and
 			# store the result in a variable.
 			result, category_name, game_name = normal.process_normal_run(game, platform, board, player, flags)
-			clean_name = f'{game_name} ({config.PLATFORM_MAP[platform].upper()} - {category_name})'
+			get_platform = utils.resolve_platform_id(getattr(result, "platform", None))
+			platform_name = get_platform["name"] if get_platform is not None else platform.upper()
+			clean_name = f'{game_name} ({platform_name} - {category_name})'
 
 	# Check if a run object was returned, or if it is None.
 	if result is None:
@@ -465,7 +466,7 @@ def personal_best(owner, game, platform, board, args):
 			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case _:
 			is_emulator = " (Emulator)" if result.emulator else ""
-			clean_name = f"{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform].upper()} - {category_name}{is_emulator})"
+			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
 
 	# Return the standard string to represent this PB.
 	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
