@@ -72,7 +72,7 @@ class Utilities:
 		self.cache.create_key(f"run-finder:users:{username}", result[0].id)
 		return result[0].id
 
-	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: dict | None = None, alt_url: str = None):
+	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int | None = None, variables: list | None = None, alt_url: str = None):
 		"""
 		Fetch leaderboard for a game/category.
 		If max_runs is provided, only that many runs are returned.
@@ -109,7 +109,7 @@ class Utilities:
 		# Found nothing, so return None.
 		return None
 
-	def lookup_run_place(self, game_id, category_id, run_id, variables: dict | None, alt_url: str = None):
+	def lookup_run_place(self, game_id, category_id, run_id, variables: list | None, alt_url: str = None):
 		"""
 		Looks up the leaderboard for a game and returns the
 		place number representing the provided run.
@@ -148,6 +148,29 @@ class Utilities:
 			if entry["run"]["id"] == run_id:
 				return entry["place"]
 		return None
+
+	@staticmethod
+	def filter_all_runs(runs: list, var_filters: list):
+		"""
+		Takes a list of run objects returned by the search_runs method
+		and filters out the runs so only the ones the user asked for
+		are included.
+
+		Returns a new list of filtered runs.
+		"""
+		filtered_runs = []
+		for r in runs:
+			all_match = True
+			for x in var_filters:
+				for key, val in x.items():
+					if r["values"].get(key) != val:
+						all_match = False
+						break
+				if not all_match:
+					break
+			if all_match:
+				filtered_runs.append(r)
+		return filtered_runs
 
 	def search_runs(self, game_id, category_id, user_id, var_filters=None, base_query=None):
 		"""

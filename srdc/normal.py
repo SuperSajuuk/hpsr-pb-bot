@@ -217,15 +217,7 @@ class NormalRun:
 		# is a limitation of SRDC. Thus, to just have "one run", we need to do
 		# some filtering here.
 		if active_slice is not None:
-			filtered_runs = []
-			for r in runs:
-				# Check if this run matches the chosen slice
-				for x in var_filters:
-					for key, val in x.items():
-						if r["values"].get(key) == val:
-							filtered_runs.append(r)
-							break
-			runs = filtered_runs
+			runs = self.utils.filter_all_runs(runs, var_filters)
 
 		# If nothing remains after filtering, return None
 		if not runs:
@@ -235,25 +227,20 @@ class NormalRun:
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 
 		# In some cases, the run order above will not be the run we needed. Do
-		# some additional filtering, then capture the top run.
+		# some additional filtering, then capture the top run. This only filters
+		# if there was no active slice (as its just a repeat of the above behaviour)
 		#
 		# The run at the top of the index will then be used to get its placement
 		# in the leaderboard. To avoid duplication, leaderboard placement is
 		# parsed by a helper function.
 		best_run = runs[0]
-		if var_filters is not None:
-			filtered_runs = []
-			for r in runs:
-				for x in var_filters:
-					for key, val in x.items():
-						if r["values"].get(key) == val:
-							filtered_runs.append(r)
-							break
-
+		if active_slice is None and var_filters is not None:
 			# If the filtered runs are empty, there were no runs matching conditions.
+			filtered_runs = self.utils.filter_all_runs(runs, var_filters)
 			filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 			if len(filtered_runs) == 0:
 				return None
+
 			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
