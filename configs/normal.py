@@ -27,6 +27,7 @@ GAME_MAP = {
 	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
 	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
+	"shrek2": {"name": "Shrek 2", "aliases": ["s2"]}
 }
 
 # Map abbreviations passed by users to human-readable names.
@@ -117,5 +118,6 @@ BOARD_GAME_SLUG = {
 	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
 	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
-	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"]
+	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],
+	"shrek_2": ["shrek2_pc", "s2_pc"]
 }
