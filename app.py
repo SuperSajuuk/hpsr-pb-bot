@@ -139,7 +139,7 @@ def split_extras(argstr: str) -> list[str]:
 # Parse all arguments from "args"
 # This effectively covers optional switches
 # or behavioural changes
-def extract_flags(tokens: list[str]) -> dict:
+def extract_flags(game: str, tokens: list[str]) -> dict:
 	# Set default flag values
 	# These will then be used by the program to decide certain things
 	flags = {
@@ -165,22 +165,26 @@ def extract_flags(tokens: list[str]) -> dict:
 			continue
 
 		# Check if the token represents a sub-board for category extensions.
+		# Game must be ce/catext to actually trigger this block.
 		ce_match = False
-		for _, aliases in ce_config.SUB_CATEGORY_MAP.items():
-			if token in aliases:
-				flags["ce_board"] = token
-				ce_match = True
-				break
+		if game in ["ce", "catext"]:
+			for _, aliases in ce_config.SUB_CATEGORY_MAP.items():
+				if token in aliases:
+					flags["ce_board"] = token
+					ce_match = True
+					break
 		if ce_match:
 			continue
 
 		# Check if the token represents a sub-board for multi-runs.
+		# Game must be in the list to trigger this block.
 		mr_match = False
-		for _, aliases in mr_config.SUB_CATEGORY_MAP.items():
-			if token in aliases:
-				flags["mr_board"] = token
-				mr_match = True
-				break
+		if game in ["multirun", "multi", "mr"]:
+			for _, aliases in mr_config.SUB_CATEGORY_MAP.items():
+				if token in aliases:
+					flags["mr_board"] = token
+					mr_match = True
+					break
 		if mr_match:
 			continue
 
@@ -242,7 +246,7 @@ def individual_level(owner, game, platform, level, category, args):
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
-	flags = extract_flags(extras)
+	flags = extract_flags(game, extras)
 	is_wr = flags.get("world_record", False)
 	runner_override = flags.get("player", None)
 
@@ -285,7 +289,7 @@ def latest_run(owner, game, platform, board, args):
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
-	flags = extract_flags(extras)
+	flags = extract_flags(game, extras)
 	runner_override = flags.get("player", None)
 
 	# Resolve the player. This will always be the channel owner,
@@ -354,7 +358,7 @@ def personal_best(owner, game, platform, board, args):
 
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
-	flags = extract_flags(extras)
+	flags = extract_flags(game, extras)
 	runner_override = flags.get("player", None)
 
 	# Resolve the player. This will always be the channel owner,

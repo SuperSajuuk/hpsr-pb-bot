@@ -28,7 +28,8 @@ GAME_MAP = {
 	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
 	"shrek2": {"name": "Shrek 2", "aliases": ["s2"]},
-	"traod": {"name": "Tomb Raider: The Angel of Darkness", "aliases": ["angelofdarkness", "aod", "tombraideraod"]}
+	"traod": {"name": "Tomb Raider: The Angel of Darkness", "aliases": ["angelofdarkness", "aod", "tombraideraod"]},
+	"popww": {"name": "Prince of Persia: Warrior Within", "aliases": ["warriorwithin"]}
 }
 
 # Map abbreviations passed by users to human-readable names.
@@ -61,7 +62,8 @@ CATEGORY_MAP = {
 	"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
 	"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"},
 	"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"},
-	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"}
+	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"},
+	"True Ending": {"aliases": ["te", "ending", "trueending"], "internal_name": "te"}
 }
 
 # Platform category map
@@ -126,5 +128,6 @@ BOARD_GAME_SLUG = {
 		"shrek2_ps2_sp", "shrek2_ps2_coop", "shrek2_gcn_sp", "shrek2_gcn_coop", "shrek2_xbox_sp", "shrek2_xbox_coop",
 		"s2_ps2_sp", "s2_ps2_coop", "s2_gcn_sp", "s2_gcn_coop", "s2_xbox_sp", "s2_xbox_coop"
 	],
-	"traod": ["traod_pc", "angelofdarkness_pc", "aod_pc", "tombraideraod_pc"]
+	"traod": ["traod_pc", "angelofdarkness_pc", "aod_pc", "tombraideraod_pc"],
+	"pop_ww": ["popww_pc_std", "popww_pc_zl", "popww_pc_nmg", "popww_ps2_std", "popww_ps2_zl", "popww_ps2_nmg"]
 }

@@ -234,6 +234,7 @@ class NormalRun:
 		# in the leaderboard. To avoid duplication, leaderboard placement is
 		# parsed by a helper function.
 		best_run = runs[0]
+		filtered_runs = []
 		if active_slice is None and var_filters is not None:
 			# If the filtered runs are empty, there were no runs matching conditions.
 			filtered_runs = self.utils.filter_all_runs(runs, var_filters)
@@ -243,8 +244,17 @@ class NormalRun:
 
 			best_run = filtered_runs[0]
 
-		# Extract all run details and the leaderboard placement, then return the run object.
+		# Find the placement of the run in the leaderboard.
+		# For some bizarre reason, this might return None in really rare circumstances.
+		# If that happens, do it again but with the next item on the list (perhaps the
+		# returned object was for an obsolete run?)
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
+		if place is None:
+			best_run = filtered_runs[1] if len(filtered_runs) > 1 else runs[1]
+			if best_run is not None:
+				place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
+
+		# Extract all run details and the leaderboard placement, then return the run object.
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

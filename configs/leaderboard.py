@@ -1304,5 +1304,21 @@ LEADERBOARD_CONFIG = {
 				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
 			]
 		}
+	},
+	"pop_ww": {
+		"any": {
+			"variables": [
+				{"name": "std", "aliases": ["standard"], "var_id": "6nj54el4", "value_id": "0q5mvvlp"},
+				{"name": "zl", "aliases": ["zip", "zless", "zipless"], "var_id": "6nj54el4", "value_id": "4lxk5g12"},
+				{"name": "nmg", "aliases": ["nomajorglitches"], "var_id": "6nj54el4", "value_id": "zqo7k51y"}
+			]
+		},
+		"te": {
+			"variables": [
+				{"name": "std", "aliases": ["standard"], "var_id": "jlz2k0l2", "value_id": "013ydrl5"},
+				{"name": "zl", "aliases": ["zip", "zless", "zipless"], "var_id": "jlz2k0l2", "value_id": "5lexv6qo"},
+				{"name": "nmg", "aliases": ["nomajorglitches"], "var_id": "jlz2k0l2", "value_id": "rqvngr16"}
+			]
+		}
 	}
 }
