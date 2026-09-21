@@ -5,8 +5,16 @@ users to find runs and Personal Bests (PBs) from speedrun.com. The web app parse
 command and returns the run matching the search parameters, allowing the streamer to know on-the-fly what their last 
 PB submission was.
 
-Currently, this only supports Harry Potter leaderboards: support for searching up other games will be implemented in 
-the future. To see what games are supported in the web app today, refer to [Supported Games](https://github.com/SuperSajuuk/hpsr-pb-bot/wiki/LR-Games) on the wiki.
+This code started life as a direct fork from work already completed by Artfulinfo, who had built the web app to 
+support HP games for PB lookup only. All credit goes to him for the initial implementation, and the original 
+repository can be found at this link: https://github.com/artfulinfo/hpsr-pb-bot
+
+In a future update, this repository (the one you're viewing currently!) will stop displaying the "Forked from" text 
+below the repo name at the top of the page. The reason why this will be done is that the original name (hpsr-pb-bot) 
+no longer makes sense, as the repo is no longer just an HP Speedrunning PB bot finder. Leaving the fork network 
+allows the repo name to be updated to something more general.
+
+To see what games are supported in the web app today, refer to [Supported Games](https://github.com/SuperSajuuk/hpsr-pb-bot/wiki/LR-Games) on the wiki.
 
 ## Setup
 > [!IMPORTANT]
