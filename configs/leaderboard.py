@@ -1297,7 +1297,7 @@ LEADERBOARD_CONFIG = {
 				{"name": "la", "var_id": "0nwowprl", "value_id": "5lm67ky1"}
 			]
 		},
-		"100s_nla": {
+		"100s": {
 			"variables": [
 				{"var_id": "onvj5pwn", "value_id": "810ezmjq"},
 				{"name": "nla", "var_id": "0nwowprl", "value_id": "jq6r80nq"},
