@@ -119,5 +119,9 @@ BOARD_GAME_SLUG = {
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
 	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
 	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],
-	"shrek_2": ["shrek2_pc", "s2_pc"]
+	"shrek_2": ["shrek2_pc", "s2_pc"],
+	"shrek_2_c": [
+		"shrek2_ps2_sp", "shrek2_ps2_coop", "shrek2_gcn_sp", "shrek2_gcn_coop", "shrek2_xbox_sp", "shrek2_xbox_coop",
+		"s2_ps2_sp", "s2_ps2_coop", "s2_gcn_sp", "s2_gcn_coop", "s2_xbox_sp", "s2_xbox_coop"
+	]
 }

@@ -134,6 +134,20 @@ LEADERBOARD_CONFIG = {
 			]
 		}
 	},
+	"shrek_2_c": {
+		"any": {
+			"variables": [
+				{"name": "sp", "var_id": "wl3q0yn1", "value_id": "zqoxowpq"},
+				{"name": "coop", "var_id": "wl3q0yn1", "value_id": "01397ed1"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "sp", "var_id": "wl3q0yn1", "value_id": "zqoxowpq"},
+				{"name": "coop", "var_id": "wl3q0yn1", "value_id": "01397ed1"}
+			]
+		}
+	},
 	"legacy_pc_story": {
 		"ranrok": {
 			"variables": [

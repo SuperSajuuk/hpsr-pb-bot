@@ -43,7 +43,9 @@ METADATA_ALIASES = {
 	"2 Players": {"aliases": ["2p", "2players"], "int_key": "2p"},
 	"3 Players": {"aliases": ["3p", "3players"], "int_key": "3p"},
 	"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"], "int_key": "nla"},
-	"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"], "int_key": "la"}
+	"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"], "int_key": "la"},
+	"Single Player": {"aliases": ["1p", "sp", "single", "singleplayer"], "int_key": "sp"},
+	"Co-op": {"aliases": ["coop", "co-op"], "int_key": "coop"}
 }
 
 # Point to the docs if there is an error.
