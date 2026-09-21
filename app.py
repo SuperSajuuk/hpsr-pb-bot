@@ -332,7 +332,8 @@ def latest_run(owner, game, platform, board, args):
 	place = getattr(result, "place", "?")
 	time = getattr(result, "time", "unknown time")
 	link = getattr(result, "link", "no link")
-	return f"The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}"
+	is_current_wr = "👑 " if place == 1 else ""
+	return f"{is_current_wr}The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}"
 
 
 # Find a PB for the given player and category.
@@ -469,7 +470,8 @@ def personal_best(owner, game, platform, board, args):
 			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
 
 	# Return the standard string to represent this PB.
-	return f"The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
+	is_current_wr = "👑 " if result.place == 1 else ""
+	return f"{is_current_wr}The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
 
 
 # Provide help and support to users calling the routes.

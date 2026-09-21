@@ -26,6 +26,7 @@ GAME_MAP = {
 	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
 	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
 	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
+	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
 }
 
 # Map abbreviations passed by users to human-readable names.
@@ -57,6 +58,7 @@ CATEGORY_MAP = {
 	"2 Spatulas": {"aliases": ["2s", "2spat", "2spatulas"], "internal_name": "2s"},
 	"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
 	"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"},
+	"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"}
 }
 
 # Platform category map
@@ -114,5 +116,6 @@ BOARD_GAME_SLUG = {
 	"hpcc": ["hp2_cc"],
 	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
-	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"]
+	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
+	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"]
 }
