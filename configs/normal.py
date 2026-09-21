@@ -25,7 +25,7 @@ GAME_MAP = {
 	# Selection of other games. Extend appropriately.
 	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
 	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
-	"ssbfbbr": {"name": "Spongebob Squarepants: Battle for Bikini Bottom Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
+	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 }
 
 # Map abbreviations passed by users to human-readable names.
