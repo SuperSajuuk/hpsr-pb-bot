@@ -172,14 +172,11 @@ class CategoryExtension:
 		if not category_id:
 			raise ValueError("CE category not found in CE game")
 
-		# Resolve the user ID and capture the category vars.
+		# Resolve the user ID and capture the category vars. Then,
+		# search for runs, if none found then return.
 		user_id = self.utils.get_user_id(player)
-		required_variables = category_meta.get("variables", [])
-		if required_variables:
-			required_variables = {var["var_id"]: var["value_id"] for var in required_variables}
-
-		# Search for runs, if none found then return.
-		runs = self.utils.search_runs(game_id, category_id, user_id, required_variables)
+		ce_cat_vars = category_meta.get("variables", [])
+		runs = self.utils.search_runs(game_id, category_id, user_id, ce_cat_vars)
 		if not runs:
 			return None
 
@@ -189,6 +186,7 @@ class CategoryExtension:
 		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
 		# of additional runs. The list of runs must be filtered to get the correct
 		# run that the user asked for.
+		required_variables = {var["var_id"]: var["value_id"] for var in ce_cat_vars}
 		filtered_runs = []
 		for r in runs:
 			ok = True
@@ -206,7 +204,7 @@ class CategoryExtension:
 		# The only run that we have is the one that the user asked form.
 		# Lookup the placement and extract run data, using the same helper as normal runs
 		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], ce_cat_vars)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr
