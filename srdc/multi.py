@@ -167,37 +167,26 @@ class MultiRun:
 
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)
-		required_variables = category_meta.get("variables", [])
-		if required_variables:
-			required_variables = {var["var_id"]: var["value_id"] for var in required_variables}
-
-		# Search for runs, or return None if nothing there.
-		runs = self.utils.search_runs(game_id, category_id, user_id, required_variables)
+		mr_cat_vars = category_meta.get("variables", [])
+		runs = self.utils.search_runs(game_id, category_id, user_id, mr_cat_vars)
 		if not runs:
 			return None
 
-		# Sort the runs by the most recently verified run (newest at the top).
-		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-
-		# Unlike category extensions, multi-runs tends to have very few sub-boards
-		# However, as they're still a form of category extension, we do need to ensure
-		# all returned runs are filtered to get the correct run that the user asked for.
-		filtered_runs = []
-		for r in runs:
-			ok = True
-			for var_id, value_id in required_variables.items():
-				if r["values"].get(var_id) != value_id:
-					ok = False
-					break
-			if ok:
-				filtered_runs.append(r)
+		# Unlike CE's, multiruns tend to have fewer sub-categories, however the
+		# returned list will contain a lot of additional runs. The list of runs
+		# must be filtered to get the correct run that the user asked for.
+		required_variables = [{var["var_id"]: var["value_id"] for var in mr_cat_vars}]
+		filtered_runs = self.utils.filter_all_runs(runs, required_variables)
 
 		# If no runs were found, return None
 		if not filtered_runs:
 			return None
 
-		# The only run that we have is the one that the user asked form.
-		# Lookup the placement and extract run data, using the same helper as normal runs
+		# Sort the runs by the most recently verified run (newest at the top).
+		# As this is likely to be a very short list, the expected run would be
+		# the most recently submitted. Select it, then find its placement on the
+		# leaderboard. Return the SpeedRun object for this run using the helpers.
+		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = filtered_runs[0]
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
 		sr = self.utils.extract_run(best_run, player)

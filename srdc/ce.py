@@ -180,10 +180,9 @@ class CategoryExtension:
 		if not runs:
 			return None
 
-		# Sort the runs by the most recently verified run (newest at the top).
-		# Because CE's contain a lot of sub-boards, the ce_cat_vars will return a lot
-		# of additional runs. The list of runs must be filtered to get the correct
-		# run that the user asked for.
+		# Because CE's contain a lot of sub-boards, the returned list will contain
+		# a lot of additional runs. The list of runs must be filtered to get
+		# the correct run that the user asked for.
 		required_variables = [{var["var_id"]: var["value_id"] for var in ce_cat_vars}]
 		filtered_runs = self.utils.filter_all_runs(runs, required_variables)
 
@@ -191,8 +190,10 @@ class CategoryExtension:
 		if not filtered_runs:
 			return None
 
-		# The only run that we have is the one that the user asked form.
-		# Lookup the placement and extract run data, using the same helper as normal runs
+		# Sort the runs by the most recently verified run (newest at the top).
+		# As this is likely to be a very short list, the expected run would be
+		# the most recently submitted. Select it, then find its placement on the
+		# leaderboard. Return the SpeedRun object for this run using the helpers.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = filtered_runs[0]
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
