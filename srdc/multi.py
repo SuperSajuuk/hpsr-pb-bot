@@ -168,7 +168,7 @@ class MultiRun:
 
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)
-		mr_cat_vars = category_meta.get("variables", [])
+		mr_cat_vars = self.utils.generate_var_filters(category_meta, flags)
 		runs = self.utils.search_runs(game_id, category_id, user_id, mr_cat_vars)
 		if not runs:
 			return None
@@ -176,10 +176,7 @@ class MultiRun:
 		# Unlike CE's, multiruns tend to have fewer sub-categories, however the
 		# returned list will contain a lot of additional runs. The list of runs
 		# must be filtered to get the correct run that the user asked for.
-		required_variables = [{var["var_id"]: var["value_id"] for var in mr_cat_vars}]
-		filtered_runs = self.utils.filter_all_runs(runs, required_variables)
-
-		# If no runs were found, return None
+		filtered_runs = self.utils.filter_all_runs(runs, mr_cat_vars)
 		if not filtered_runs:
 			return None
 
@@ -189,7 +186,7 @@ class MultiRun:
 		# leaderboard. Return the SpeedRun object for this run using the helpers.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], required_variables)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], mr_cat_vars)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

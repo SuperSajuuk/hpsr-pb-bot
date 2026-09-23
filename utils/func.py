@@ -77,7 +77,7 @@ class Utilities:
 		Fetch leaderboard for a game/category.
 		If max_runs is provided, only that many runs are returned.
 		"""
-		url = f"leaderboards/{game_id}/category/{category_id}?embed=players" if alt_url is None else alt_url
+		url = f"leaderboards/{game_id}/category/{category_id}?embed=variables" if alt_url is None else alt_url
 		if max_runs is not None:
 			url += f"&max={max_runs}"
 		if variables:
@@ -171,6 +171,48 @@ class Utilities:
 			if all_match:
 				filtered_runs.append(r)
 		return filtered_runs
+
+	@staticmethod
+	def generate_var_filters(cfg, flags, cfg_2=None):
+		# All the variable data is stored in the "variables" key.
+		# Use that to capture all the relevant info we need.
+		# Some keys might contain names to define what they are.
+		active_slice = None
+		variable_data = cfg.get("variables", None)
+		if variable_data is None:
+			variable_data = cfg_2.get("variables", []) if isinstance(cfg_2, dict) else []
+
+		# Check the user provided flags against the slice names.
+		slice_names = {x["name"] for x in variable_data if "name" in x}
+		if flags:
+			# Flags that match slice names AND are True.
+			# If any are found, select it as the active slice.
+			true_flags = {name for name in slice_names if flags.get(name) is True}
+			if true_flags:
+				active_slice = next(iter(true_flags))
+			else:
+				# Perhaps check in the additional metadata in case there's something there.
+				additional_flags = {name for key, name in flags["additional_metadata"].items()}
+				if additional_flags:
+					active_slice = next(iter(additional_flags))
+				else:
+					active_slice = next((name for name in slice_names if name not in flags), None)
+
+		# This might still be None: in which case, just pick the first slice.
+		if active_slice is None:
+			active_slice = next(iter(slice_names), None)
+
+		# Build the relevant variable filters and then return the new list.
+		var_filters = []
+		for x in variable_data:
+			if "name" not in x:
+				var_filters.append({x["var_id"]: x["value_id"]})
+				continue
+			if x.get("name") == active_slice or active_slice in x.get("aliases", []):
+				var_filters.append({x["var_id"]: x["value_id"]})
+				continue
+
+		return var_filters
 
 	def search_runs(self, game_id, category_id, user_id, var_filters=None, base_query=None):
 		"""

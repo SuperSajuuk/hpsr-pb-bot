@@ -48,7 +48,9 @@ METADATA_ALIASES = {
 	"Co-op": {"aliases": ["coop", "co-op"], "int_key": "coop"},
 	"Standard": {"aliases": ["std", "standard"], "int_key": "std"},
 	"Zipless": {"aliases": ["zl", "zless", "zipless"], "int_key": "zl"},
-	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "int_key": "nmg"}
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "int_key": "nmg"},
+	"Any%": {"aliases": ["any", "any%"], "int_key": "any"},
+	"100%": {"aliases": ["100", "100%", "hundo"], "int_key": "100"}
 }
 
 # Point to the docs if there is an error.

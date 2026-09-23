@@ -490,7 +490,7 @@ def home_page_nothing():
 # Common error handlers
 @app.errorhandler(exc.UserInputException)
 def user_input_handler(error):
-	guidance = f" For guidance on resolving this issue, refer to the docs: {config.COMMAND_USAGE_DOC}." if not isinstance(error, UnsupportedGame) else ""
+	guidance = f" For guidance on resolving this issue, refer to the docs: {config.COMMAND_USAGE_DOC}." if not isinstance(error, exc.UnsupportedGame) else ""
 	err = f"{error}{guidance}"
 	return err, 400
 

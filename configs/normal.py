@@ -24,6 +24,7 @@ GAME_MAP = {
 
 	# Selection of other games. Extend appropriately.
 	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
+	"r1": {"name": "Rayman", "ordering": "pf", "aliases": ["rayman", "rayman1"]},
 	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
 	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
@@ -63,13 +64,23 @@ CATEGORY_MAP = {
 	"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"},
 	"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"},
 	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"},
-	"True Ending": {"aliases": ["te", "ending", "trueending"], "internal_name": "te"}
+	"True Ending": {"aliases": ["te", "ending", "trueending"], "internal_name": "te"},
+	"Sax%": {"aliases": ["sax", "mrsax", "sax%", "mrsax%"], "internal_name": "sax"},
+	"Skops%": {"aliases": ["skops", "mrskops", "skops%", "mrskops%"], "internal_name": "skops"}
 }
 
 # Platform category map
 # This is an alternative version of CATEGORY_MAP, but designed
 # for game boards which set the top category to platform names
 PLATFORM_CATEGORY_MAP = {
+	"r1": {
+		"PS1": ["ps1", "psx"],
+		"PC": ["pc"],
+		"DSI": ["ds"],
+		"GBA": ["gba"],
+		"Sega Saturn": ["saturn", "segasaturn", "ss"],
+		"Atari Jaguar": ["jaguar", "atari", "atarijaguar", "aj"]
+	},
 	"r3": {
 		"GCN": ["gcn", "wii"],
 		"GCN Emu": ["gcn"],
@@ -120,6 +131,7 @@ BOARD_GAME_SLUG = {
 	"disneys_brother_bear": ["dbb_pc"],
 	"hpcc": ["hp2_cc"],
 	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
+	"r1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"],
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
 	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
 	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],

@@ -169,44 +169,8 @@ class NormalRun:
 		# If so, capture all variables and build a var_filters list
 		# for use in the query.
 		var_filters = None
-		active_slice = None
 		if (cfg and "variables" in cfg) or (cfg_2 and "variables" in cfg_2):
-			# All the variable data is stored in the "variables" key.
-			# Use that to capture all the relevant info we need.
-			# Some keys might contain names to define what they are.
-			variable_data = cfg.get("variables", None)
-			if variable_data is None:
-				variable_data = cfg_2.get("variables", [])
-
-			# Check the user provided flags against the slice names.
-			slice_names = {x["name"] for x in variable_data if "name" in x}
-			if flags:
-				# Flags that match slice names AND are True.
-				# If any are found, select it as the active slice.
-				true_flags = {name for name in slice_names if flags.get(name) is True}
-				if true_flags:
-					active_slice = next(iter(true_flags))
-				else:
-					# Perhaps check in the additional metadata in case there's something there.
-					additional_flags = {name for key, name in flags["additional_metadata"].items()}
-					if additional_flags:
-						active_slice = next(iter(additional_flags))
-					else:
-						active_slice = next((name for name in slice_names if name not in flags), None)
-
-			# This might still be None: in which case, just pick the first slice.
-			if active_slice is None:
-				active_slice = next(iter(slice_names), None)
-
-			# Build var_filters
-			var_filters = []
-			for x in variable_data:
-				if "name" not in x:
-					var_filters.append({x["var_id"]: x["value_id"]})
-					continue
-				if x.get("name") == active_slice or active_slice in x.get("aliases", []):
-					var_filters.append({x["var_id"]: x["value_id"]})
-					continue
+			var_filters = self.utils.generate_var_filters(cfg, flags, cfg_2)
 
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
@@ -217,41 +181,22 @@ class NormalRun:
 		# After returning runs, you may receive more than you asked for: this
 		# is a limitation of SRDC. Thus, to just have "one run", we need to do
 		# some filtering here.
-		if active_slice is not None:
+		if var_filters is not None:
 			runs = self.utils.filter_all_runs(runs, var_filters)
-
-		# If nothing remains after filtering, return None
 		if not runs:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top)
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-
-		# In some cases, the run order above will not be the run we needed. Do
-		# some additional filtering, then capture the top run. This only filters
-		# if there was no active slice (as its just a repeat of the above behaviour)
-		#
-		# The run at the top of the index will then be used to get its placement
-		# in the leaderboard. To avoid duplication, leaderboard placement is
-		# parsed by a helper function.
 		best_run = runs[0]
-		filtered_runs = []
-		if active_slice is None and var_filters is not None:
-			# If the filtered runs are empty, there were no runs matching conditions.
-			filtered_runs = self.utils.filter_all_runs(runs, var_filters)
-			filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-			if len(filtered_runs) == 0:
-				return None
-
-			best_run = filtered_runs[0]
 
 		# Find the placement of the run in the leaderboard.
-		# For some bizarre reason, this might return None in really rare circumstances.
-		# If that happens, do it again but with the next item on the list (perhaps the
-		# returned object was for an obsolete run?)
+		# In some very rare instances, such as when two runs are submitted
+		# at the same time, place lookup may return None. If that occurs,
+		# then perform a second lookup using the next run in the list.
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
 		if place is None:
-			best_run = filtered_runs[1] if len(filtered_runs) > 1 else runs[1]
+			best_run = runs[1]
 			if best_run is not None:
 				place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
 

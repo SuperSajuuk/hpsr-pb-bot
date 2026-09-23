@@ -543,118 +543,70 @@ LEADERBOARD_CONFIG = {
 				{"var_id": "7896d298", "value_id": "klrg73oq"}
 			]
 		},
-		"sy_hp1_any": {
+		"sy_hp1": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "4qye4641"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp2_any": {
+		"sy_hp2": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "mln6320q"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp3_any": {
+		"sy_hp3": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "810e7rwq"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp4_any": {
+		"sy_hp4": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "9qjyd5eq"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp5_any": {
+		"sy_hp5": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "jq6k7j3l"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp6_any": {
+		"sy_hp6": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "5lmjn9jl"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp71_any": {
+		"sy_hp71": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "81ww8ko1"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 		},
-		"sy_hp72_any": {
+		"sy_hp72": {
 			"board": "Single Year",
 			"variables": [
 				{"var_id": "2lgr1v7n", "value_id": "zqown7pl"},
-				{"var_id": "wl30dmyl", "value_id": "013erydq"}
+				{"name": "any", "var_id": "wl30dmyl", "value_id": "013erydq"},
+				{"name": "100", "var_id": "wl30dmyl", "value_id": "rqvwdn71"}
 			]
 
-		},
-		"sy_hp1_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "4qye4641"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp2_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "mln6320q"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp3_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "810e7rwq"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp4_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "9qjyd5eq"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp5_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "jq6k7j3l"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp6_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "5lmjn9jl"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp71_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "81ww8ko1"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
-		},
-		"sy_hp72_100": {
-			"board": "Single Year",
-			"variables": [
-				{"var_id": "2lgr1v7n", "value_id": "zqown7pl"},
-				{"var_id": "wl30dmyl", "value_id": "rqvwdn71"}
-			]
 		},
 		"dvd_hc": {
 			"board": "DVD Games",
