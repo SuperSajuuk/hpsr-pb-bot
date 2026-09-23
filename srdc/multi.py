@@ -8,6 +8,7 @@
 # do not have a hard-coded value for, the system will look up SRDC and
 # then fail if no board exists.
 from utils.model import SpeedRun
+from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, MissingInternalData
 import srcomapi.datatypes as dt
 
 
@@ -83,13 +84,13 @@ class MultiRun:
 		# board in the code. If not, there is an error.
 		mr_key = self.game_map.get(base_game)
 		if not mr_key:
-			return None
+			raise InvalidGame(f"Unknown Multirun game series: '{ce_key}'. Check for typos or whether this is a supported series for multirun lookups.")
 
 		# Parse the mr_key (which contains the game name) to see
 		# if it exists. If not, there is an error.
 		alias_table = self.category_aliases.get(mr_key["id"])
 		if not alias_table:
-			return None
+			raise MissingInternalData(f"No alias table exists for ID '{ce_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
 
 		# Check if the top board is defined in the alias list.
 		# If it isn't, the user might have provided an alternative
@@ -97,7 +98,7 @@ class MultiRun:
 		if mr_board not in alias_table:
 			mr_board = self.token_aliases[mr_key["id"]].get(mr_board, None)
 			if mr_board is None:
-				return None
+				raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
 		# Use the board_token (the top-level board) to find
 		# actual internal token name (this is needed to ensure
@@ -108,7 +109,7 @@ class MultiRun:
 		# does not exist in the alias table.
 		board_token = alias_table[mr_board].get(mr_category_board, None)
 		if board_token is None:
-			return None
+			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
 		# Build the internal key and lookup the multi-run.
 		internal_key = f"{mr_board}_{board_token}"
@@ -145,12 +146,12 @@ class MultiRun:
 		# Find the leaderboard config for this category.
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
-			raise ValueError(f"No leaderboard config found for Multirun game slug: {slug_id}")
+			raise MissingInternalData(f"No leaderboard config found for Multirun game slug: {slug_id}")
 
 		# Category metadata is necessary for Multiruns: if nothing is found, or the
 		# Multirun category cannot be found in the configuration, return an error.
 		if mr_category not in cfg:
-			raise ValueError(f"Unknown Multirun category key: {mr_category}")
+			raise MissingInternalData(f"Unknown Multirun category key: {mr_category}")
 
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
@@ -163,7 +164,7 @@ class MultiRun:
 
 		# If category_obj is still None, then the category does not exist.
 		if not category_id:
-			raise ValueError("Multirun category not found in Multirun game")
+			raise InvalidCategory("Multirun category not found in Multirun game")
 
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.utils.get_user_id(player)

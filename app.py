@@ -31,6 +31,7 @@ import configs.generic as config
 
 # Import everything else that is needed
 import utils.func as func
+import utils.exceptions as exc
 import utils.cache as caching
 import urllib.parse as url_parse
 import srdc.ils as ind_lvl
@@ -400,7 +401,7 @@ def personal_best(owner, game, platform, board, args):
 	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
 	if mode is None:
-		return f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}"
+		raise exc.InvalidCategory(f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}")
 
 	# Produce an internal key.
 	internal_key = f"{game}_{platform}"
@@ -417,7 +418,9 @@ def personal_best(owner, game, platform, board, args):
 
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
-				return f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+				raise exc.InvalidCategory(
+					f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+				)
 
 			# Capture the internal key based on board_name
 			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
@@ -435,7 +438,9 @@ def personal_best(owner, game, platform, board, args):
 
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
-				return f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+				raise exc.InvalidCategory(
+					f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+				)
 
 			# Capture the internal key based on board_name
 			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
@@ -444,12 +449,7 @@ def personal_best(owner, game, platform, board, args):
 					break
 
 	# Query SRDC to find the most recent PB of the player for this game/category.
-	try:
-		result = per_best.lookup_pb(mode, game, internal_key, board, player, flags)
-	except ValueError as e:
-		return str(e)
-
-	# Was there any results?
+	result = per_best.lookup_pb(mode, game, internal_key, board, player, flags)
 	if not result:
 		return "No PB found for this criteria."
 
@@ -479,25 +479,35 @@ def personal_best(owner, game, platform, board, args):
 
 
 # Provide help and support to users calling the routes.
-@app.route("/help")
-def command_help():
-	return f"This bot can search SRDC for the latest run or a personal best. See the docs for commands/usage: {config.COMMAND_USAGE_DOC}"
+@app.route("/")
+def home_page_nothing():
+	return (
+		f"This web app is designed to support speedrunners on Twitch by enabling a single platform to look up ILs, PBs, runs or world records. "
+		f"For more information, such as supported games and command use, refer to the wiki: <a href='{config.COMMAND_USAGE_DOC}'>{config.COMMAND_USAGE_DOC}</a>"
+	)
 
 
 # Common error handlers
+@app.errorhandler(exc.UserInputException)
+def user_input_handler(error):
+	guidance = f" For guidance on resolving this issue, refer to the docs: {config.COMMAND_USAGE_DOC}." if not isinstance(error, UnsupportedGame) else ""
+	err = f"{error}{guidance}"
+	return err, 400
+
+
+@app.errorhandler(exc.MissingInternalData)
+def missing_int_data(error):
+	return error, 400
+
+
 @app.errorhandler(ValueError)
 def value_error_handler(error):
-	return str(error)
-
-
-# @app.errorhandler(KeyError)
-# def key_error_handler(error):
-# 	return f"One or more of the inputs provided couldn't be found: '{str(error)}'"
+	return str(error), 400
 
 
 @app.errorhandler(500)
 def internal_error(error):
-	return f"Encountered an error in your request, or could not find a run: {str(error)}"
+	return f"Encountered an error in your request: {str(error)}"
 
 
 @app.errorhandler(408)

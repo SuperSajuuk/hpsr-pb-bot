@@ -8,6 +8,7 @@
 # the main boards. CE's are to be handled in ce.py and multiruns will
 # be in multi.py
 from utils.model import SpeedRun
+from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, UnsupportedGame
 from configs.generic import COMMAND_USAGE_DOC
 
 
@@ -49,11 +50,11 @@ class NormalRun:
 				break
 
 		if no_game:
-			raise ValueError(f"Unknown game: '{game}'. Refer to the docs for the supported games: {COMMAND_USAGE_DOC}")
+			raise InvalidGame(f"Unknown game: '{game}'.")
 		if is_unsupported:
-			raise ValueError(f"Game code '{game}' is currently unsupported in the bot due to technical limitations. This will be resolved in the future.")
+			raise UnsupportedGame(f"Game code '{game}' is currently unsupported in the bot due to technical limitations. This will be resolved in the future.")
 		if platform not in self.platform_map:
-			raise ValueError(f"Unknown platform: '{platform}'. Refer to the docs for the supported platforms: {COMMAND_USAGE_DOC}")
+			raise InvalidPlatform(f"Unknown platform: '{platform}'.")
 
 		# Check if the board name is in the category list.
 		not_board = True
@@ -68,7 +69,7 @@ class NormalRun:
 
 		# If not found, then raise an error
 		if not_board:
-			raise ValueError(f"Unknown category/board: '{board}'.  Refer to the docs for the supported categories: {COMMAND_USAGE_DOC}")
+			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
 		# If there are additional metadata flags, then append it to
 		# category name for output. There would usually only be
@@ -118,7 +119,7 @@ class NormalRun:
 
 		# Didn't find anything, so returning.
 		if not category_meta:
-			return None
+			raise InvalidCategory("The category key provided could not be found in the alias list. Please check your input, and try again.")
 
 		# Check that there is a category matching the one we asked for.
 		category_id = None
@@ -155,7 +156,7 @@ class NormalRun:
 
 		# If no category exists with the given name, raise ValueError and quit.
 		if not category_id:
-			raise ValueError("Category not found in game")
+			raise InvalidCategory("The category name obtained from the category key could not be mapped to a valid speedrun.com category for this game.")
 
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.utils.get_user_id(player)

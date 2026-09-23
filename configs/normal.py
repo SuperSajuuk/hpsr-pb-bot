@@ -24,7 +24,7 @@ GAME_MAP = {
 
 	# Selection of other games. Extend appropriately.
 	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
-	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
+	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"], "unsupported": True},
 	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
 	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
 	"shrek2": {"name": "Shrek 2", "aliases": ["s2"]},
