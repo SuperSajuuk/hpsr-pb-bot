@@ -227,7 +227,7 @@ class Utilities:
 		Returns a list, which may be empty or contain a list of Run objects.
 		"""
 		# Build a base query, which we can then paginate against.
-		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables,players" if base_query is None else base_query
+		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables" if base_query is None else base_query
 		if var_filters:
 			if isinstance(var_filters, list):
 				for var in var_filters:

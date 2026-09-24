@@ -1227,6 +1227,28 @@ LEADERBOARD_CONFIG = {
 			]
 		}
 	},
+	"rayman_1": {
+		"100": {
+			"variables": [
+				{"var_id": "2lgzx5o8", "value_id": "xqkr5ky1"}
+			]
+		},
+		"any": {
+			"variables": [
+				{"var_id": "2lgzx5o8", "value_id": "gq7npey1"}
+			]
+		},
+		"sax": {
+			"variables": [
+				{"var_id": "2lgzx5o8", "value_id": "21gj5vn1"}
+			]
+		},
+		"skops": {
+			"variables": [
+				{"var_id": "2lgzx5o8", "value_id": "192xy60q"}
+			]
+		}
+	},
 	"rehydrated": {
 		"1s": {
 			"variables": [

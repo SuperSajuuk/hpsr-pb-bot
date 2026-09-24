@@ -131,7 +131,7 @@ BOARD_GAME_SLUG = {
 	"disneys_brother_bear": ["dbb_pc"],
 	"hpcc": ["hp2_cc"],
 	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
-	"r1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"],
+	"rayman_1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"],
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
 	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
 	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],
