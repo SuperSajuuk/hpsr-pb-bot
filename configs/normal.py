@@ -10,27 +10,93 @@
 # This is used for main boards that have no separate
 # handler.
 GAME_MAP = {
-	# Harry Potter
-	"hp1": {"name": "Harry Potter and the Philosopher's Stone"},
-	"hp2": {"name": "Harry Potter and the Chamber of Secrets"},
-	"hp3": {"name": "Harry Potter and the Prisoner of Azkaban"},
-	"hp4": {"name": "Harry Potter and the Goblet of Fire"},
-	"hp5": {"name": "Harry Potter and the Order of the Phoenix"},
-	"hp6": {"name": "Harry Potter and the Half Blood Prince"},
-	"hp7.1": {"name": "Harry Potter and the Deathly Hallows Part 1", "aliases": ["hp71", "hp7p1"]},
-	"hp7.2": {"name": "Harry Potter and the Deathly Hallows Part 2", "aliases": ["hp72", "hp7p2"]},
-	"qwc": {"name": "Harry Potter: Quidditch World Cup", "aliases": ["hpqwc"]},
-	"legacy": {"name": "Hogwarts Legacy", "aliases": ["hl", "hogwartslegacy"]},
-
-	# Selection of other games. Extend appropriately.
-	"dbb": {"name": "Disney's Brother Bear", "aliases": ["disneysbrotherbear", "brotherbear"]},
-	"r1": {"name": "Rayman", "ordering": "pf", "aliases": ["rayman", "rayman1"]},
-	"r3": {"name": "Rayman 3: Hoodlum Havoc", "ordering": "pf", "aliases": ["rayman3"]},
-	"ssbfbbr": {"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated", "ordering": "pf", "aliases": ["bfbbr"]},
-	"hm": {"name": "Hannah Montana", "aliases": ["montana", "hannahmontana"]},
-	"shrek2": {"name": "Shrek 2", "aliases": ["s2"]},
-	"traod": {"name": "Tomb Raider: The Angel of Darkness", "aliases": ["angelofdarkness", "aod", "tombraideraod"]},
-	"popww": {"name": "Prince of Persia: Warrior Within", "aliases": ["warriorwithin"]}
+	"hp1": {
+		"name": "Harry Potter and the Philosopher's Stone",
+		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"]
+	},
+	"hp2": {
+		"name": "Harry Potter and the Chamber of Secrets",
+		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"]
+	},
+	"hp3": {
+		"name": "Harry Potter and the Prisoner of Azkaban",
+		"platforms": ["ps2", "xbox", "gcn", "pc", "gba"]
+	},
+	"hp4": {
+		"name": "Harry Potter and the Goblet of Fire",
+		"platforms": ["ps2", "xbox", "gcn", "pc", "gba", "ds"]
+	},
+	"hp5": {
+		"name": "Harry Potter and the Order of the Phoenix",
+		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "gba", "ds"]
+	},
+	"hp6": {
+		"name": "Harry Potter and the Half Blood Prince",
+		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "ds"]
+	},
+	"hp7.1": {
+		"name": "Harry Potter and the Deathly Hallows Part 1",
+		"aliases": ["hp71", "hp7p1"],
+		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"]
+	},
+	"hp7.2": {
+		"name": "Harry Potter and the Deathly Hallows Part 2",
+		"aliases": ["hp72", "hp7p2"],
+		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"]
+	},
+	"qwc": {
+		"name": "Harry Potter: Quidditch World Cup",
+		"aliases": ["hpqwc"],
+		"platforms": ["gba", "gcn", "ps2", "xbox", "pc"]
+	},
+	"legacy": {
+		"name": "Hogwarts Legacy",
+		"aliases": ["hl", "hogwartslegacy"],
+		"platforms": ["ps4", "ps5", "pc", "xbone", "xbss", "xbsx"]
+	},
+	"dbb": {
+		"name": "Disney's Brother Bear",
+		"aliases": ["disneysbrotherbear", "brotherbear"],
+		"platforms": ["pc"]
+	},
+	"r1": {
+		"name": "Rayman",
+		"ordering": "pf",
+		"aliases": ["rayman", "rayman1"],
+		"platforms": ["ps1", "psx", "pc", "ds", "gba", "ss", "saturn", "segasaturn", "aj", "jaguar", "atari", "atarijaguar"]
+	},
+	"r3": {
+		"name": "Rayman 3: Hoodlum Havoc",
+		"ordering": "pf",
+		"aliases": ["rayman3"],
+		"platforms": ["gcn", "pc", "ps2", "hd", "ps3", "x360", "xss", "xbox"]
+	},
+	"ssbfbbr": {
+		"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated",
+		"ordering": "pf",
+		"aliases": ["bfbbr"],
+		"platforms": ["ps4", "xbone", "pc", "xboxone"]
+	},
+	"hm": {
+		"name": "Hannah Montana",
+		"aliases": ["montana", "hannahmontana"],
+		"platforms": ["ds"]
+	},
+	"shrek2": {
+		"name": "Shrek 2",
+		"aliases": ["s2"],
+		"platforms": ["pc", "ps2", "xbox", "gcn"]
+	},
+	"traod": {
+		"name": "Tomb Raider: The Angel of Darkness",
+		"aliases": ["angelofdarkness", "aod", "tombraideraod"],
+		"platforms": ["ps2", "pc"]
+	},
+	"popww": {
+		"name": "Prince of Persia: Warrior Within",
+		"aliases": ["warriorwithin"],
+		"platforms": ["gcn", "ps2", "ps3", "pc", "psp", "xbox", "psvita", "vita", "wii"]
+	}
 }
 
 # Map abbreviations passed by users to human-readable names.

@@ -37,6 +37,7 @@ class NormalRun:
 		"""
 		no_game = True
 		is_unsupported = False
+		supported_platforms = []
 		game_int_name = None
 		game_name = None
 		ordering_mode = None
@@ -45,6 +46,7 @@ class NormalRun:
 				no_game = False
 				game_int_name = key_name
 				game_name = data["name"]
+				supported_platforms = data.get("platforms", [])
 				is_unsupported = data.get("unsupported", False)
 				ordering_mode = data.get("ordering", "cf")
 				break
@@ -55,6 +57,8 @@ class NormalRun:
 			raise UnsupportedGame(f"Game code '{game}' is currently unsupported in the bot due to technical limitations. This will be resolved in the future.")
 		if platform not in self.platform_map:
 			raise InvalidPlatform(f"Unknown platform: '{platform}'.")
+		if platform not in supported_platforms:
+			raise UnsupportedGame(f"The platform '{platform}' cannot be used for this game, please try one of the allowed platforms: {', '.join(supported_platforms)}")
 
 		# Check if the board name is in the category list.
 		not_board = True
