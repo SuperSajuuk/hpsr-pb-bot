@@ -266,7 +266,7 @@ def individual_level(owner, game, platform, level, category, args):
 	# Note that the output will be dependent on the flag "--world-record".
 	# platform_repl is a bodge to support a specific set of ILs.
 	platform_repl = platform.replace("cc", "pc")
-	clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
+	clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
 	if is_wr:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
@@ -393,8 +393,8 @@ def personal_best(owner, game, platform, board, args):
 	# Parse the board value in both the CE and MR category maps.
 	category_name = None
 	if alias_table is not None:
-		for cat_name, aliases in alias_table.items():
-			if board in aliases:
+		for cat_name, data in alias_table.items():
+			if board in data["aliases"]:
 				category_name = cat_name
 				break
 
@@ -471,7 +471,7 @@ def personal_best(owner, game, platform, board, args):
 			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case _:
 			is_emulator = " (Emulator)" if result.emulator else ""
-			clean_name = f'{nm_config.GAME_MAP[game]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
+			clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
 
 	# Return the standard string to represent this PB.
 	is_current_wr = "👑 " if result.place == 1 else ""

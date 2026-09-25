@@ -144,17 +144,18 @@ class PersonalBest:
 		Uses SRDC variable filters and client-side filtering to ensure only the run the
 		user requested is returned.
 		"""
-		# Obtain the slug URL for the game key.
-		# If one doesn't exist, it might be a CE or MR.
+		# Pull in all category data based on the PB Mode.
 		game_map, category_map, board_aliases, board_slugs = self.get_config_dicts(pb_mode)
-		slug = board_slugs.get(internal_key, None)
-		if slug is None:
-			for key, val in game_map.items():
-				if val["id"] == game_key:
-					slug = val["id"]
-					break
+
+		# Get the slug URL
+		slug = None
+		for slug_url, aliases in board_slugs.items():
+			if internal_key in aliases:
+				slug = slug_url
+				break
 
 		# Throw an error here if slug is still None
+		print(slug)
 		if slug is None:
 			raise ValueError("An error has occurred with an internal function: the slug URL couldn't be found for this combination of inputs.")
 
@@ -162,11 +163,10 @@ class PersonalBest:
 		game_id, game_cats = self.utils.get_game_code(slug)
 		category_meta = None
 		ce_category_meta = None
-		for board_name, aliases in category_map.items():
-			if cat_key in aliases:
+		for board_name, data in category_map.items():
+			if cat_key in data["aliases"]:
 				category_meta = board_name
 				break
-
 		if board_aliases is not None:
 			ce_cat_key = internal_key.split("_")[0]
 			for key, val in board_aliases.items():
