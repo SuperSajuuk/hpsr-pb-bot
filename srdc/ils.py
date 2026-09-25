@@ -169,10 +169,14 @@ class IndividualLevel:
 		for an IL.
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
-		slug = self.board_slugs[internal_key]
-		game_id, game_cats = self.utils.get_game_code(slug, redis_key="levels", type_filter="per-level")
+		slug = None
+		for slug_url, aliases in self.board_slugs.items():
+			if internal_key in aliases:
+				slug = slug_url
+				break
 
-		# Check that there is a category matching the one we asked for.
+		# Return the game code and then parse the category name for ID.
+		game_id, game_cats = self.utils.get_game_code(slug, redis_key="levels", type_filter="per-level")
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == category_meta:
