@@ -70,7 +70,6 @@ class PersonalBest:
 			game=str(run["game"]),
 			category=str(run["category"]),
 			time=time,
-			raw=run,
 			platform=run["system"]["platform"],
 			emulator=run["system"]["emulated"],
 			place=entry["place"],
@@ -81,57 +80,36 @@ class PersonalBest:
 	# ---------------------------------------------------------
 	# PB FILTERING
 	# ---------------------------------------------------------
-	def find_pbs(self, player: str, pbs: list, category_id: str, variable_filter=None, flags: dict = None):
+	def find_pbs(self, player: str, pbs: list, category_id: str, var_filters=None):
 		"""
-		Find PBs matching a category and optional variable filter.
-		variable_filter = ("variable_id", "expected_value")
+		Takes a list of PB run objects returned by speedrun.com and
+		only returns the PBs that meet conditions.
+
+		If there are matches, the results list will contain SpeedRun objects.
+		If no PB matches, the list will be empty.
 		"""
 		results = []
 		for entry in pbs:
 			# Check for a category match: if none, continue.
 			run = entry["run"]
-			if str(run["category"]) != category_id:
+			if run["category"] != category_id:
 				continue
 
-			# Optional variable match (CE, multiruns)
-			if variable_filter is not None:
-				# If the variable_filter data includes a "variables" key, use data from there
-				variable_data = variable_filter.get("variables", None)
-				if variable_data is not None:
-					# The variable_data might include multiple variable dictionaries.
-					# To identify the one we need, capture the name value and map it
-					# to the flags' dictionary. Flags are derived from the users' input.
-					slice_names = {x["name"] for x in variable_data if "name" in x}
-					active_slice = None
-					if flags is not None:
-						for name in slice_names:
-							if flags.get(name, False):
-								active_slice = name
-								break
-
-					# Check for a slice or continue on if there was nothing.
-					if active_slice is not None:
-						variable_data = [x for x in variable_data if x["name"] == active_slice]
-
-					# Now parse just the variable that we need.
-					all_match = True
-					for x in variable_data:
-						var_id = x.get("var_id")
-						expected = x.get("value_id", None)
-						if run["values"].get(var_id) == expected:
+			# If any variable filters are provided, use them to check for
+			# additional filtering.
+			all_match = True
+			if var_filters is not None:
+				for x in var_filters:
+					for key, val in x.items():
+						if run["values"].get(key) != val:
+							all_match = False
 							break
-						all_match = False
-
 					if not all_match:
-						continue
-				else:
-					# Check if the value ID is the one we wanted.
-					var_id, expected = variable_filter
-					if run["values"].get(var_id) != expected:
-						continue
+						break
 
-			# Append the PB result to the list.
-			results.append(self.extract_pb(entry, player))
+			# Append the PB result to the list if all variables matched.
+			if all_match:
+				results.append(self.extract_pb(entry, player))
 
 		return results
 
@@ -155,7 +133,6 @@ class PersonalBest:
 				break
 
 		# Throw an error here if slug is still None
-		print(slug)
 		if slug is None:
 			raise ValueError("An error has occurred with an internal function: the slug URL couldn't be found for this combination of inputs.")
 
@@ -188,16 +165,14 @@ class PersonalBest:
 			raise ValueError("Category not found in game")
 
 		# Fetch PBs for this player based on this game ID.
-		# Also, load unified leaderboard config for this game (if present)
 		pbs = self.search_pbs(player, game_id)
-		variables = self.utils.resolve_leaderboard_config(game_key, internal_key)
-		variables_2 = None
-		if variables is not None:
-			variables_2 = variables.get(cat_key, None)
 
-		# Filter the PB list to try and find the PB the user asked for.
-		# If no PB found, return None.
-		result = self.find_pbs(player, pbs, category_id, variables if variables_2 is None else variables_2, flags)
+		# Pull in all relevant config data, build var filters
+		# then filter all PBs to find the requested one.
+		cfg = self.utils.resolve_leaderboard_config(game_key, internal_key)
+		variables = None if cfg is None else cfg.get(cat_key, None)
+		var_filters = self.utils.generate_var_filters(variables, flags)
+		result = self.find_pbs(player, pbs, category_id, var_filters)
 		if not result:
 			return None
 
