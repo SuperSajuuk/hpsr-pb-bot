@@ -256,7 +256,7 @@ class Utilities:
 		return all_runs
 
 	@staticmethod
-	def extract_run(run_obj, player_name) -> SpeedRun:
+	def extract_run(run, player_name, place_num=None) -> SpeedRun:
 		"""
 		Convert a srcomapi Run object into a SpeedRun dataclass.
 		"""
@@ -264,7 +264,7 @@ class Utilities:
 		# This may come up in some runs which are measured with millisecond precision.
 		# To avoid looking silly in some places, millisecond precision will only be
 		# given if the API returns it.
-		seconds = run_obj["times"]["primary_t"]
+		seconds = run["times"]["primary_t"]
 		total_ms = round(seconds * 1000)
 		days, remainder = divmod(total_ms, 86_400_000)
 		hours, remainder = divmod(remainder, 3_600_000)
@@ -286,12 +286,11 @@ class Utilities:
 		# Create a SpeedRun model and return it.
 		return SpeedRun(
 			player=player_name,
-			game=str(run_obj["game"]),
-			category=str(run_obj["category"]),
+			game=str(run["game"]),
+			category=str(run["category"]),
 			time=time_str,
-			platform=run_obj["system"]["platform"],
-			emulator=run_obj["system"]["emulated"],
-			place=None,  # run search does not include leaderboard place
-			link=run_obj["weblink"],
-			id=None
+			platform=run["system"]["platform"],
+			emulator=run["system"]["emulated"],
+			place=place_num,
+			link=run["weblink"]
 		)

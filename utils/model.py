@@ -16,4 +16,3 @@ class SpeedRun:
 	emulator: bool
 	place: int | None
 	link: str
-	id: int | None

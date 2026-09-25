@@ -25,7 +25,6 @@ class PersonalBest:
 		self.ce_board_aliases, self.mr_board_aliases = board_aliases
 		self.nm_board_slugs = board_slugs
 		self.utils = utils
-		self.game_code_cache = {}
 
 	# Return just the config dicts that match the mode of the PB
 	# This prevents us pointlessly checking "all" the categories
@@ -55,27 +54,6 @@ class PersonalBest:
 	def search_pbs(self, player: str, game_id: str):
 		"""Fetch PBs for a player/game combination."""
 		return self.api.get(f"users/{player}/personal-bests?game={game_id}&embed=variables")
-
-	# ---------------------------------------------------------
-	# PB EXTRACTION
-	# ---------------------------------------------------------
-	@staticmethod
-	def extract_pb(entry, player_name) -> SpeedRun:
-		"""Convert a PB entry into a structured dataclass."""
-		run = entry["run"]
-		seconds = run["times"]["primary_t"]
-		time = str(datetime.timedelta(seconds=seconds))
-		return SpeedRun(
-			player=player_name,
-			game=str(run["game"]),
-			category=str(run["category"]),
-			time=time,
-			platform=run["system"]["platform"],
-			emulator=run["system"]["emulated"],
-			place=entry["place"],
-			link=run["weblink"],
-			id=run["id"]
-		)
 
 	# ---------------------------------------------------------
 	# PB FILTERING
@@ -109,7 +87,7 @@ class PersonalBest:
 
 			# Append the PB result to the list if all variables matched.
 			if all_match:
-				results.append(self.extract_pb(entry, player))
+				results.append(self.utils.extract_run(run, player, entry["place"]))
 
 		return results
 
@@ -119,8 +97,8 @@ class PersonalBest:
 	def lookup_pb(self, pb_mode: str, game_key: str, internal_key: str, cat_key: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
 		Look up the most recent Personal Best for a player in a specific game/category.
-		Uses SRDC variable filters and client-side filtering to ensure only the run the
-		user requested is returned.
+		Any var filters stored for the specific game in the leaderboard config are used
+		to perform client-side filtering, ensuring only the requested PB is returned.
 		"""
 		# Pull in all category data based on the PB Mode.
 		game_map, category_map, board_aliases, board_slugs = self.get_config_dicts(pb_mode)
