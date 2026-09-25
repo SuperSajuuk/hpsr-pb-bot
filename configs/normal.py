@@ -173,7 +173,10 @@ BOARD_GAME_SLUG = {
 	"hp1pc": ["hp1_pc"],
 	"hp2pc": ["hp2_pc"],
 	"hp3pc": ["hp3_pc"],
-	"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
+	"hp4": [
+		"hp4_pc_1p", "hp4_pc_2p", "hp4_pc_3p", "hp4_ps2_1p", "hp4_ps2_2p", "hp4_ps2_3p",
+		"hp4_xbox_1p", "hp4_xbox_2p", "hp4_xbox_3p", "hp4_gcn_1p", "hp4_gcn_2p", "hp4_gcn_3p"
+	],
 	"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_x360", "hp5_wii"],
 	"hp6": ["hp6_pc", "hp6_ps2", "hp6_ps3", "hp6_xbox", "hp6_x360", "hp6_wii"],
 	"hp7p1": ["hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"],
