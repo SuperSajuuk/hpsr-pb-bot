@@ -289,7 +289,6 @@ class Utilities:
 			game=str(run_obj["game"]),
 			category=str(run_obj["category"]),
 			time=time_str,
-			raw=None,
 			platform=run_obj["system"]["platform"],
 			emulator=run_obj["system"]["emulated"],
 			place=None,  # run search does not include leaderboard place
