@@ -27,6 +27,13 @@ class IndividualLevel:
 		Queries SRDC to find the top 1 run of every IL board for
 		the provided game ID. Will return an empty list or
 		all matching runs.
+
+		Unlike other routes, this one has to embed player metadata
+		since the invocation command is trying to find the person who
+		has the world record and doesn't know who it is until SRDC
+		returns it.
+
+		This is the only place where &embed=players should exist.
 		"""
 		base_q = f"games/{game_id}/records?top=1&scope=levels&embed=players"
 		all_runs = []
@@ -34,14 +41,14 @@ class IndividualLevel:
 		while True:
 			# Start at 20, then increase the offset per loop.
 			# If the batch returns nothing, break the loop.
-			q = f"{base_q}&max=20&offset={offset}"
+			q = f"{base_q}&max=50&offset={offset}"
 			batch = self.api.get(q)
 			if not batch:
 				break
 
 			# Append the runs, then increase the offset and continue.
 			all_runs.extend(batch)
-			offset += 20
+			offset += 50
 
 		# Return the full list.
 		return all_runs
@@ -133,7 +140,7 @@ class IndividualLevel:
 		# Resolve user ID and then find that specific level run.
 		# If nothing there, just return None.
 		user_id = self.utils.get_user_id(player)
-		q = f"runs?game={game_id}&level={level_id}&category={category_id}&user={user_id}&status=verified&embed=players"
+		q = f"runs?game={game_id}&level={level_id}&category={category_id}&user={user_id}&status=verified&embed=variables"
 		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters=variables, base_query=q)
 		if not runs:
 			return None
@@ -157,7 +164,7 @@ class IndividualLevel:
 			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
-		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=players,variables"
+		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=variables"
 		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=required_variables, alt_url=lb_q)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place

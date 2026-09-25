@@ -241,16 +241,16 @@ class Utilities:
 		all_runs = []
 		offset = 0
 		while True:
-			# Start at 20, then increase the offset per loop.
+			# Start at 50, then increase the offset per loop.
 			# If the batch returns nothing, break the loop.
-			q = f"{base_q}&max=20&offset={offset}"
+			q = f"{base_q}&max=50&offset={offset}"
 			batch = self.api.get(q)
 			if not batch:
 				break
 
 			# Append the runs, then increase the offset and continue.
 			all_runs.extend(batch)
-			offset += 20
+			offset += 50
 
 		# Return the full list.
 		return all_runs
