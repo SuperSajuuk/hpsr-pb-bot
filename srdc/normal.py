@@ -114,7 +114,7 @@ class NormalRun:
 
 		# Get the Game ID and its top category list. Then,
 		# obtain the relevant category name from the category map.
-		game_id, game_cats = self.utils.get_game_code(slug)
+		game_id, game_cats = self.api.get_game_code(slug)
 		category_meta = None
 		for category_name, data in self.category_map.items():
 			if cat_key in data["aliases"]:
@@ -163,7 +163,7 @@ class NormalRun:
 			raise InvalidCategory("The category name obtained from the category key could not be mapped to a valid speedrun.com category for this game.")
 
 		# Resolve user ID, then check for variables in case we have one.
-		user_id = self.utils.get_user_id(player)
+		user_id = self.api.get_user_id(player)
 		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, int_name)
 		cfg_2 = None
 		if cfg is not None:
@@ -178,7 +178,7 @@ class NormalRun:
 
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
-		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters)
+		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 

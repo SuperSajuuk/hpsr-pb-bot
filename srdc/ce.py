@@ -27,49 +27,6 @@ class CategoryExtension:
 		self.lb_config = lb_config
 		self.utils = utils
 
-	# Resolve the Game Slug for a CE
-	# Using just the game code provided, check our
-	# local config for that code. If it's not there,
-	# query SRDC and ensure it does have the category
-	# extension tag.
-	def resolve_ce_game_slug(self, base_game: str) -> dt.Game | str:
-		"""
-		Resolve the Game Slug for a Category Extension
-
-		If possible, rely on local config data before querying SRDC.
-		If we don't have a config key for this, query SRDC and ensure
-		the game does have the Category Extension game type assigned.
-
-		Raises ValueError if no such game is found.
-		"""
-		# Check if the base game key is already in the game map.
-		# Use it first before querying SRDC.
-		if base_game in self.game_map:
-			return self.game_map[base_game]
-
-		# Couldn't find it in our hard-coded list, so
-		# query SRDC for the specific game that is needed.
-		search = self.api.get(f"games?abbreviation={base_game}&embed=tags")
-		if not search:
-			raise ValueError(f"No Category Extension game found for base game: {base_game}")
-
-		# Parse the game object for the relevant tag.
-		# This is hard-coded because category extension is
-		# always the same and doesn't change.
-		game = search[0]
-		is_ce = False
-		for tag in game["gametypes"]:
-			if tag == "53no817x":
-				is_ce = True
-				break
-
-		# Error here, because the required tag cannot be found.
-		if not is_ce:
-			raise ValueError(f"No Category Extension game found for base game: {base_game}")
-
-		# Return the game object for this category extension board.
-		return game
-
 	def process_category_extension(self, base_game: str, ce_top_board: str, ce_category_board: str, player: str, flags: dict) -> (SpeedRun | None, str | None):
 		"""
 		Using the provided variables, determine if the category
@@ -81,14 +38,19 @@ class CategoryExtension:
 
 		Returns a SpeedRun object or None.
 		"""
-		# Parse the base_game to see if we have a supported CE
-		# board in the code. If not, there is an error.
+		# Parse the base_game value to see if this is defined internally.
+		# If not, look up SRDC and raise InvalidGame if nothing is found.
 		ce_key = self.game_map.get(base_game)
 		if not ce_key:
-			raise InvalidGame(f"Unknown CE game series: '{ce_key}'. Check for typos or whether this is a supported series for CE lookups.")
+			lk = self.api.get_ce_mr_game(base_game, "53no817x", "category extension")
+			if not lk:
+				raise InvalidGame(f"Unknown CE game series: '{base_game}'. Check for typos or whether this is a supported series for CE lookups.")
+			ce_key = {"name": lk["names"]["international"], "id": lk["abbreviation"]}
 
-		# Parse the ce_key (which contains the game name) to see
-		# if it exists. If not, there is an error.
+		# Check for a table of aliases referring to the categories.
+		# Even if the game object is returned by SRDC, an alias table
+		# is still required internally, as it's used to map user input
+		# to a hard-coded internal name.
 		alias_table = self.category_aliases.get(ce_key["id"])
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{ce_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
@@ -150,20 +112,16 @@ class CategoryExtension:
 		# Return the run object and the alias_name produced.
 		return run, cat_alias_name, alias_name
 
-	def lookup_ce_run(self, base_game: str,	ce_category: str, player: str, flags: dict = None) -> SpeedRun | None:
+	def lookup_ce_run(self, slug_id: str, ce_category: str, player: str, flags: dict = None) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
 		but with CE-specific variables.
 
 		Returns a SpeedRun object or None if nothing was found.
 		"""
-		# Find the required Slug URL for this category extension board,
-		# then resolve the slug to find the game object.
-		ce_slug = self.resolve_ce_game_slug(base_game)
-		slug_id = ce_slug.get("id", None)
+		# Resolve the Slug ID for its SRDC ID and all categories,
+		# then capture the leaderboard data.
 		game_id, game_cats = self.utils.get_game_code(slug_id)
-
-		# Find the leaderboard config for this category.
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise MissingInternalData(f"No leaderboard config found for CE game slug: {slug_id}")
@@ -189,11 +147,11 @@ class CategoryExtension:
 		# Resolve the user ID and capture the category vars. If the
 		# metadata parameter is not None, set a slice to capture the
 		# specific piece of metadata that was asked for.
-		user_id = self.utils.get_user_id(player)
+		user_id = self.api.get_user_id(player)
 		ce_cat_vars = self.utils.generate_var_filters(category_meta, flags)
 
 		# Search for runs, if none found then return.
-		runs = self.utils.search_runs(game_id, category_id, user_id, ce_cat_vars)
+		runs = self.api.search_runs(game_id, category_id, user_id, ce_cat_vars)
 		if not runs:
 			return None
 

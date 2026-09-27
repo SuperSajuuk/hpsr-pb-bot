@@ -10,6 +10,7 @@
 # heavily filtered. In normal cases, it is better to look up runs directly
 # using the /run/ route.
 from utils.model import SpeedRun
+from utils.exceptions import InvalidCategory, MissingInternalData
 import datetime
 
 
@@ -47,13 +48,6 @@ class PersonalBest:
 				slugs = self.nm_board_slugs
 
 		return gm, cm, ba, slugs
-
-	# ---------------------------------------------------------
-	# PB FETCH
-	# ---------------------------------------------------------
-	def search_pbs(self, player: str, game_id: str):
-		"""Fetch PBs for a player/game combination."""
-		return self.api.get(f"users/{player}/personal-bests?game={game_id}&embed=variables")
 
 	# ---------------------------------------------------------
 	# PB FILTERING
@@ -112,10 +106,10 @@ class PersonalBest:
 
 		# Throw an error here if slug is still None
 		if slug is None:
-			raise ValueError("An error has occurred with an internal function: the slug URL couldn't be found for this combination of inputs.")
+			raise MissingInternalData("An error has occurred with an internal function: the slug URL couldn't be found for this combination of inputs.")
 
 		# Pull game object and category information if needed
-		game_id, game_cats = self.utils.get_game_code(slug)
+		game_id, game_cats = self.api.get_game_code(slug)
 		category_meta = None
 		ce_category_meta = None
 		for board_name, data in category_map.items():
@@ -140,10 +134,10 @@ class PersonalBest:
 
 		# Raise ValueError if the category object does not exist for this game.
 		if not category_id:
-			raise ValueError("Category not found in game")
+			raise InvalidCategory("The category name obtained from the category key could not be mapped to a valid speedrun.com category for this game.")
 
 		# Fetch PBs for this player based on this game ID.
-		pbs = self.search_pbs(player, game_id)
+		pbs = self.api.search_pbs(player, game_id)
 
 		# Pull in all relevant config data, build var filters
 		# then filter all PBs to find the requested one.

@@ -27,50 +27,7 @@ class MultiRun:
 		self.lb_config = lb_config
 		self.utils = utils
 
-	# Resolve the Game Slug for a Multirun
-	# Using just the game code provided, check our
-	# local config for that code. If it's not there,
-	# query SRDC and ensure it does have the category
-	# extension tag.
-	def resolve_multirun_game_slug(self, base_game: str) -> dt.Game | str:
-		"""
-		Resolve the Game Slug for a Multirun
-
-		If possible, rely on local config data before querying SRDC.
-		If we don't have a config key for this, query SRDC and ensure
-		the game does have the Multi Run game type assigned.
-
-		Raises ValueError if no such game is found.
-		"""
-		# Check if the base game key is already in the game map.
-		# Use it first before querying SRDC.
-		if base_game in self.game_map:
-			return self.game_map[base_game]
-
-		# Couldn't find it in our hard-coded list, so
-		# query SRDC for the specific game that is needed.
-		search = self.api.get(f"games?abbreviation={base_game}&embed=tags")
-		if not search:
-			raise ValueError(f"No Multi-run game found for base game: {base_game}")
-
-		# Parse the game object for the relevant tag.
-		# This is hard-coded because multi-run is
-		# always the same and doesn't change.
-		game = search[0]
-		is_multi_run = False
-		for tag in game["gametypes"]:
-			if tag == "rj1dy1o8":
-				is_multi_run = True
-				break
-
-		# Error here, because the required tag cannot be found.
-		if not is_multi_run:
-			raise ValueError(f"No Multi-run game found for base game: {base_game}")
-
-		# Return the game object for this multi-run board.
-		return game
-
-	def process_multi_run(self, base_game: str, mr_board: str, mr_category_board: str, player: str) -> (SpeedRun | None, str | None):
+	def process_multi_run(self, base_game: str, mr_board: str, mr_category_board: str, player: str, flags: dict) -> (SpeedRun | None, str | None):
 		"""
 		Using the provided variables, determine if the multi-run board
 		is configured and whether there is a valid mr_board value.
@@ -80,17 +37,22 @@ class MultiRun:
 
 		Returns a SpeedRun object or None.
 		"""
-		# Parse the base_game to see if we have a supported multi-run
-		# board in the code. If not, there is an error.
+		# Parse the base_game value to see if this is defined internally.
+		# If not, look up SRDC and raise InvalidGame if nothing is found.
 		mr_key = self.game_map.get(base_game)
 		if not mr_key:
-			raise InvalidGame(f"Unknown Multirun game series: '{ce_key}'. Check for typos or whether this is a supported series for multirun lookups.")
+			lk = self.api.get_ce_mr_game(base_game, "rj1dy1o8", "Multi-run")
+			if not lk:
+				raise InvalidGame(f"Unknown Multirun game series: '{base_game}'. Check for typos or whether this is a supported series for multirun lookups.")
+			mr_key = {"name": lk["names"]["international"], "id": lk["abbreviation"]}
 
-		# Parse the mr_key (which contains the game name) to see
-		# if it exists. If not, there is an error.
+		# Check for a table of aliases referring to the categories.
+		# Even if the game object is returned by SRDC, an alias table
+		# is still required internally, as it's used to map user input
+		# to a hard-coded internal name.
 		alias_table = self.category_aliases.get(mr_key["id"])
 		if not alias_table:
-			raise MissingInternalData(f"No alias table exists for ID '{ce_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
+			raise MissingInternalData(f"No alias table exists for ID '{mr_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
 
 		# Check if the top board is defined in the alias list.
 		# If it isn't, the user might have provided an alternative
@@ -113,7 +75,7 @@ class MultiRun:
 
 		# Build the internal key and lookup the multi-run.
 		internal_key = f"{mr_board}_{board_token}"
-		run = self.lookup_multi_run(base_game, internal_key, player)
+		run = self.lookup_multi_run(mr_key["id"], internal_key, player, flags)
 
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
@@ -132,18 +94,14 @@ class MultiRun:
 		# Return the run object and the alias_name produced.
 		return run, cat_clean_name, alias_name
 
-	def lookup_multi_run(self, base_game: str, mr_category: str, player: str) -> SpeedRun | None:
+	def lookup_multi_run(self, slug_id: str, mr_category: str, player: str, flags: dict) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
 		but with multirun-specific variables.
 		"""
-		# Find the required Slug URL for this category extension board,
-		# then resolve the slug to find the game object.
-		mr_slug = self.resolve_multirun_game_slug(base_game)
-		slug_id = mr_slug.get("id", None)
-		game_id, game_cats = self.utils.get_game_code(slug_id)
-
-		# Find the leaderboard config for this category.
+		# Resolve the Slug ID for its SRDC ID and all categories,
+		# then capture the leaderboard data.
+		game_id, game_cats = self.api.get_game_code(slug_id)
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise MissingInternalData(f"No leaderboard config found for Multirun game slug: {slug_id}")
@@ -167,9 +125,9 @@ class MultiRun:
 			raise InvalidCategory("Multirun category not found in Multirun game")
 
 		# Resolve the user ID, capture the category vars and then search for runs.
-		user_id = self.utils.get_user_id(player)
+		user_id = self.api.get_user_id(player)
 		mr_cat_vars = self.utils.generate_var_filters(category_meta, flags)
-		runs = self.utils.search_runs(game_id, category_id, user_id, mr_cat_vars)
+		runs = self.api.search_runs(game_id, category_id, user_id, mr_cat_vars)
 		if not runs:
 			return None
 

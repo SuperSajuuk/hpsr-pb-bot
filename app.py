@@ -30,6 +30,7 @@ import configs.leaderboard as lb_config
 import configs.generic as config
 
 # Import everything else that is needed
+import utils.api as api
 import utils.func as func
 import utils.exceptions as exc
 import utils.cache as caching
@@ -58,11 +59,14 @@ pool = redis.ConnectionPool(
 	decode_responses=True
 )
 
-# Instantiate all our internal code for powering the actual program.
+# Instantiate various internal classes for caching, API and functions.
 cache = caching.Caching(redis.Redis(connection_pool=pool))
-utils = func.Utilities(srdc_api, cache, lb_config.LEADERBOARD_CONFIG, config.PLATFORM_MAP)
+api = api.API(srdc_api, cache)
+utils = func.Utilities(api, lb_config.LEADERBOARD_CONFIG, config.PLATFORM_MAP)
+
+# Instantiate the core program code that handles run management
 normal = normal_run.NormalRun(
-	api=srdc_api,
+	api=api,
 	game_map=nm_config.GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
@@ -72,7 +76,8 @@ normal = normal_run.NormalRun(
 	utils=utils
 )
 il = ind_lvl.IndividualLevel(
-	api=srdc_api,
+	srdc_api=srdc_api,
+	api=api,
 	game_map=nm_config.GAME_MAP,
 	levels_map=il_config.LEVELS_MAP,
 	category_map=nm_config.CATEGORY_MAP,
@@ -81,7 +86,7 @@ il = ind_lvl.IndividualLevel(
 	utils=utils
 )
 lg = lego.LEGONormalRun(
-	api=srdc_api,
+	api=api,
 	game_map=lego_config.GAME_MAP,
 	category_map=lego_config.BOARD_ALIASES,
 	category_aliases=lego_config.CATEGORY_ALIASES,
@@ -90,7 +95,7 @@ lg = lego.LEGONormalRun(
 	utils=utils
 )
 cat_ext = ce_run.CategoryExtension(
-	api=srdc_api,
+	api=api,
 	game_map=ce_config.GAME_MAP,
 	category_map=ce_config.SUB_CATEGORY_MAP,
 	category_aliases=ce_config.CATEGORY_ALIASES,
@@ -101,7 +106,7 @@ cat_ext = ce_run.CategoryExtension(
 	utils=utils
 )
 multirun = multi.MultiRun(
-	api=srdc_api,
+	api=api,
 	game_map=mr_config.GAME_MAP,
 	category_map=mr_config.SUB_CATEGORY_MAP,
 	category_aliases=mr_config.CATEGORY_ALIASES,
@@ -111,7 +116,7 @@ multirun = multi.MultiRun(
 	utils=utils
 )
 per_best = pb.PersonalBest(
-	api=srdc_api,
+	api=api,
 	game_map=(nm_config.GAME_MAP, ce_config.GAME_MAP, mr_config.GAME_MAP),
 	category_map=(nm_config.CATEGORY_MAP, ce_config.SUB_CATEGORY_MAP, mr_config.SUB_CATEGORY_MAP),
 	board_aliases=(ce_config.BOARD_ALIASES, mr_config.BOARD_ALIASES),
@@ -217,6 +222,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 					flags["lego_md"]["nocut_mode"] = True if token != "standard" else False
 				case _ if token in ["restricted", "unrestricted"]:
 					flags["lego_md"]["restricted_mode"] = True if token == "restricted" else False
+			continue
 
 		# Nothing was found. Perhaps its additional metadata:
 		# add an incrementing key number value pair to the
@@ -310,14 +316,14 @@ def latest_run(owner, game, platform, board, args):
 		case _ if game in ("multirun", "multi", "mr"):
 			# This is a multi-run: pass everything to
 			# the processor and store the result in a variable.
-			result, cat_clean_name, alias_name = multirun.process_multi_run(platform, board, flags["mr_board"], player)
+			result, cat_clean_name, alias_name = multirun.process_multi_run(platform, board, flags["mr_board"], player, flags)
 			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case "lego":
 			# This is a LEGO main-board game.
 			# Due to LEGO games having more sub-categories than regular
 			# main board categories, they're handled separately due to
 			# extra metadata being needed.
-			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_md"], player)
+			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_md"], player, flags)
 			clean_name = f'{lego_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# This is a normal main board run which didn't meet any of

@@ -13,7 +13,8 @@ from utils.model import SpeedRun
 # API for an individual level submission. This is
 # used by !run only.
 class IndividualLevel:
-	def __init__(self, api, game_map, levels_map, category_map, board_slugs, ik_mapping, utils):
+	def __init__(self, srdc_api, api, game_map, levels_map, category_map, board_slugs, ik_mapping, utils):
+		self.srdc = srdc_api
 		self.api = api
 		self.game_map = game_map
 		self.levels_map = levels_map
@@ -39,10 +40,10 @@ class IndividualLevel:
 		all_runs = []
 		offset = 0
 		while True:
-			# Start at 20, then increase the offset per loop.
+			# Start at 50, then increase the offset per loop.
 			# If the batch returns nothing, break the loop.
 			q = f"{base_q}&max=50&offset={offset}"
-			batch = self.api.get(q)
+			batch = self.srdc.get(q)
 			if not batch:
 				break
 
@@ -126,7 +127,7 @@ class IndividualLevel:
 				break
 
 		# Return the game code and then parse the category name for ID.
-		game_id, game_cats = self.utils.get_game_code(slug, redis_key="levels", type_filter="per-level")
+		game_id, game_cats = self.api.get_game_code(slug, redis_key="levels", type_filter="per-level")
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == category_meta:
@@ -139,33 +140,27 @@ class IndividualLevel:
 
 		# Resolve user ID and then find that specific level run.
 		# If nothing there, just return None.
-		user_id = self.utils.get_user_id(player)
+		user_id = self.api.get_user_id(player)
 		q = f"runs?game={game_id}&level={level_id}&category={category_id}&user={user_id}&status=verified&embed=variables"
-		runs = self.utils.search_runs(game_id, category_id, user_id, var_filters=variables, base_query=q)
+		runs = self.api.search_runs(game_id, category_id, user_id, var_filters=variables, base_query=q)
 		if not runs:
 			return None
 
-		# Sort the runs by the most recently verified run (newest at the top)
-		# Then, filter the returned runs so only the ones matching the correct
-		# value are return (
+		# Sort the runs by the most recently verified run (newest at the top).
+		# A small portion of ILs may have variables assigned to them. If that
+		# is the case, filter all run objects and return the requested one.
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = runs[0]
-		required_variables = {var["var_id"]: var["value_id"] for var in variables}
-		filtered_runs = []
-		if required_variables:
-			for run in runs:
-				for var_id, value_id in required_variables.items():
-					if run["values"].get(var_id) == value_id:
-						filtered_runs.append(run)
-
+		if variables:
 			# For some reason, this filtered list will be in reverse.
 			# Simply reverse the order and return the top value.
+			filtered_runs = self.utils.filter_all_runs(runs, variables)
 			filtered_runs.reverse()
 			best_run = filtered_runs[0]
 
 		# Extract all run details and the leaderboard placement, then return the run object.
 		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=variables"
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=required_variables, alt_url=lb_q)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=variables, alt_url=lb_q)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr
