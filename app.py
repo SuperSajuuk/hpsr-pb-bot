@@ -502,7 +502,7 @@ def user_input_handler(error):
 
 @app.errorhandler(exc.MissingInternalData)
 def missing_int_data(error):
-	return error, 400
+	return str(error), 400
 
 
 @app.errorhandler(ValueError)

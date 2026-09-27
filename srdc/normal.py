@@ -75,26 +75,11 @@ class NormalRun:
 		if not_board:
 			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
-		# If there are additional metadata flags, then append it to
-		# category name for output. There would usually only be
-		# a single key here, hence the hard coding for just key_1.
+		# Process additional metadata, look up the run and return the run details.
 		internal_key = f"{game_int_name}_{platform}"
-		if flags.get("additional_metadata", {}):
-			key_val = flags['additional_metadata'].get('key_1')
-			if key_val is not None:
-				found_alias = False
-				for human_name, data in self.md_aliases.items():
-					if key_val in data["aliases"]:
-						found_alias = True
-						category_name += f" {human_name}"
-						internal_key += f"_{data['int_key']}"
-						break
-				if not found_alias:
-					category_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
-
-		# Look up the run, and return the result.
-		run = self.lookup_run(internal_key, board, ordering_mode, int_name, player, flags)
-		return run, category_name, game_name
+		cat_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
+		run = self.lookup_run(int_key, board, ordering_mode, int_name, player, flags)
+		return run, cat_name, game_name
 
 	def lookup_run(self, internal_key: str, cat_key: str, order_mode: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""

@@ -102,7 +102,7 @@ class Utilities:
 		return filtered_runs
 
 	@staticmethod
-	def process_additional_md(metadata: dict, cat_name: str = None, int_key: str = None):
+	def process_additional_md(metadata: dict, aliases: dict, cat_name: str, int_key: str = None):
 		"""
 		Processes the additional_metadata key of flags to extend the category name
 		or the internal key, depending on use case.
@@ -110,7 +110,30 @@ class Utilities:
 		Returns the category name and internal key with the modifications. If no
 		modifications were made, then the original values are just returned as is.
 		"""
-		pass
+		# If there isn't any metadata, just return.
+		if not metadata:
+			return cat_name, int_key
+
+		# Process all metadata values
+		for key_val in metadata.values():
+			found_alias = False
+			for human_name, data in aliases.items():
+				if key_val in data["aliases"]:
+					found_alias = True
+					cat_name += f" {human_name}"
+
+					# If internal key was provided, and it exists in the
+					# data dictionary, extend it.
+					if int_key is not None and data.get("int_key", None) is not None:
+						int_key += f"_{data['int_key']}"
+					break
+
+			# No alias found: do nothing and just continue to the next one.
+			if not found_alias:
+				continue
+
+		# Return the modified category name and internal key, if any.
+		return cat_name, int_key
 
 	@staticmethod
 	def generate_var_filters(cfg, flags, cfg_2=None):

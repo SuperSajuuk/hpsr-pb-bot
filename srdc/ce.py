@@ -80,7 +80,7 @@ class CategoryExtension:
 
 		# Build the internal key and lookup the CE.
 		internal_key = f"{ce_top_board}_{board_token}"
-		run = self.lookup_ce_run(base_game, internal_key, player, flags)
+		run = self.lookup_ce_run(ce_key["id"], internal_key, player, flags)
 
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
@@ -96,20 +96,8 @@ class CategoryExtension:
 				cat_alias_name = name
 				break
 
-		# If there's additional metadata, coerce that into the cat_alias_name
-		if flags.get("additional_metadata", {}):
-			key_val = flags['additional_metadata'].get('key_1')
-			if key_val is not None:
-				found_alias = False
-				for human_name, data in self.md_aliases.items():
-					if key_val in data["aliases"]:
-						found_alias = True
-						cat_alias_name += f" {human_name}"
-						break
-				if not found_alias:
-					cat_alias_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
-
 		# Return the run object and the alias_name produced.
+		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)
 		return run, cat_alias_name, alias_name
 
 	def lookup_ce_run(self, slug_id: str, ce_category: str, player: str, flags: dict = None) -> SpeedRun | None:
@@ -121,7 +109,7 @@ class CategoryExtension:
 		"""
 		# Resolve the Slug ID for its SRDC ID and all categories,
 		# then capture the leaderboard data.
-		game_id, game_cats = self.utils.get_game_code(slug_id)
+		game_id, game_cats = self.api.get_game_code(slug_id)
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise MissingInternalData(f"No leaderboard config found for CE game slug: {slug_id}")

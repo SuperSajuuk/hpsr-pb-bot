@@ -94,22 +94,9 @@ class LEGONormalRun:
 				sub_cat_name = name
 				break
 
-		# Check the additional metadata for Restricted/Unrestricted
-		# and append it to the category name.
-		if flags.get("additional_metadata", {}):
-			key_val = flags['additional_metadata'].get('key_1')
-			if key_val is not None:
-				found_alias = False
-				for human_name, data in self.md_aliases.items():
-					if key_val in data["aliases"]:
-						found_alias = True
-						sub_cat_name += f" {human_name}"
-						break
-				if not found_alias:
-					sub_cat_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
-
-		# Produce the necessary alias name for the attempted category
-		# solely based on various flags.
+		# Process the additional metadata, create the cat name output
+		# and return the data.
+		sub_cat_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
 		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
 		return run, new_sub_cat_name, alias_name
 
