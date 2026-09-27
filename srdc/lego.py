@@ -17,13 +17,14 @@ from utils.model import SpeedRun
 # API for a LEGO Games run submission. This is
 # used by !run only.
 class LEGONormalRun:
-	def __init__(self, api, game_map, category_map, category_aliases, sub_category_aliases, token_aliases, utils):
+	def __init__(self, api, game_map, category_map, category_aliases, sub_category_aliases, token_aliases, md_aliases, utils):
 		self.api = api
 		self.game_map = game_map
 		self.category_map = category_map
 		self.category_aliases = category_aliases
 		self.sub_category_aliases = sub_category_aliases
 		self.token_aliases = token_aliases
+		self.md_aliases = md_aliases
 		self.utils = utils
 
 	def process_lego_main_board(self, game: str, board_name: str, lego_md: dict, player: str, flags: dict):
@@ -65,21 +66,16 @@ class LEGONormalRun:
 		if not board_token:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
-		# Build an internal key based on the values of flags.
+		# Check if N0CUT5 mode was asked for.
 		is_nocut5_mode = lego_md.get("nocut_mode", None)
-		is_restricted = lego_md.get("restricted_mode", None)
 		ik_nocut_mode = ""
-		ik_restricted_mode = ""
 		scn_nocut_mode = ""
-		scn_restricted_mode = ""
 		if is_nocut5_mode is not None:
 			ik_nocut_mode = "_nocut" if is_nocut5_mode else "_standard"
 			scn_nocut_mode = " N0CUT5" if is_nocut5_mode else " Standard"
-		if is_restricted is not None:
-			ik_restricted_mode = "_restricted" if is_restricted else "_unrestricted"
-			scn_restricted_mode = " Restricted" if is_restricted else " Unrestricted"
 
-		internal_key = f"{board_name}_{sub_category_board}{ik_nocut_mode}{ik_restricted_mode}"
+		# Build an internal key, then look up the runs.
+		internal_key = f"{board_name}_{sub_category_board}{ik_nocut_mode}"
 		run = self.lookup_lego_run(game, internal_key, lego_key["slug"], board_name, player, flags)
 
 		# Produce a clean category name based on the alias value. This
@@ -98,9 +94,23 @@ class LEGONormalRun:
 				sub_cat_name = name
 				break
 
+		# Check the additional metadata for Restricted/Unrestricted
+		# and append it to the category name.
+		if flags.get("additional_metadata", {}):
+			key_val = flags['additional_metadata'].get('key_1')
+			if key_val is not None:
+				found_alias = False
+				for human_name, data in self.md_aliases.items():
+					if key_val in data["aliases"]:
+						found_alias = True
+						sub_cat_name += f" {human_name}"
+						break
+				if not found_alias:
+					sub_cat_name += f" {flags['additional_metadata'].get('key_1').capitalize()}"
+
 		# Produce the necessary alias name for the attempted category
 		# solely based on various flags.
-		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}{scn_restricted_mode}"
+		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
 		return run, new_sub_cat_name, alias_name
 
 	def lookup_lego_run(self, game: str, internal_key: str, slug: str, cat_key: str, player: str, flags: dict) -> SpeedRun | None:

@@ -8,7 +8,7 @@
 # Sub-board token matches
 # This is just a list of strings to see if the token
 # for extract_flags is a match to something here.
-FLAG_TOKEN_MATCHES = ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard", "unrestricted", "restricted"]
+FLAG_TOKEN_MATCHES = ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard"]
 
 # Game mapping.
 # Key names must be abbreviations that would be called in !run lego

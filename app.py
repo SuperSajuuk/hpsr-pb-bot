@@ -92,6 +92,7 @@ lg = lego.LEGONormalRun(
 	category_aliases=lego_config.CATEGORY_ALIASES,
 	sub_category_aliases=lego_config.SUB_CATEGORY_ALIASES,
 	token_aliases=lego_config.BOARD_TOKEN_ALIASES,
+	md_aliases=config.METADATA_ALIASES,
 	utils=utils
 )
 cat_ext = ce_run.CategoryExtension(
@@ -220,8 +221,6 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 					flags["lego_md"]["main_sub_category"] = token
 				case _ if token in ["nocut5", "n0cut5", "standard"]:
 					flags["lego_md"]["nocut_mode"] = True if token != "standard" else False
-				case _ if token in ["restricted", "unrestricted"]:
-					flags["lego_md"]["restricted_mode"] = True if token == "restricted" else False
 			continue
 
 		# Nothing was found. Perhaps its additional metadata:

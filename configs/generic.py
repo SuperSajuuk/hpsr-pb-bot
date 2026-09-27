@@ -50,7 +50,9 @@ METADATA_ALIASES = {
 	"Zipless": {"aliases": ["zl", "zless", "zipless"], "int_key": "zl"},
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "int_key": "nmg"},
 	"Any%": {"aliases": ["any", "any%"], "int_key": "any"},
-	"100%": {"aliases": ["100", "100%", "hundo"], "int_key": "100"}
+	"100%": {"aliases": ["100", "100%", "hundo"], "int_key": "100"},
+	"Unrestricted": {"aliases": ["ur", "unrestricted"], "int_key": "unrestricted"},
+	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"}
 }
 
 # Point to the docs if there is an error.

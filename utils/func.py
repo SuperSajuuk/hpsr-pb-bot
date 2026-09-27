@@ -102,6 +102,17 @@ class Utilities:
 		return filtered_runs
 
 	@staticmethod
+	def process_additional_md(metadata: dict, cat_name: str = None, int_key: str = None):
+		"""
+		Processes the additional_metadata key of flags to extend the category name
+		or the internal key, depending on use case.
+
+		Returns the category name and internal key with the modifications. If no
+		modifications were made, then the original values are just returned as is.
+		"""
+		pass
+
+	@staticmethod
 	def generate_var_filters(cfg, flags, cfg_2=None):
 		# All the variable data is stored in the "variables" key.
 		# Use that to capture all the relevant info we need.
