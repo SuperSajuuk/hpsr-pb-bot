@@ -9,7 +9,6 @@
 # be in multi.py
 from utils.model import SpeedRun
 from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, UnsupportedGame
-from configs.generic import COMMAND_USAGE_DOC
 
 
 # NormalRun

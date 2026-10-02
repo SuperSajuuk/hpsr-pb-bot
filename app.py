@@ -163,8 +163,10 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	# as that is only for output text: here we just care about
 	# alias checks.
 	#
-	# Invalid tokens will be silently discarded by the program
-	# and will not be processed.
+	# Tokens which meet none of the defined conditions below will
+	# be added to additional_metadata. These are then processed
+	# later in the routes, and anything invalid will simply be
+	# ignored.
 	for token in tokens:
 		# Check if the token is set to emulator
 		if token == "emulator":

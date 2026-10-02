@@ -178,7 +178,7 @@ class IndividualLevel:
 				break
 
 		# Return the game code and then parse the category name for ID.
-		game_id, game_cats = self.utils.get_game_code(slug, redis_key="levels", type_filter="per-level")
+		game_id, game_cats = self.api.get_game_code(slug, redis_key="levels", type_filter="per-level")
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == category_meta:
@@ -194,17 +194,16 @@ class IndividualLevel:
 		if not runs:
 			raise ValueError("No IL world records could be found for these conditions.")
 
-		# This returns a large list of runs. We need to filter it down to
-		# just the one that the user asked for. If the new list is completely
-		# empty, then raise a ValueError
-		run = [r for r in runs if r["level"] == level_id and r["category"] == category_id]
-		if not run:
+		# The run list will contain one run for every category covered by the
+		# main game board. We should only return the run which equates to the
+		# specific level and category combination requested by the user. If no run
+		# is found, raise a ValueError.
+		run = next((r for r in runs if r["level"] == level_id and r["category"] == category_id), None)
+		if run is None:
 			raise ValueError("No IL world records could be found for these conditions.")
 
 		# This doesn't need to be sorted, nor do we need to find run placement, as the
 		# parameters ensure only one run will be returned, which will be the world record.
 		# Just return this run from the data given.
-		# (Yes, I know the parameters below are extremely cursed: scromapi parses this
-		# very bizarrely for some reason lol)
-		sr = self.utils.extract_run(run[0]["runs"][0]["run"], run[0]["players"]["data"][0]["names"]["international"])
+		sr = self.utils.extract_run(run["runs"][0]["run"], run["players"]["data"][0]["names"]["international"])
 		return sr
