@@ -499,12 +499,12 @@ def home_page_nothing():
 def user_input_handler(error):
 	guidance = f" For guidance on resolving this issue, refer to the docs: {config.COMMAND_USAGE_DOC}." if not isinstance(error, exc.UnsupportedGame) else ""
 	err = f"{error}{guidance}"
-	return err, 400
+	return err
 
 
 @app.errorhandler(exc.MissingInternalData)
 def missing_int_data(error):
-	return str(error), 400
+	return str(error)
 
 
 @app.errorhandler(ValueError)
