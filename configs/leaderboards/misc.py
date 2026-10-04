@@ -77,5 +77,27 @@ LEADERBOARD_DATA = {
 				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
 			]
 		}
+	},
+	"hp5gbads": {
+		"any": {
+			"variables": [
+				{"name": "gba", "var_id": "r8r4pv5n", "value_id": "qyzn3841"},
+				{"name": "emulator", "var_id": "r8r4pv5n", "value_id": "jq6eyz3l"},
+				{"name": "ds", "var_id": "r8r4pv5n", "value_id": "5lmm8gjl"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "gba", "var_id": "5lyx4k2n", "value_id": "ln85rk0l"},
+				{"name": "emulator", "var_id": "5lyx4k2n", "value_id": "81w0e5ol"},
+				{"name": "ds", "var_id": "5lyx4k2n", "value_id": "zqovmrp1"}
+			]
+		},
+		"anynsc": {
+			"variables": [
+				{"name": "gba", "var_id": "rn1y09on", "value_id": "qj7gjeeq"},
+				{"name": "emulator", "var_id": "rn1y09on", "value_id": "10vx39wl"}
+			]
+		},
 	}
 }

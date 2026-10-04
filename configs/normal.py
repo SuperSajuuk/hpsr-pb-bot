@@ -114,6 +114,7 @@ CATEGORY_MAP = {
 	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
 	"Any% No EDS": {"aliases": ["noeds", "anynoeds", "any%noeds"], "internal_name": "noeds"},
+	"Any% NSC": {"aliases": ["nsc", "nosavecorrupt", "anynsc", "anynosavecorrupt", "any%nsc", "any%nosavecorrupt"], "internal_name": "anynsc"},
 	"All Wizard Cards": {"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"},
 	"All Requirements": {"aliases": ["allreq", "allreqs", "requirements", "allrequirements"], "internal_name": "allreq"},
 	"All Crests": {"aliases": ["ac", "crests", "allcrests"], "internal_name": "allc"},
