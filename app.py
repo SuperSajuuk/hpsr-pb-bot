@@ -23,6 +23,7 @@ import os
 # Import the config data.
 import configs.ils as il_config
 import configs.ce as ce_config
+import configs.cc as cc_config
 import configs.lego as lego_config
 import configs.multi as mr_config
 import configs.normal as nm_config
@@ -38,6 +39,7 @@ import urllib.parse as url_parse
 import srdc.ils as ind_lvl
 import srdc.normal as normal_run
 import srdc.ce as ce_run
+import srdc.cc as cc_run
 import srdc.pb as pb
 import srdc.multi as multi
 import srdc.lego as lego
@@ -106,6 +108,16 @@ cat_ext = ce_run.CategoryExtension(
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
+cust_con = cc_run.CustomContent(
+	api=api,
+	game_map=cc_config.GAME_MAP,
+	category_map=cc_config.SUB_CATEGORY_MAP,
+	category_aliases=cc_config.CATEGORY_ALIASES,
+	board_aliases=cc_config.BOARD_ALIASES,
+	md_aliases=config.METADATA_ALIASES,
+	lb_config=lb_config.LEADERBOARD_CONFIG,
+	utils=utils
+)
 multirun = multi.MultiRun(
 	api=api,
 	game_map=mr_config.GAME_MAP,
@@ -150,10 +162,9 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	# Set default flag values
 	# These will then be used by the program to decide certain things
 	flags = {
-		"emulator": False, "world_record": False,
-		"player": None,	"ce_board": None,
-		"mr_board": None, "lego_md": {},
-		"additional_metadata": {}
+		"emulator": False, "world_record": False, "player": None,
+		"ce_board": None, "cc_board": None, "mr_board": None,
+		"lego_md": {}, "additional_metadata": {}
 	}
 	key_num = 1
 
@@ -171,6 +182,18 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Check if the token is set to emulator
 		if token == "emulator":
 			flags["emulator"] = True
+			continue
+
+		# Check if the token represents a sub-board for custom content.
+		# Game must be cc/custom to actually trigger this block.
+		cc_match = False
+		if game in ["cc", "custom"]:
+			for _, aliases in cc_config.SUB_CATEGORY_MAP.items():
+				if token in aliases:
+					flags["cc_board"] = token
+					cc_match = True
+					break
+		if cc_match:
 			continue
 
 		# Check if the token represents a sub-board for category extensions.
@@ -309,6 +332,11 @@ def latest_run(owner, game, platform, board, args):
 	# This will set the code off to finding a run that matches
 	# the search parameters.
 	match game:
+		case _ if game in ("cc", "custom"):
+			# This is a custom content run: pass everything to
+			# the processor and store the result in a variable.
+			result, board_name, cat_clean_name = cust_con.process_custom_content(platform, board, flags["cc_board"], player, flags)
+			clean_name = f'{cc_config.GAME_MAP[platform]["name"]} ({board_name} - {cat_clean_name})'
 		case _ if game in ("ce", "catext"):
 			# This is a category extension: pass everything to
 			# the processor and store the result in a variable.

@@ -102,7 +102,7 @@ class Utilities:
 		return filtered_runs
 
 	@staticmethod
-	def process_additional_md(metadata: dict, aliases: dict, cat_name: str, int_key: str = None):
+	def process_additional_md(metadata: dict, aliases: dict, cat_name: str, int_key: str = None, cat_name_extend: bool = True):
 		"""
 		Processes the additional_metadata key of flags to extend the category name
 		or the internal key, depending on use case.
@@ -120,7 +120,8 @@ class Utilities:
 			for human_name, data in aliases.items():
 				if key_val in data["aliases"]:
 					found_alias = True
-					cat_name += f" {human_name}"
+					if cat_name_extend:
+						cat_name += f" {human_name}"
 
 					# If internal key was provided, and it exists in the
 					# data dictionary, extend it.
