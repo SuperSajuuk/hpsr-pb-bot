@@ -96,6 +96,11 @@ GAME_MAP = {
 		"name": "Prince of Persia: Warrior Within",
 		"aliases": ["warriorwithin"],
 		"platforms": ["gcn", "ps2", "ps3", "pc", "psp", "xbox", "psvita", "vita", "wii"]
+	},
+	"kao2": {
+		"name": "Kao the Kangaroo: Round 2",
+		"aliases": ["ktk2", "ktkr2"],
+		"platforms": ["gcn", "ps2", "xbox", "pc", "wii"]
 	}
 }
 
@@ -173,10 +178,7 @@ BOARD_GAME_SLUG = {
 	"hp1pc": ["hp1_pc"],
 	"hp2pc": ["hp2_pc"],
 	"hp3pc": ["hp3_pc"],
-	"hp4": [
-		"hp4_pc_1p", "hp4_pc_2p", "hp4_pc_3p", "hp4_ps2_1p", "hp4_ps2_2p", "hp4_ps2_3p",
-		"hp4_xbox_1p", "hp4_xbox_2p", "hp4_xbox_3p", "hp4_gcn_1p", "hp4_gcn_2p", "hp4_gcn_3p"
-	],
+	"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
 	"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_x360", "hp5_wii"],
 	"hp6": ["hp6_pc", "hp6_ps2", "hp6_ps3", "hp6_xbox", "hp6_x360", "hp6_wii"],
 	"hp7p1": ["hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"],
@@ -199,16 +201,18 @@ BOARD_GAME_SLUG = {
 	"quidditch_gba": ["qwc_gba"],
 	"disneys_brother_bear": ["dbb_pc"],
 	"hpcc": ["hp2_cc"],
-	"legacy": ["legacy_pc_story", "legacy_pc_hard", "legacy_ps4_story", "legacy_ps4_hard", "legacy_ps5_story", "legacy_ps5_hard"],
+	"legacy": ["legacy_pc", "legacy_ps4", "legacy_ps5"],
 	"rayman_1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"],
 	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
-	"rehydrated": ["ssbfbbr_pc_nla", "ssbfbbr_pc_la"],
+	"rehydrated": ["ssbfbbr_pc"],
 	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],
 	"shrek_2": ["shrek2_pc", "s2_pc"],
-	"shrek_2_c": [
-		"shrek2_ps2_sp", "shrek2_ps2_coop", "shrek2_gcn_sp", "shrek2_gcn_coop", "shrek2_xbox_sp", "shrek2_xbox_coop",
-		"s2_ps2_sp", "s2_ps2_coop", "s2_gcn_sp", "s2_gcn_coop", "s2_xbox_sp", "s2_xbox_coop"
-	],
+	"shrek_2_c": ["shrek2_ps2", "shrek2_gcn", "shrek2_xbox", "s2_ps2", "s2_gcn", "s2_xbox"],
 	"traod": ["traod_pc", "angelofdarkness_pc", "aod_pc", "tombraideraod_pc"],
-	"pop_ww": ["popww_pc_std", "popww_pc_zl", "popww_pc_nmg", "popww_ps2_std", "popww_ps2_zl", "popww_ps2_nmg"]
+	"pop_ww": ["popww_pc", "popww_ps2"],
+	"kao2": [
+		"kao2_gcn", "kao2_ps2", "kao2_xbox", "kao2_pc", "kao2_wii",
+		"ktk2_gcn", "ktk2_ps2", "ktk2_xbox", "ktk2_pc", "ktk2_wii",
+		"ktkr2_gcn", "ktkr2_ps2", "ktkr2_xbox", "ktkr2_pc", "ktkr2_wii"
+	]
 }

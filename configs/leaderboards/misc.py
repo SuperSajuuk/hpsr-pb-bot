@@ -63,5 +63,19 @@ LEADERBOARD_DATA = {
 				{"name": "coop", "var_id": "wl3q0yn1", "value_id": "01397ed1"}
 			]
 		}
+	},
+	"kao2": {
+		"any": {
+			"variables": [
+				{"name": "quads", "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
+				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "quads", "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
+				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
+			]
+		}
 	}
 }

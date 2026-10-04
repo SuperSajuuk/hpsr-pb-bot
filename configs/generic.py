@@ -37,22 +37,24 @@ PLATFORM_MAP = {
 # metadata to a human-readable value. Very small list for
 # a rare number of instances
 METADATA_ALIASES = {
-	"Story": {"aliases": ["story"], "int_key": "story"},
-	"Hard": {"aliases": ["hard"], "int_key": "hard"},
-	"1 Player": {"aliases": ["1p", "1player"], "int_key": "1p"},
-	"2 Players": {"aliases": ["2p", "2players"], "int_key": "2p"},
-	"3 Players": {"aliases": ["3p", "3players"], "int_key": "3p"},
-	"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"], "int_key": "nla"},
-	"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"], "int_key": "la"},
-	"Single Player": {"aliases": ["1p", "sp", "single", "singleplayer"], "int_key": "sp"},
-	"Co-op": {"aliases": ["coop", "co-op"], "int_key": "coop"},
-	"Standard": {"aliases": ["std", "standard"], "int_key": "std"},
-	"Zipless": {"aliases": ["zl", "zless", "zipless"], "int_key": "zl"},
-	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "int_key": "nmg"},
+	"Story": {"aliases": ["story"]},
+	"Hard": {"aliases": ["hard"]},
+	"1 Player": {"aliases": ["1p", "1player"]},
+	"2 Players": {"aliases": ["2p", "2players"]},
+	"3 Players": {"aliases": ["3p", "3players"]},
+	"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"]},
+	"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"]},
+	"Single Player": {"aliases": ["1p", "sp", "single", "singleplayer"]},
+	"Co-op": {"aliases": ["coop", "co-op"]},
+	"Standard": {"aliases": ["std", "standard"]},
+	"Zipless": {"aliases": ["zl", "zless", "zipless"]},
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"]},
 	"Any%": {"aliases": ["any", "any%"], "int_key": "any"},
 	"100%": {"aliases": ["100", "100%", "hundo"], "int_key": "100"},
 	"Unrestricted": {"aliases": ["ur", "unrestricted"], "int_key": "unrestricted"},
-	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"}
+	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"},
+	"Quads": {"aliases": ["q", "qs"]},
+	"Quadless": {"aliases": ["ql", "qless", "quadless"]}
 }
 
 # Point to the docs if there is an error.
