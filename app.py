@@ -36,6 +36,7 @@ import utils.func as func
 import utils.exceptions as exc
 import utils.cache as caching
 import urllib.parse as url_parse
+import srdc.wr as wr
 import srdc.ils as ind_lvl
 import srdc.normal as normal_run
 import srdc.ce as ce_run
@@ -67,6 +68,17 @@ api = api.API(srdc_api, cache)
 utils = func.Utilities(api, lb_config.LEADERBOARD_CONFIG, config.PLATFORM_MAP)
 
 # Instantiate the core program code that handles run management
+world = wr.WorldRecords(
+	srdc_api=srdc_api,
+	api=api,
+	game_map=nm_config.GAME_MAP,
+	platform_map=config.PLATFORM_MAP,
+	category_map=nm_config.CATEGORY_MAP,
+	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
+	board_slugs=nm_config.BOARD_GAME_SLUG,
+	md_aliases=config.METADATA_ALIASES,
+	utils=utils
+)
 normal = normal_run.NormalRun(
 	api=api,
 	game_map=nm_config.GAME_MAP,
@@ -75,6 +87,7 @@ normal = normal_run.NormalRun(
 	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
 	board_slugs=nm_config.BOARD_GAME_SLUG,
 	md_aliases=config.METADATA_ALIASES,
+	wr=world,
 	utils=utils
 )
 il = ind_lvl.IndividualLevel(
@@ -373,6 +386,8 @@ def latest_run(owner, game, platform, board, args):
 	time = getattr(result, "time", "unknown time")
 	link = getattr(result, "link", "no link")
 	is_current_wr = "👑 " if place == 1 else ""
+	if flags["world_record"]:
+		return f"The current world record for {clean_name}{emulator_text} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"{is_current_wr}The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}"
 
 

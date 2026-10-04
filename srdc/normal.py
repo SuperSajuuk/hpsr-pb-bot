@@ -16,7 +16,7 @@ from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, Unsu
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, board_slugs, md_aliases, utils):
+	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, board_slugs, md_aliases, wr, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
@@ -24,6 +24,7 @@ class NormalRun:
 		self.category_map = category_map
 		self.board_slugs = board_slugs
 		self.md_aliases = md_aliases
+		self.wr = wr
 		self.utils = utils
 
 	def process_normal_run(self, game: str, platform: str, board: str, player: str, flags: dict):
@@ -74,22 +75,10 @@ class NormalRun:
 		if not_board:
 			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
-		# Process additional metadata, look up the run and return the run details.
+		# Process additional metadata and create an internal key.
+		# That internal key will then be used to get the Slug URL.
 		internal_key = f"{game_int_name}_{platform}"
 		cat_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
-		run = self.lookup_run(int_key, board, ordering_mode, int_name, player, flags)
-		return run, cat_name, game_name
-
-	def lookup_run(self, internal_key: str, cat_key: str, order_mode: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
-		"""
-		Look up the fastest verified run for a player in a specific game/category.
-		Uses SRDC variable filters and client-side filtering to ensure only the run the
-		user requested is returned (this is due to the way SRDC returns runs from the API)
-
-		Please be aware that the returned run object from this method may not necessarily
-		be a PB run. In most cases, it will be, but keep that in mind.
-		"""
-		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = None
 		for slug_url, aliases in self.board_slugs.items():
 			if internal_key in aliases:
@@ -101,7 +90,7 @@ class NormalRun:
 		game_id, game_cats = self.api.get_game_code(slug)
 		category_meta = None
 		for category_name, data in self.category_map.items():
-			if cat_key in data["aliases"]:
+			if board in data["aliases"]:
 				category_meta = category_name
 				break
 
@@ -110,8 +99,9 @@ class NormalRun:
 			raise InvalidCategory("The category key provided could not be found in the alias list. Please check your input, and try again.")
 
 		# Check that there is a category matching the one we asked for.
+		# This can change depending on what order mode is set.
 		category_id = None
-		match order_mode:
+		match ordering_mode:
 			case "cf":
 				for cat_id, cat_name in game_cats.items():
 					if cat_name == category_meta:
@@ -125,7 +115,7 @@ class NormalRun:
 				for cat_name, aliases in pm.items():
 					if codes[1] not in aliases:
 						continue
-					if flags.get("emulator", False):
+					if flags["emulator"]:
 						if "emu" in cat_name.lower() or cat_name == "emulator":
 							wanted_category = cat_name
 							break
@@ -146,6 +136,24 @@ class NormalRun:
 		if not category_id:
 			raise InvalidCategory("The category name obtained from the category key could not be mapped to a valid speedrun.com category for this game.")
 
+		# Depending on whether the world_record flag is set, lookup the
+		# relevant run, then return it.
+		if flags["world_record"]:
+			run = self.wr.lookup_world_record_run(slug, game_id, category_id, int_key, int_name, flags)
+		else:
+			run = self.lookup_run(slug, game_id, category_id, int_key, int_name, player, flags)
+
+		return run, cat_name, game_name
+
+	def lookup_run(self, slug: str, game_id: str, category_id: str, internal_key: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
+		"""
+		Look up the fastest verified run for a player in a specific game/category.
+		Uses SRDC variable filters and client-side filtering to ensure only the run the
+		user requested is returned (this is due to the way SRDC returns runs from the API)
+
+		Please be aware that the returned run object from this method may not necessarily
+		be a PB run. In most cases, it will be, but keep that in mind.
+		"""
 		# Resolve user ID, then check for variables in case we have one.
 		user_id = self.api.get_user_id(player)
 		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, int_name)
