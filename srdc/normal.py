@@ -78,7 +78,7 @@ class NormalRun:
 		# Process additional metadata and create an internal key.
 		# That internal key will then be used to get the Slug URL.
 		internal_key = f"{game_int_name}_{platform}"
-		cat_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
+		cat_clean_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
 		slug = None
 		for slug_url, aliases in self.board_slugs.items():
 			if internal_key in aliases:
@@ -143,7 +143,7 @@ class NormalRun:
 		else:
 			run = self.lookup_run(slug, game_id, category_id, int_key, int_name, player, flags)
 
-		return run, cat_name, game_name
+		return run, cat_clean_name, game_name
 
 	def lookup_run(self, slug: str, game_id: str, category_id: str, internal_key: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
 		"""
