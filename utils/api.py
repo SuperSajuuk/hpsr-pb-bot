@@ -84,30 +84,41 @@ class API:
 		self.cache.key_expiry(f"run-finder:game:{game_key}:{redis_key}", 604800)
 		return game_obj.id, cats
 
-	def get_user_id(self, username: str) -> str:
+	def get_srdc_user(self, arg: str, arg_type: str = "username") -> str:
 		"""
-		Returns the user ID for the identified user.
+		Returns the user object based on the provided username.
 		Checks Redis first before querying SRDC.
 		"""
-		key = self.cache.get_key(f"run-finder:users:{username}")
+		key = self.cache.get_key(f"run-finder:users:{arg}")
 		if key is not None:
 			return key
 
 		# Not found in Redis, query SRDC instead
-		result = self.api.search(dt.User, {"name": username})
+		result = None
+		match arg_type:
+			case "username":
+				result = self.api.search(dt.User, {"name": arg})
+			case "user_id":
+				result = self.api.get(f"users/{arg}")
+
+		# Nothing found, raise an error?
 		if not result:
-			raise ValueError(f"User not found on SRDC: {username}")
+			raise ValueError(f"User not found on SRDC: {arg}")
 
 		# Cache the users' ID, so we don't have to query SRDC again
-		self.cache.create_key(f"run-finder:users:{username}", result[0].id)
-		return result[0].id
+		val = result[0].id if arg_type == "username" else result["names"]["international"]
+		self.cache.create_key(f"run-finder:users:{arg}", val)
+		return val
 
 	def get_leaderboard(self, game_id: str, category_id: str, max_runs: int = None, variables: list = None, alt_url: str = None):
 		"""
 		Fetch leaderboard for a game/category.
-		If max_runs is provided, only that many runs are returned.
+		URL is extended based on max_runs or variables being included.
 		"""
+		# Set the URL.
 		url = f"leaderboards/{game_id}/category/{category_id}?embed=variables" if alt_url is None else alt_url
+
+		# Append max_runs and var-value pairs if required.
 		if max_runs is not None:
 			url += f"&max={max_runs}"
 		if variables:
@@ -117,7 +128,7 @@ class API:
 
 		return self.api.get(url)
 
-	def search_runs(self, game_id, category_id, user_id, var_filters=None, base_query=None):
+	def search_runs(self, game_id, category_id, user_id, var_filters: list = None, base_query=None):
 		"""
 		Builds a base query from the provided game_id, category_id and user_id
 		to find runs on a specific leaderboard of SRDC.
@@ -132,12 +143,8 @@ class API:
 		# Build a base query, which we can then paginate against.
 		base_q = f"runs?game={game_id}&category={category_id}&user={user_id}&status=verified&embed=variables" if base_query is None else base_query
 		if var_filters:
-			if isinstance(var_filters, list):
-				for var in var_filters:
-					for key, val in var.items():
-						base_q += f"&var-{key}={val}"
-			else:
-				for key, val in var_filters.items():
+			for var in var_filters:
+				for key, val in var.items():
 					base_q += f"&var-{key}={val}"
 
 		# Paginate the results until all are found.

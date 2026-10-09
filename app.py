@@ -113,10 +113,8 @@ lg = lego.LEGONormalRun(
 cat_ext = ce_run.CategoryExtension(
 	api=api,
 	game_map=ce_config.GAME_MAP,
-	category_map=ce_config.SUB_CATEGORY_MAP,
 	category_aliases=ce_config.CATEGORY_ALIASES,
 	board_aliases=ce_config.BOARD_ALIASES,
-	token_aliases=ce_config.BOARD_TOKEN_ALIASES,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
@@ -137,18 +135,10 @@ multirun = multi.MultiRun(
 	category_map=mr_config.SUB_CATEGORY_MAP,
 	category_aliases=mr_config.CATEGORY_ALIASES,
 	board_aliases=mr_config.BOARD_ALIASES,
-	token_aliases=mr_config.BOARD_TOKEN_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
-per_best = pb.PersonalBest(
-	api=api,
-	game_map=(nm_config.GAME_MAP, ce_config.GAME_MAP, mr_config.GAME_MAP),
-	category_map=(nm_config.CATEGORY_MAP, ce_config.SUB_CATEGORY_MAP, mr_config.SUB_CATEGORY_MAP),
-	board_aliases=(ce_config.BOARD_ALIASES, mr_config.BOARD_ALIASES),
-	board_slugs=nm_config.BOARD_GAME_SLUG,
-	utils=utils
-)
+per_best = pb.PersonalBest(api=api, utils=utils)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -177,7 +167,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	flags = {
 		"emulator": False, "world_record": False, "player": None,
 		"ce_board": None, "cc_board": None, "mr_board": None,
-		"lego_md": {}, "additional_metadata": {}
+		"place_num": -1, "lego_md": {}, "additional_metadata": {}
 	}
 	key_num = 1
 
@@ -192,8 +182,8 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	# later in the routes, and anything invalid will simply be
 	# ignored.
 	for token in tokens:
-		# Check if the token is set to emulator
-		if token == "emulator":
+		# Check if the token refers to emulator boards.
+		if token in ["emu", "emulator"]:
 			flags["emulator"] = True
 			continue
 
@@ -213,11 +203,9 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Game must be ce/catext to actually trigger this block.
 		ce_match = False
 		if game in ["ce", "catext"]:
-			for _, aliases in ce_config.SUB_CATEGORY_MAP.items():
-				if token in aliases:
-					flags["ce_board"] = token
-					ce_match = True
-					break
+			if token in lb_config.CE_TOKEN_LOOKUP:
+				flags["ce_board"] = token
+				ce_match = True
 		if ce_match:
 			continue
 
@@ -225,8 +213,8 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Game must be in the list to trigger this block.
 		mr_match = False
 		if game in ["multirun", "multi", "mr"]:
-			for _, aliases in mr_config.SUB_CATEGORY_MAP.items():
-				if token in aliases:
+			for _, data in mr_config.SUB_CATEGORY_MAP.items():
+				if token in data["aliases"]:
 					flags["mr_board"] = token
 					mr_match = True
 					break
@@ -236,9 +224,23 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Check if the token contains the string --player=
 		# or its alias --p=. If no value is provided, it will
 		# still be set to None and thus ignored.
-		if "--player=" in token or "--p=" in token:
-			p_name = token.split("=")[1]
-			flags["player"] = p_name if len(p_name) > 0 else None
+		if token.startswith("--player=") or token.startswith("--p="):
+			_, _, p_name = token.partition("=")
+			p_name = p_name.lstrip("=")
+			flags["player"] = p_name if p_name else None
+			continue
+
+		# Check if the token contains --position or its aliases.
+		# This is used when a requestor wants to know who submitted
+		# a run at a specific place on a leaderboard. The default value
+		# is -1, which will be ignored. Only usable in /run/ at the moment.
+		if token.startswith(("--position=", "--pos=", "--place=")):
+			_, _, pos_num = token.partition("=")
+			pos_num = pos_num.lstrip("=")
+			try:
+				flags["place_num"] = int(pos_num)
+			except ValueError:
+				pass
 			continue
 
 		# Check if the token contains either --world-record or
@@ -282,7 +284,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 def individual_level(owner, game, platform, level, category, args):
 	# I can't imagine that these will be in upper-case,
 	# but just make sure everything is lower-case.
-	owner = owner.strip().lower()
+	channel_owner = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	level = level.strip().lower()
@@ -291,17 +293,11 @@ def individual_level(owner, game, platform, level, category, args):
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
 	flags = extract_flags(game, extras)
-	is_wr = flags.get("world_record", False)
-	runner_override = flags.get("player", None)
-
-	# Resolve the player. This will always be the channel owner,
-	# unless the player flag has been set.
-	player = runner_override if runner_override is not None else owner
-	player = resolve_player(owner, player)
+	player = resolve_player(channel_owner, flags["player"])
 
 	# Hand over results processing to the processor. This will either
 	# return a SpeedRun object or None, if nothing was found.
-	result, il_cat_name = il.process_il(game, platform, level, category, player, is_wr)
+	result, il_cat_name = il.process_il(game, platform, level, category, player, flags["world_record"])
 	if not result:
 		return "No individual level submission could be found with these parameters."
 
@@ -310,7 +306,7 @@ def individual_level(owner, game, platform, level, category, args):
 	# platform_repl is a bodge to support a specific set of ILs.
 	platform_repl = platform.replace("cc", "pc")
 	clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
-	if is_wr:
+	if flags["world_record"]:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
 
@@ -326,7 +322,7 @@ def individual_level(owner, game, platform, level, category, args):
 def latest_run(owner, game, platform, board, args):
 	# I can't imagine that these will be in upper-case,
 	# but just make sure everything is lower-case.
-	owner = owner.strip().lower()
+	channel_owner = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	board = url_parse.unquote(board.strip().lower())
@@ -334,12 +330,7 @@ def latest_run(owner, game, platform, board, args):
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
 	flags = extract_flags(game, extras)
-	runner_override = flags.get("player", None)
-
-	# Resolve the player. This will always be the channel owner,
-	# unless the player flag has been set.
-	player = runner_override if runner_override is not None else owner
-	player = resolve_player(owner, player)
+	player = resolve_player(channel_owner, flags["player"])
 
 	# Process the provided data and match it to value of "game".
 	# This will set the code off to finding a run that matches
@@ -388,6 +379,8 @@ def latest_run(owner, game, platform, board, args):
 	is_current_wr = "👑 " if place == 1 else ""
 	if flags["world_record"]:
 		return f"The current world record for {clean_name}{emulator_text} is held by {result.player} with a time of {result.time}: {result.link}"
+	if flags["place_num"] > 0:
+		return f"{is_current_wr}{result.player} holds position {place} in {clean_name}{emulator_text} with a time of {result.time}: {result.link}"
 	return f"{is_current_wr}The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}"
 
 
@@ -402,7 +395,7 @@ def latest_run(owner, game, platform, board, args):
 def personal_best(owner, game, platform, board, args):
 	# I can't imagine that these will be in upper-case,
 	# but just make sure everything is lower-case.
-	owner = owner.strip().lower()
+	channel_owner = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
 	board = url_parse.unquote(board.strip().lower())
@@ -410,58 +403,84 @@ def personal_best(owner, game, platform, board, args):
 	# Parse everything in the arguments, if anything is there.
 	extras = split_extras(args)
 	flags = extract_flags(game, extras)
-	runner_override = flags.get("player", None)
-
-	# Resolve the player. This will always be the channel owner,
-	# unless the player flag has been set.
-	player = runner_override if runner_override is not None else owner
-	player = resolve_player(owner, player)
+	player = resolve_player(channel_owner, flags["player"])
 
 	# Determine the mode that we are in, derived from game key mapping.
 	# By default, if mode is None, then it is a normal board: otherwise,
 	# other values determine what the relevant mode is.
 	mode = None
+	slug = None
 	alias_table = None
+	clean_name = None
+	lb_cfg = None
+	board_name = None
+	internal_key = f"{game}_{platform}"
 	for key, val in nm_config.GAME_MAP.items():
 		if game == key:
+			# Determine the Slug URL
 			mode = "main"
-			alias_table = nm_config.CATEGORY_MAP
+			alias_table = nm_config.CATEGORY_MAP.copy()
+			for slug_url, aliases in nm_config.BOARD_GAME_SLUG.items():
+				if internal_key in aliases:
+					slug = slug_url
+					break
+
+			# Capture leaderboard data.
+			lb_cfg = utils.resolve_leaderboard_config(slug, internal_key)
+			if lb_cfg:
+				alias_table.update(lb_cfg.get("categories", {}))
+
+			# For standard boards, set the board name here.
+			for name, data in alias_table.items():
+				if board in data["aliases"]:
+					board_name = name
+					break
 			break
 	if mode is None:
 		for key, val in ce_config.GAME_MAP.items():
 			if game == val["id"]:
+				# Capture leaderboard data
 				mode = "ce"
-				alias_table = ce_config.SUB_CATEGORY_MAP
+				slug = val["id"]
+				lb_cfg = lb_config.LEADERBOARD_CONFIG.get(game)
+				if lb_cfg:
+					alias_table = lb_cfg["sub_categories"]
 				break
 	if mode is None:
 		for key, val in mr_config.GAME_MAP.items():
 			if game == val["id"]:
 				mode = "mr"
-				alias_table = mr_config.SUB_CATEGORY_MAP
+				slug = val["id"]
+				lb_cfg = lb_config.LEADERBOARD_CONFIG.get(game)
+				alias_table = nm_config.CATEGORY_MAP.copy()
 				break
 
 	# Parse the board value in both the CE and MR category maps.
 	category_name = None
 	if alias_table is not None:
 		for cat_name, data in alias_table.items():
-			if board in data["aliases"]:
-				category_name = cat_name
-				break
+			if isinstance(data, list):
+				if board in data:
+					category_name = cat_name
+					break
+			else:
+				if board in data["aliases"]:
+					category_name = cat_name
+					break
 
 	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
 	if mode is None:
 		raise exc.InvalidCategory(f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}")
 
-	# Produce an internal key.
-	internal_key = f"{game}_{platform}"
-	board_name = None
+	# Switch the mode to set some other missing details.
 	match mode:
 		case "ce":
 			# Check if the platform name is in the alias list.
+			# The platform variable represents the top level board in this instance.
 			alias_found = False
-			for name, aliases in ce_config.BOARD_ALIASES.items():
-				if platform in aliases:
+			for name, data in lb_cfg["categories"].items():
+				if platform in data["aliases"]:
 					board_name = name
 					alias_found = True
 					break
@@ -472,16 +491,18 @@ def personal_best(owner, game, platform, board, args):
 					f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 				)
 
-			# Capture the internal key based on board_name
-			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
-				if data["board"] == board_name:
-					internal_key = key
+			# Generate a clean output name.
+			game_name = None
+			for key, val in ce_config.GAME_MAP.items():
+				if val["id"] == game:
+					game_name = val["name"]
 					break
+			clean_name = f"{game_name} ({board_name} - {category_name})"
 		case "mr":
 			# Check if the platform name is in the alias list.
 			alias_found = False
-			for name, aliases in mr_config.BOARD_ALIASES.items():
-				if platform in aliases:
+			for name, data in lb_cfg["categories"].items():
+				if platform in data["aliases"]:
 					board_name = name
 					alias_found = True
 					break
@@ -492,36 +513,24 @@ def personal_best(owner, game, platform, board, args):
 					f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
 				)
 
-			# Capture the internal key based on board_name
-			for key, data in lb_config.LEADERBOARD_CONFIG[game].items():
-				if data["board"] == board_name:
-					internal_key = key
-					break
-
-	# Query SRDC to find the most recent PB of the player for this game/category.
-	result = per_best.lookup_pb(mode, game, internal_key, board, player, flags)
-	if not result:
-		return "No PB found for this criteria."
-
-	# Match the mode to generate a clean name.
-	match mode:
-		case "ce":
-			game_name = None
-			for key, val in ce_config.GAME_MAP.items():
-				if val["id"] == game:
-					game_name = val["name"]
-					break
-			clean_name = f"{game_name} ({board_name} - {category_name})"
-		case "mr":
+			# Generate a clean output name.
 			game_name = None
 			for key, val in mr_config.GAME_MAP.items():
 				if val["id"] == game or game in val.get("aliases", []):
 					game_name = val["name"]
 					break
 			clean_name = f"{game_name} ({board_name} - {category_name})"
-		case _:
-			is_emulator = " (Emulator)" if result.emulator else ""
-			clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
+
+	# Query SRDC to find the most recent PB of the player for this game/category.
+	cat_cfg = utils.resolve_category_config(lb_cfg, internal_key, board)
+	result = per_best.lookup_pb(slug, cat_cfg, board_name, player, flags)
+	if not result:
+		return "No PB found for this criteria."
+
+	# If mode is set to "main", derive the clean name here, as we'll use the result data for it.
+	if mode == "main":
+		is_emulator = " (Emulator)" if result.emulator else ""
+		clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
 
 	# Return the standard string to represent this PB.
 	is_current_wr = "👑 " if result.place == 1 else ""

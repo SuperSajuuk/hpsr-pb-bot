@@ -7,8 +7,10 @@
 #
 
 # Game mapping.
-# This is used for main boards that have no separate
-# handler.
+# This contains all details about standard game boards
+# that don't have their own handler. All games here need to
+# define their full display name, allowed platforms and
+# board slugs (which are mapped to internal keys).
 GAME_MAP = {
 	"hp1": {
 		"name": "Harry Potter and the Philosopher's Stone",
@@ -105,40 +107,19 @@ GAME_MAP = {
 }
 
 # Map abbreviations passed by users to human-readable names.
-# This is just for main boards: for CE's and Multiruns, use
-# the ce.py and multi.py files under the configs folder.
+# This category is ONLY for standard/generic boards: aka,
+# categories which are extremely common. Game-specific categories
+# should be defined in the respective leaderboard config data.
 CATEGORY_MAP = {
 	"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
 	"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
 	"Glitchless": {"aliases": ["gless", "glitchless"], "internal_name": "gless"},
 	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
-	"Any% No EDS": {"aliases": ["noeds", "anynoeds", "any%noeds"], "internal_name": "noeds"},
-	"Any% NSC": {"aliases": ["nsc", "nosavecorrupt", "anynsc", "anynosavecorrupt", "any%nsc", "any%nosavecorrupt"], "internal_name": "anynsc"},
-	"All Wizard Cards": {"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"},
-	"All Requirements": {"aliases": ["allreq", "allreqs", "requirements", "allrequirements"], "internal_name": "allreq"},
 	"All Crests": {"aliases": ["ac", "crests", "allcrests"], "internal_name": "allc"},
-	"Warpless": {"aliases": ["wl", "warpless"], "internal_name": "warpless"},
-	"Boostless": {"aliases": ["bl", "boostless"], "internal_name": "boostless"},
-	"All Shields": {"aliases": ["as", "shields", "allshields"], "internal_name": "allshields"},
-	"Beat Hogwarts Cup": {"aliases": ["bhc", "hogwarts", "hogwartscup", "beathogwarts", "beathogwartscup"], "internal_name": "bhc"},
-	"Beat World Cup": {"aliases": ["bwc", "world", "worldcup", "beatworld", "beatworldscup"], "internal_name": "bwc"},
-	"Beat the Tutorial": {"aliases": ["btt", "tutorial", "beattutorial", "beatthetutorial"], "internal_name": "btt"},
 	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"},
-	"Kill Ranrok": {"aliases": ["ranrok", "killranrok"], "internal_name": "ranrok"},
-	"All Quests": {"aliases": ["aq", "quests", "allquests"], "internal_name": "allq"},
-	"Glitched": {"aliases": ["glitched"], "internal_name": "glitched"},
-	"All Teensies": {"aliases": ["at", "allt", "allteensies"], "internal_name": "allt"},
-	"No Teensies": {"aliases": ["not", "noteensies"], "internal_name": "not"},
-	"1 Spatula": {"aliases": ["1s", "1spat", "1spatula"], "internal_name": "1s"},
-	"2 Spatulas": {"aliases": ["2s", "2spat", "2spatulas"], "internal_name": "2s"},
-	"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
-	"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"},
 	"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"},
-	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"},
-	"True Ending": {"aliases": ["te", "ending", "trueending"], "internal_name": "te"},
-	"Sax%": {"aliases": ["sax", "mrsax", "sax%", "mrsax%"], "internal_name": "sax"},
-	"Skops%": {"aliases": ["skops", "mrskops", "skops%", "mrskops%"], "internal_name": "skops"}
+	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"}
 }
 
 # Platform category map

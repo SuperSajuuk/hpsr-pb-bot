@@ -140,7 +140,7 @@ class IndividualLevel:
 
 		# Resolve user ID and then find that specific level run.
 		# If nothing there, just return None.
-		user_id = self.api.get_user_id(player)
+		user_id = self.api.get_srdc_user(player)
 		q = f"runs?game={game_id}&level={level_id}&category={category_id}&user={user_id}&status=verified&embed=variables"
 		runs = self.api.search_runs(game_id, category_id, user_id, var_filters=variables, base_query=q)
 		if not runs:

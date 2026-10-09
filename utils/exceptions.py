@@ -26,6 +26,10 @@ class InvalidPlatform(UserInputException):
 	pass
 
 
+class InvalidPosNumber(UserInputException):
+	pass
+
+
 class UnsupportedGame(UserInputException):
 	pass
 

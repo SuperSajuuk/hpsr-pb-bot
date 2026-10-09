@@ -37,3 +37,15 @@ for _, module_name, _ in pkgutil.iter_modules(leaderboards.__path__):
 		if key in LEADERBOARD_CONFIG:
 			raise RuntimeError(f"Duplicate leaderboard key detected: {key}")
 	LEADERBOARD_CONFIG.update(data)
+
+# Build a set of all aliases representing category extensions.
+# This is needed to support extract_flags for token matching.
+CE_TOKEN_LOOKUP = set()
+for cfg in LEADERBOARD_CONFIG.values():
+	sub_cats = cfg.get("sub_categories", None)
+	if not sub_cats:
+		continue
+	for aliases in sub_cats.values():
+		if not isinstance(aliases, list):
+			continue
+		CE_TOKEN_LOOKUP.update(aliases)

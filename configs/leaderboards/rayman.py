@@ -5,6 +5,10 @@
 #
 LEADERBOARD_DATA = {
 	"rayman_1": {
+		"categories": {
+			"Sax%": {"aliases": ["sax", "mrsax", "sax%", "mrsax%"], "internal_name": "sax"},
+			"Skops%": {"aliases": ["skops", "mrskops", "skops%", "mrskops%"], "internal_name": "skops"}
+		},
 		"100": {
 			"variables": [
 				{"var_id": "2lgzx5o8", "value_id": "xqkr5ky1"}
@@ -27,6 +31,11 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"r3": {
+		"categories": {
+			"Glitched": {"aliases": ["glitched"], "internal_name": "glitched"},
+			"All Teensies": {"aliases": ["at", "allt", "allteensies"], "internal_name": "allt"},
+			"No Teensies": {"aliases": ["not", "noteensies"], "internal_name": "not"}
+		},
 		"any": {
 			"variables": [
 				{"var_id": "6nj2zjl4", "value_id": "gq75p5r1"}

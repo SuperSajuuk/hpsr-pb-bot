@@ -131,7 +131,7 @@ class LEGONormalRun:
 			raise InvalidCategory("Category not found in LEGO game board.")
 
 		# Resolve user ID and pull in all variables for the game.
-		user_id = self.api.get_user_id(player)
+		user_id = self.api.get_srdc_user(player)
 		cfg = self.utils.resolve_leaderboard_config(game, internal_key, cat_key)
 		if cfg is None:
 			raise MissingInternalData(f"Missing leaderboard configuration data for key: '{internal_key}'.")

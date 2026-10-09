@@ -58,7 +58,7 @@ BOARD_TOKEN_ALIASES = {
 		"replay": ["rs", "replaystory"],
 		"ac": ["allcrests"],
 		"100": ["hundo"]
-	},
+	}
 }
 
 # Category aliases

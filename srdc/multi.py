@@ -17,13 +17,12 @@ import srcomapi.datatypes as dt
 # API for a Multirun submission.
 # This is used by !run only.
 class MultiRun:
-	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, token_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
 		self.category_map = category_map
 		self.category_aliases = category_aliases
 		self.board_aliases = board_aliases
-		self.token_aliases = token_aliases
 		self.lb_config = lb_config
 		self.utils = utils
 
@@ -46,87 +45,92 @@ class MultiRun:
 				raise InvalidGame(f"Unknown Multirun game series: '{base_game}'. Check for typos or whether this is a supported series for multirun lookups.")
 			mr_key = {"name": lk["names"]["international"], "id": lk["abbreviation"]}
 
-		# Check for a table of aliases referring to the categories.
-		# Even if the game object is returned by SRDC, an alias table
-		# is still required internally, as it's used to map user input
-		# to a hard-coded internal name.
-		alias_table = self.category_aliases.get(mr_key["id"])
-		if not alias_table:
-			raise MissingInternalData(f"No alias table exists for ID '{mr_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-
-		# Check if the top board is defined in the alias list.
-		# If it isn't, the user might have provided an alternative
-		# name, which needs to be checked
-		if mr_board not in alias_table:
-			mr_board = self.token_aliases[mr_key["id"]].get(mr_board, None)
-			if mr_board is None:
-				raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
-
-		# Use the board_token (the top-level board) to find
-		# actual internal token name (this is needed to ensure
-		# random user input always maps to the correct internal
-		# value).
-		#
-		# If this returns None, then whatever token they provided
-		# does not exist in the alias table.
-		board_token = alias_table[mr_board].get(mr_category_board, None)
-		if board_token is None:
-			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
-
-		# Build the internal key and lookup the multi-run.
-		internal_key = f"{mr_board}_{board_token}"
-		run = self.lookup_multi_run(mr_key["id"], internal_key, player, flags)
-
-		# Produce a clean name based on the alias value. This allows one
-		# "output" name against lots of aliases for tidiness of the
-		# board aliases.
-		alias_name = None
-		cat_clean_name = None
-		for name, aliases in self.board_aliases.items():
-			if mr_board in aliases:
-				alias_name = name
-				break
-		for name, aliases in self.category_map.items():
-			if mr_category_board in aliases:
-				cat_clean_name = name
-				break
-
-		# Return the run object and the alias_name produced.
-		return run, cat_clean_name, alias_name
-
-	def lookup_multi_run(self, slug_id: str, mr_category: str, player: str, flags: dict) -> SpeedRun | None:
-		"""
-		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
-		but with multirun-specific variables.
-		"""
-		# Resolve the Slug ID for its SRDC ID and all categories,
-		# then capture the leaderboard data.
+		# Pull in game id and game cats from cache/SRDC, alongside
+		# the leaderboard data. Unlike normal runs, CE's require leaderboard
+		# data, so if there isn't anything, we have to abandon.
+		slug_id = mr_key["id"]
 		game_id, game_cats = self.api.get_game_code(slug_id)
 		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise MissingInternalData(f"No leaderboard config found for Multirun game slug: {slug_id}")
 
-		# Category metadata is necessary for Multiruns: if nothing is found, or the
-		# Multirun category cannot be found in the configuration, return an error.
-		if mr_category not in cfg:
-			raise MissingInternalData(f"Unknown Multirun category key: {mr_category}")
+		# Check if the mr_top_board is in the defined category list.
+		tb_int_name = None
+		mr_top_board_name = None
+		for board_name, data in cfg["categories"].items():
+			if mr_board in data["aliases"]:
+				tb_int_name = data["internal_name"]
+				mr_top_board_name = board_name
+				break
 
-		# Using the CE Category config, search the SRDC Game categories
+		# Build the internal key and check if it can be found in the key list.
+		internal_key = f"{base_game}_{tb_int_name}"
+		if internal_key not in cfg:
+			raise MissingInternalData(f"Internal key '{internal_key}' cannot be found.")
+
+		# Check for a table of aliases referring to the categories.
+		# Even if the game object is returned by SRDC, an alias table
+		# is still required internally, as it's used to map user input
+		# to a hard-coded internal name.
+		alias_table = self.category_aliases.get(slug_id)
+		if not alias_table:
+			raise MissingInternalData(f"No alias table exists for ID '{slug_id}, which prevents category matching. Please report this as a bug on the GitHub repository.")
+		if mr_board not in alias_table:
+			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
+
+		# Use the board_token (the top-level board) to find the
+		# actual internal token name (this is needed to ensure
+		# random user input always maps to the correct internal
+		# value).
+		board_token = None
+		for name, aliases in alias_table.get(tb_int_name, {}).items():
+			if mr_category_board in aliases:
+				board_token = name
+				break
+
+		# After the loop above, if this is still None, then whatever
+		# token they provided does not exist in the alias table.
+		if board_token is None:
+			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
+
+		# Look for the multi-run "run".
+		# To avoid issues, ce_board is overwritten with the value of
+		# board_token above.
+		flags["mr_board"] = board_token
+		run = self.lookup_multi_run(game_id, game_cats, cfg[internal_key], player, flags)
+
+		# Produce a clean name based on the alias value. This allows one
+		# "output" name against lots of aliases for tidiness of the
+		# board aliases.
+		cat_clean_name = None
+		for name, data in self.category_map.items():
+			if mr_category_board in data["aliases"]:
+				cat_clean_name = name
+				break
+
+		# Return the run object and the alias_name produced.
+		return run, cat_clean_name, mr_top_board_name
+
+	def lookup_multi_run(self, game_id: str, game_cats: dict, cat_data: dict, player: str, flags: dict) -> SpeedRun | None:
+		"""
+		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
+		but with multirun-specific variables.
+		"""
+		# Using the Multirun Category config, search the SRDC Game categories
 		# list to find the matching board name.
-		category_meta = cfg[mr_category]
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
-			if cat_name == category_meta["board"]:
+			if cat_name == cat_data["board"]:
 				category_id = cat_id
 				break
 
 		# If category_obj is still None, then the category does not exist.
 		if not category_id:
-			raise InvalidCategory("Multirun category not found in Multirun game")
+			raise InvalidCategory("Multirun category not found in multirun game")
 
 		# Resolve the user ID, capture the category vars and then search for runs.
-		user_id = self.api.get_user_id(player)
-		mr_cat_vars = self.utils.generate_var_filters(category_meta, flags)
+		user_id = self.api.get_srdc_user(player)
+		mr_cat_vars = self.utils.generate_var_filters(cat_data["variables"], flags)
 		runs = self.api.search_runs(game_id, category_id, user_id, mr_cat_vars)
 		if not runs:
 			return None

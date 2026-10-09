@@ -139,7 +139,7 @@ class CustomContent:
 		# Resolve the user ID and capture the category vars. If the
 		# metadata parameter is not None, set a slice to capture the
 		# specific piece of metadata that was asked for.
-		user_id = self.api.get_user_id(player)
+		user_id = self.api.get_srdc_user(player)
 		cc_cat_vars = self.utils.generate_var_filters(category_meta, flags)
 
 		# Search for runs, if none found then return.

@@ -41,7 +41,7 @@ class WorldRecords:
 
 		return self.srdc.get(base_q)
 
-	def lookup_world_record_run(self, slug: str, game_id: str, category_id: str, internal_key: str, int_name: str, flags: dict | None) -> SpeedRun | None:
+	def lookup_world_record_run(self, game_id: str, category_id: str, var_filters: list) -> SpeedRun | None:
 		"""
 		Look up the current world record in a specific game/category.
 		Uses SRDC variable filters and client-side filtering to ensure only the run the
@@ -50,19 +50,6 @@ class WorldRecords:
 		Unlike lookup_run(), this method doesn't accept player data, and uses the run object
 		returned by SRDC to fill out the required run data.
 		"""
-		# Capture any variables if needed.
-		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, int_name)
-		cfg_2 = None
-		if cfg is not None:
-			cfg_2 = cfg.get(int_name, None)
-
-		# Check if either cfg or cfg_2 contains a variables key.
-		# If so, capture all variables and build a var_filters list
-		# for use in the query.
-		var_filters = None
-		if (cfg and "variables" in cfg) or (cfg_2 and "variables" in cfg_2):
-			var_filters = self.utils.generate_var_filters(cfg, flags, cfg_2)
-
 		# With the provided data, search SRDC for runs.
 		# If nothing there, just return None.
 		run = self.lookup_wr_run(game_id, category_id, var_filters)

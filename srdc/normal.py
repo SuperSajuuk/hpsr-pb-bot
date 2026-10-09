@@ -8,7 +8,7 @@
 # the main boards. CE's are to be handled in ce.py and multiruns will
 # be in multi.py
 from utils.model import SpeedRun
-from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, UnsupportedGame
+from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, UnsupportedGame, InvalidPosNumber
 
 
 # NormalRun
@@ -38,9 +38,11 @@ class NormalRun:
 		no_game = True
 		is_unsupported = False
 		supported_platforms = []
+		category_list = self.category_map.copy()
 		game_int_name = None
 		game_name = None
 		ordering_mode = None
+		slug = None
 		for key_name, data in self.game_map.items():
 			if game == key_name or game in data.get("aliases", []):
 				no_game = False
@@ -51,6 +53,7 @@ class NormalRun:
 				ordering_mode = data.get("ordering", "cf")
 				break
 
+		# Do some initial validation checks before continuing.
 		if no_game:
 			raise InvalidGame(f"Unknown game: '{game}'.")
 		if is_unsupported:
@@ -60,14 +63,28 @@ class NormalRun:
 		if platform not in supported_platforms:
 			raise UnsupportedGame(f"The platform '{platform}' cannot be used for this game, please try one of the allowed platforms: {', '.join(supported_platforms)}")
 
+		# Produce an internal key and get the slug URL.
+		internal_key = f"{game_int_name}_{platform}"
+		for slug_url, aliases in self.board_slugs.items():
+			if internal_key in aliases:
+				slug = slug_url
+				break
+
+		# Capture the category data for the game, if any specific ones exist.
+		board_cfg = self.utils.resolve_leaderboard_config(slug, internal_key)
+		if board_cfg:
+			category_list.update(board_cfg.get("categories", {}))
+
 		# Check if the board name is in the category list.
 		not_board = True
 		category_name = None
+		int_category_id = None
 		int_name = None
-		for board_name, data in self.category_map.items():
+		for board_name, data in category_list.items():
 			if board in data["aliases"]:
 				not_board = False
 				category_name = board_name
+				int_category_id = data.get("board_id", None)
 				int_name = data["internal_name"]
 				break
 
@@ -75,28 +92,9 @@ class NormalRun:
 		if not_board:
 			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
-		# Process additional metadata and create an internal key.
-		# That internal key will then be used to get the Slug URL.
-		internal_key = f"{game_int_name}_{platform}"
+		# Process additional metadata and then get the Game ID/Category list from SRDC.
 		cat_clean_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
-		slug = None
-		for slug_url, aliases in self.board_slugs.items():
-			if internal_key in aliases:
-				slug = slug_url
-				break
-
-		# Get the Game ID and its top category list. Then,
-		# obtain the relevant category name from the category map.
 		game_id, game_cats = self.api.get_game_code(slug)
-		category_meta = None
-		for category_name, data in self.category_map.items():
-			if board in data["aliases"]:
-				category_meta = category_name
-				break
-
-		# Didn't find anything, so returning.
-		if not category_meta:
-			raise InvalidCategory("The category key provided could not be found in the alias list. Please check your input, and try again.")
 
 		# Check that there is a category matching the one we asked for.
 		# This can change depending on what order mode is set.
@@ -104,7 +102,13 @@ class NormalRun:
 		match ordering_mode:
 			case "cf":
 				for cat_id, cat_name in game_cats.items():
-					if cat_name == category_meta:
+					# Prefer matching on cat_id first. This is more likely to
+					# match over names which may change.
+					if cat_id == int_category_id:
+						category_id = cat_id
+						break
+					# If cat_id failed (highly unlikely), use cat_name as fallback.
+					if cat_name == category_name:
 						category_id = cat_id
 						break
 			case "pf":
@@ -126,8 +130,12 @@ class NormalRun:
 
 				# Now do the same category loop we normally do
 				# but using the wanted_category because we are in
-				# pf mode.
+				# pf mode. We still prefer cat_id matching first before
+				# using the name though.
 				for cat_id, cat_name in game_cats.items():
+					if cat_id == int_category_id:
+						category_id = cat_id
+						break
 					if cat_name == wanted_category:
 						category_id = cat_id
 						break
@@ -136,16 +144,67 @@ class NormalRun:
 		if not category_id:
 			raise InvalidCategory("The category name obtained from the category key could not be mapped to a valid speedrun.com category for this game.")
 
+		# Capture variables from the category configuration.
+		cat_cfg = self.utils.resolve_category_config(board_cfg, int_key, int_name)
+		var_filters = None
+		if cat_cfg and cat_cfg.get("variables", None):
+			var_filters = self.utils.generate_var_filters(board_cfg["variables"], flags)
+
 		# Depending on whether the world_record flag is set, lookup the
 		# relevant run, then return it.
 		if flags["world_record"]:
-			run = self.wr.lookup_world_record_run(slug, game_id, category_id, int_key, int_name, flags)
+			run = self.wr.lookup_world_record_run(game_id, category_id, var_filters)
+		elif flags["place_num"] > 0:
+			run = self.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
-			run = self.lookup_run(slug, game_id, category_id, int_key, int_name, player, flags)
+			run = self.lookup_run(game_id, category_id, var_filters, player)
 
 		return run, cat_clean_name, game_name
 
-	def lookup_run(self, slug: str, game_id: str, category_id: str, internal_key: str, int_name: str, player: str, flags: dict | None) -> SpeedRun | None:
+	def find_run_at_position(self, game_id: str, category_id: str, position: int, var_filters: list) -> SpeedRun | None:
+		"""
+		Look up the fastest verified run in a specific game/category at a defined position.
+		This doesn't use the player argument, as it will be derived from the run object
+		returned by SRDC.
+
+		Returns a SpeedRun object or None, if no run was found.
+		"""
+		# Check the value of the position number given.
+		# -1 means no number, or an invalid number, was provided.
+		# Anything greater than 200 raises an error currently.
+		if position == -1:
+			raise InvalidPosNumber("No position number has been provided. A whole number between 1-200 inclusive is required.")
+		if position > 200:
+			raise InvalidPosNumber("You can only use the --position flag on leaderboards up to a maximum of run 200 at this time.")
+
+		# Look for a run that matches requirements.
+		# Unlike normal runs, this only uses leaderboard lookup, as it's the only
+		# route that includes place numbers. The max number of runs returned is
+		# constrained by the position argument for simplicity.
+		runs = self.api.get_leaderboard(game_id, category_id, position, var_filters)
+		if not runs:
+			return None
+
+		# Rather than handing to a specific utility function here, instead
+		# just loop all runs until it finds the one with the given
+		# position.
+		run = None
+		for entry in runs["runs"]:
+			if entry["place"] == position:
+				run = entry
+				break
+
+		# Didn't find it (which would be strange...)
+		if run is None:
+			return None
+
+		# Extract run details from the object.
+		player = self.api.get_srdc_user(run["run"]["players"][0]["id"], arg_type="user_id")
+		sr = self.utils.extract_run(run["run"], player)
+		sr.place = run["place"]
+		return sr
+
+	def lookup_run(self, game_id: str, category_id: str, var_filters: list, player: str) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in a specific game/category.
 		Uses SRDC variable filters and client-side filtering to ensure only the run the
@@ -154,22 +213,9 @@ class NormalRun:
 		Please be aware that the returned run object from this method may not necessarily
 		be a PB run. In most cases, it will be, but keep that in mind.
 		"""
-		# Resolve user ID, then check for variables in case we have one.
-		user_id = self.api.get_user_id(player)
-		cfg = self.utils.resolve_leaderboard_config(slug, internal_key, int_name)
-		cfg_2 = None
-		if cfg is not None:
-			cfg_2 = cfg.get(int_name, None)
-
-		# Check if either cfg or cfg_2 contains a variables key.
-		# If so, capture all variables and build a var_filters list
-		# for use in the query.
-		var_filters = None
-		if (cfg and "variables" in cfg) or (cfg_2 and "variables" in cfg_2):
-			var_filters = self.utils.generate_var_filters(cfg, flags, cfg_2)
-
-		# With the provided data, search SRDC for runs.
+		# Resolve user ID, then search for runs.
 		# If nothing there, just return None.
+		user_id = self.api.get_srdc_user(player)
 		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None

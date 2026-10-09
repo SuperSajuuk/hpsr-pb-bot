@@ -17,50 +17,15 @@ GAME_MAP = {
 # Sub-category mapping.
 # This refers to the second board under the top level board.
 SUB_CATEGORY_MAP = {
-	"Any%": ["any", "any%"],
-	"100%": ["100", "hundo", "100%"],
-	"All Wizard Cards": ["awc", "allwizardcards"],
-	"No Major Skips": ["nms", "nomajorskips"]
+	"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+	"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
+	"All Wizard Cards": {"aliases": ["awc", "allwizardcards"], "internal_name": "awc"},
+	"No Major Skips": {"aliases": ["nms", "nomajorskips"], "internal_name": "nms"}
 }
 
 # Board aliases. The key name must be the alias name to display:
 # the value of each key is a list of string aliases to be checked.
-BOARD_ALIASES = {
-	"PC Trifecta": ["pctri", "pctrifecta"],
-	"7PC Duofecta": ["7pcduo", "7pcduofecta"],
-	"PS1 Duofecta": ["ps1duo", "ps1duofecta"],
-	"PC Octofecta": ["pcocto", "pcoctofecta"],
-	"6th Gen Trifecta": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"],
-	"GBC Duofecta": ["gbcduo", "gbcduofecta"],
-	"GBA Pentafecta": ["gbapenta", "gbapentafecta"],
-	"Handheld Octofecta": ["hhocto", "hhoctofecta", "handheldocto", "handheldoctofecta"],
-	"Full Series": ["fs", "fullseries"]
-}
-
-# Board token aliases.
-# This is used to map user input to the name that
-# is used internally to reference a specific
-# top-level board for a multi-run.
-BOARD_TOKEN_ALIASES = {
-	"hpmulti": {
-		"pctrifecta": "pctri",
-		"7pcduofecta": "7pcduo",
-		"pcoctofecta": "pcocto",
-		"ps1duofecta": "ps1duo",
-		"6thgentrifecta": "6thgentri",
-		"gcntri": "6thgentri",
-		"gcntrifecta": "6thgentri",
-		"xboxtri": "6thgentri",
-		"xboxtrifecta": "6thgentri",
-		"ps2tri": "6thgentri",
-		"ps2trifecta": "6thgentri",
-		"gbcduofecta": "gbcduo",
-		"gbapentafecta": "gbapenta",
-		"hhoctofecta": "hhocto",
-		"handheldoctofecta": "hhocto",
-		"fullseries": "fs"
-	}
-}
+BOARD_ALIASES = {}
 
 # Category aliases
 # Like board aliases, this is used to map user input
@@ -68,14 +33,43 @@ BOARD_TOKEN_ALIASES = {
 # a specific sub-board for a category extension.
 CATEGORY_ALIASES = {
 	"hpmulti": {
-		"pctri": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100", "awc": "awc", "allwizardcards": "awc"},
-		"7pcduo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"pcocto": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"ps1duo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100", "nms": "nms", "nomajorskips": "nms"},
-		"6thgentri": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"gbcduo": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"gbapenta": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"hhocto": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"},
-		"fs": {"any": "any", "any%": "any", "100": "100", "hundo": "100", "100%": "100"}
+		"pctri": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"],
+			"awc": ["awc", "wizardcards", "allwizardcards"]
+		},
+		"7pcduo": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"],
+		},
+		"pcocto": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		},
+		"ps1duo": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"],
+			"nms": ["nms", "nomajorskips"]
+		},
+		"6thgentri": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		},
+		"gbcduo": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		},
+		"gbapenta": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		},
+		"hhocto": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		},
+		"fs": {
+			"any": ["any", "any%"],
+			"100": ["100", "hundo", "100%"]
+		}
 	}
 }

@@ -5,6 +5,12 @@
 #
 LEADERBOARD_DATA = {
 	"rehydrated": {
+		"categories": {
+			"1 Spatula": {"aliases": ["1s", "1spat", "1spatula"], "internal_name": "1s"},
+			"2 Spatulas": {"aliases": ["2s", "2spat", "2spatulas"], "internal_name": "2s"},
+			"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
+			"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"}
+		},
 		"1s": {
 			"variables": [
 				{"var_id": "onvj5pwn", "value_id": "9qj9mgel"},
@@ -35,6 +41,13 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"pop_ww": {
+		"categories": {
+			"True Ending": {
+				"aliases": ["te", "ending", "trueending"],
+				"board_id": "wkp550dr",
+				"internal_name": "te"
+			}
+		},
 		"any": {
 			"variables": [
 				{"name": "std", "aliases": ["standard"], "var_id": "6nj54el4", "value_id": "0q5mvvlp"},
@@ -77,27 +90,5 @@ LEADERBOARD_DATA = {
 				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
 			]
 		}
-	},
-	"hp5gbads": {
-		"any": {
-			"variables": [
-				{"name": "gba", "var_id": "r8r4pv5n", "value_id": "qyzn3841"},
-				{"name": "emulator", "var_id": "r8r4pv5n", "value_id": "jq6eyz3l"},
-				{"name": "ds", "var_id": "r8r4pv5n", "value_id": "5lmm8gjl"}
-			]
-		},
-		"100": {
-			"variables": [
-				{"name": "gba", "var_id": "5lyx4k2n", "value_id": "ln85rk0l"},
-				{"name": "emulator", "var_id": "5lyx4k2n", "value_id": "81w0e5ol"},
-				{"name": "ds", "var_id": "5lyx4k2n", "value_id": "zqovmrp1"}
-			]
-		},
-		"anynsc": {
-			"variables": [
-				{"name": "gba", "var_id": "rn1y09on", "value_id": "qj7gjeeq"},
-				{"name": "emulator", "var_id": "rn1y09on", "value_id": "10vx39wl"}
-			]
-		},
 	}
 }

@@ -16,13 +16,11 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CategoryExtension:
-	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, token_aliases, md_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_aliases, board_aliases, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.category_map = category_map
 		self.category_aliases = category_aliases
 		self.board_aliases = board_aliases
-		self.token_aliases = token_aliases
 		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
@@ -47,28 +45,46 @@ class CategoryExtension:
 				raise InvalidGame(f"Unknown CE game series: '{base_game}'. Check for typos or whether this is a supported series for CE lookups.")
 			ce_key = {"name": lk["names"]["international"], "id": lk["abbreviation"]}
 
-		# Check for a table of aliases referring to the categories.
+		# Pull in game id and game cats from cache/SRDC, alongside
+		# the leaderboard data. Unlike normal runs, CE's require leaderboard
+		# data, so if there isn't anything, we have to abandon.
+		slug_id = ce_key["id"]
+		game_id, game_cats = self.api.get_game_code(slug_id)
+		cfg = self.lb_config.get(slug_id)
+		if cfg is None:
+			raise MissingInternalData(f"No leaderboard config found for CE game slug: {slug_id}")
+
+		# Check if the ce_top_board is in the defined category list.
+		tb_int_name = None
+		ce_top_board_name = None
+		for board_name, data in cfg["categories"].items():
+			if ce_top_board in data["aliases"]:
+				tb_int_name = data["internal_name"]
+				ce_top_board_name = board_name
+				break
+
+		# Build the internal key and check if it can be found in the key list.
+		internal_key = f"{base_game}_{tb_int_name}"
+		if internal_key not in cfg:
+			raise MissingInternalData(f"Internal key '{internal_key}' cannot be found.")
+
+		# Check for a table of aliases referring to the categories. Also,
+		# do a check for tb_int_name being in the alias_table.
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
-		alias_table = self.category_aliases.get(ce_key["id"])
+		alias_table = self.category_aliases.get(slug_id)
 		if not alias_table:
-			raise MissingInternalData(f"No alias table exists for ID '{ce_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-
-		# Check if the top board is defined in the alias list.
-		# If it isn't, the user might have provided an alternative
-		# name, which needs to be checked.
-		if ce_top_board not in alias_table:
-			ce_top_board = self.token_aliases[ce_key["id"]].get(ce_top_board, None)
-			if ce_top_board is None:
-				raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
+			raise MissingInternalData(f"No alias table exists for ID '{slug_id}, which prevents category matching. Please report this as a bug on the GitHub repository.")
+		if tb_int_name not in alias_table:
+			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
 		# Use the board_token (the top-level board) to find the
 		# actual internal token name (this is needed to ensure
 		# random user input always maps to the correct internal
 		# value).
 		board_token = None
-		for name, aliases in alias_table.get(ce_top_board, {}).items():
+		for name, aliases in alias_table.get(tb_int_name, {}).items():
 			if ce_category_board in aliases:
 				board_token = name
 				break
@@ -78,74 +94,54 @@ class CategoryExtension:
 		if board_token is None:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
-		# Build the internal key and lookup the CE.
-		internal_key = f"{ce_top_board}_{board_token}"
-		run = self.lookup_ce_run(ce_key["id"], internal_key, player, flags)
+		# Look for the CE run.
+		# To avoid issues, ce_board is overwritten with the value of
+		# board_token above.
+		flags["ce_board"] = board_token
+		run = self.lookup_ce_run(game_id, game_cats, cfg[internal_key], player, flags)
 
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
 		# board aliases.
-		alias_name = None
 		cat_alias_name = None
-		for name, aliases in self.board_aliases.items():
-			if ce_top_board in aliases:
-				alias_name = name
-				break
-		for name, aliases in self.category_map.items():
+		for name, aliases in cfg["sub_categories"].items():
 			if ce_category_board in aliases:
 				cat_alias_name = name
 				break
 
 		# Return the run object and the alias_name produced.
 		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)
-		return run, cat_alias_name, alias_name
+		return run, cat_alias_name, ce_top_board_name
 
-	def lookup_ce_run(self, slug_id: str, ce_category: str, player: str, flags: dict = None) -> SpeedRun | None:
+	def lookup_ce_run(self, game_id: str, game_cats: dict, cat_data: dict, player: str, flags: dict = None) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
 		but with CE-specific variables.
 
 		Returns a SpeedRun object or None if nothing was found.
 		"""
-		# Resolve the Slug ID for its SRDC ID and all categories,
-		# then capture the leaderboard data.
-		game_id, game_cats = self.api.get_game_code(slug_id)
-		cfg = self.lb_config.get(slug_id)
-		if cfg is None:
-			raise MissingInternalData(f"No leaderboard config found for CE game slug: {slug_id}")
-
-		# Category metadata is necessary for CEs: if nothing is found, or the
-		# CE category cannot be found in the configuration, return an error.
-		if ce_category not in cfg:
-			raise MissingInternalData(f"Unknown CE category key: {ce_category}")
-
 		# Using the CE Category config, search the SRDC Game categories
 		# list to find the matching board name.
-		category_meta = cfg[ce_category]
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
-			if cat_name == category_meta["board"]:
+			if cat_name == cat_data["board"]:
 				category_id = cat_id
 				break
 
 		# If category_id is still None, then the category does not exist.
 		if not category_id:
-			raise InvalidCategory("CE category not found in CE game")
+			raise InvalidCategory("CE category not found in category extension game")
 
-		# Resolve the user ID and capture the category vars. If the
-		# metadata parameter is not None, set a slice to capture the
-		# specific piece of metadata that was asked for.
-		user_id = self.api.get_user_id(player)
-		ce_cat_vars = self.utils.generate_var_filters(category_meta, flags)
-
-		# Search for runs, if none found then return.
+		# Resolve the user ID, capture the category vars and then search for runs.
+		user_id = self.api.get_srdc_user(player)
+		ce_cat_vars = self.utils.generate_var_filters(cat_data["variables"], flags)
 		runs = self.api.search_runs(game_id, category_id, user_id, ce_cat_vars)
 		if not runs:
 			return None
 
 		# Because CE's contain a lot of sub-boards, the returned list will contain
-		# a lot of additional runs. The list of runs must be filtered to get
-		# the correct run that the user asked for.
+		# a lot of additional runs. The list of runs must be filtered to get the
+		# correct run that the user asked for.
 		filtered_runs = self.utils.filter_all_runs(runs, ce_cat_vars)
 		if not filtered_runs:
 			return None

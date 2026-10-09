@@ -8,19 +8,19 @@ LEADERBOARD_DATA = {
 	"hp1_6th_gen": {
 		"any": {
 			"variables": [
-				{"name": "console", "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
+				{"name": "console", "default": True, "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
 				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"},
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "console", "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
+				{"name": "console", "default": True, "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
 				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"},
 			]
 		},
 		"nms": {
 			"variables": [
-				{"name": "console", "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
+				{"name": "console", "default": True, "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
 				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"}
 			]
 		}
@@ -28,19 +28,19 @@ LEADERBOARD_DATA = {
 	"hp2_6th_gen": {
 		"any": {
 			"variables": [
-				{"name": "console", "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
+				{"name": "console", "default": True, "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
 				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"},
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "console", "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
+				{"name": "console", "default": True, "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
 				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"},
 			]
 		},
 		"nms": {
 			"variables": [
-				{"name": "console", "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
+				{"name": "console", "default": True, "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
 				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"}
 			]
 		}
@@ -48,41 +48,48 @@ LEADERBOARD_DATA = {
 	"hp3_6th_gen": {
 		"any": {
 			"variables": [
-				{"name": "console", "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
+				{"name": "console", "default": True, "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
 				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"},
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "console", "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
+				{"name": "console", "default": True, "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
 				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"},
 			]
 		},
 		"nms": {
 			"variables": [
-				{"name": "console", "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
+				{"name": "console", "default": True, "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
 				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"}
 			]
 		}
 	},
 	"hp2_ps2": {
+		"categories": {
+			"Any% No EDS": {
+				"aliases": ["noeds", "anynoeds", "any%noeds"],
+				"board_id": "w209e9z2",
+				"internal_name": "noeds"
+			}
+		},
 		"any": {
 			"variables": [
-				{"name": "console", "var_id": "yn20gk2l", "value_id": "139v60r1"},
+				{"name": "console", "default": True, "var_id": "yn20gk2l", "value_id": "139v60r1"},
 				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"},
 			],
 		},
 		"100": {
 			"variables": [
-				{"name": "console", "var_id": "yn20gk2l", "value_id": "139v60r1"},
+				{"name": "console", "default": True, "var_id": "yn20gk2l", "value_id": "139v60r1"},
 				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"},
 			],
 		},
 		"noeds": {
 			"variables": [
-				{"name": "console", "var_id": "yn20gk2l", "value_id": "139v60r1"},
+				{"name": "console", "default": True, "var_id": "yn20gk2l", "value_id": "139v60r1"},
 				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"}
-			],
+			]
 		}
 	}
 }

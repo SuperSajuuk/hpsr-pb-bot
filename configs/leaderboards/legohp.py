@@ -7,7 +7,7 @@
 LEADERBOARD_DATA = {
 	"hp14": {
 		"any_solo_nocut": {
-			"board": "1PC",
+			"board": "Any%",
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
 				{"var_id": "p85dm5xl", "value_id": "jq68d97l"}
