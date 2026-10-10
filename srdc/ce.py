@@ -56,9 +56,11 @@ class CategoryExtension:
 		# Check if the ce_top_board is in the defined category list.
 		tb_int_name = None
 		ce_top_board_name = None
+		ce_top_board_id = None
 		for board_name, data in cfg["categories"].items():
 			if ce_top_board in data["aliases"]:
 				tb_int_name = data["internal_name"]
+				ce_top_board_id = data["board_id"]
 				ce_top_board_name = board_name
 				break
 
@@ -100,7 +102,7 @@ class CategoryExtension:
 		flags["ce_board"] = board_token
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
 		for cat_id, cat_name in game_cats.items():
-			if cat_name == ce_top_board_name:
+			if cat_name == ce_top_board_name or cat_id == ce_top_board_id:
 				category_id = cat_id
 				break
 

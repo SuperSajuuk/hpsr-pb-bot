@@ -119,6 +119,15 @@ CATEGORY_ALIASES = {
 		"fd": {
 			"intro": ["intro"],
 			"nointro": ["ni", "nointro", "noint"]
-		}
+		},
+		"allb": {"story": ["story"], "hard": ["hard"]},
+		"alla": {"story": ["story"], "hard": ["hard"]},
+		"da": {"story": ["story"], "hard": ["hard"]},
+		"fs": {"story": ["story"], "hard": ["hard"]},
+		"mc": {"story": ["story"], "hard": ["hard"]},
+		"t1": {"story": ["story"], "hard": ["hard"]},
+		"t2": {"story": ["story"], "hard": ["hard"]},
+		"t3": {"story": ["story"], "hard": ["hard"]},
+		"t4": {"story": ["story"], "hard": ["hard"]}
 	}
 }

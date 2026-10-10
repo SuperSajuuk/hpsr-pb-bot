@@ -6,20 +6,20 @@
 ROOT_KEY = "hpce"
 LEADERBOARD_DATA = {
 	"categories": {
-		"1PC": {"aliases": ["1pc", "hp1pc"], "internal_name": "1pc"},
-		"2PC": {"aliases": ["2pc", "hp2pc"], "internal_name": "2pc"},
-		"3PC": {"aliases": ["3pc", "hp3pc"], "internal_name": "3pc"},
-		"4PC": {"aliases": ["4pc", "hp4pc"], "internal_name": "4pc"},
-		"5PC": {"aliases": ["5pc", "hp5pc"], "internal_name": "5pc"},
-		"6PC": {"aliases": ["6pc", "hp6pc"], "internal_name": "6pc"},
-		"Single Year": {"aliases": ["sy", "singleyear"], "internal_name": "sy"},
-		"Insane%": {"aliases": ["insane", "ins", "insane%"], "internal_name": "insane"},
-		"Multiruns": {"aliases": ["mr", "hpmr", "multiruns", "hpmultiruns"], "internal_name": "mr"},
-		"1PS1": {"aliases": ["1ps1", "hp1ps1"], "internal_name": "1ps1"},
-		"2PS1": {"aliases": ["2ps1", "hp2ps1"], "internal_name": "2ps1"},
-		"4PSP": {"aliases": ["4psp", "hp4psp"], "internal_name": "4psp"},
-		"5PSP": {"aliases": ["5psp", "hp5psp"], "internal_name": "5psp"},
-		"DVD Games": {"aliases": ["dvd", "dvdgames", "hpdvdgames"], "internal_name": "dvd"}
+		"1PC": {"aliases": ["1pc", "hp1pc"], "board_id": "xd1j7vwd", "internal_name": "1pc"},
+		"2PC": {"aliases": ["2pc", "hp2pc"], "board_id": "zd3j7xr2", "internal_name": "2pc"},
+		"3PC": {"aliases": ["3pc", "hp3pc"], "board_id": "wkp4w8vk", "internal_name": "3pc"},
+		"4PC": {"aliases": ["4pc", "hp4pc"], "board_id": "w20gevvk", "internal_name": "4pc"},
+		"5PC": {"aliases": ["5pc", "hp5pc"], "board_id": "rkl5jr82", "internal_name": "5pc"},
+		"6PC": {"aliases": ["6pc", "hp6pc"], "board_id": "z27zyz4k", "internal_name": "6pc"},
+		"Single Year": {"aliases": ["sy", "singleyear"], "board_id": "xd1vl0rd", "internal_name": "sy"},
+		"Insane%": {"aliases": ["insane", "ins", "insane%"], "board_id": "9d83xr72", "internal_name": "insane"},
+		"Multiruns": {"aliases": ["mr", "hpmr", "multiruns", "hpmultiruns"], "board_id": "ndx314vd", "internal_name": "mr"},
+		"1PS1": {"aliases": ["1ps1", "hp1ps1"], "board_id": "zd3r5wvd", "internal_name": "1ps1"},
+		"2PS1": {"aliases": ["2ps1", "hp2ps1"], "board_id": "02qwx172", "internal_name": "2ps1"},
+		"4PSP": {"aliases": ["4psp", "hp4psp"], "board_id": "9kv3g402", "internal_name": "4psp"},
+		"5PSP": {"aliases": ["5psp", "hp5psp"], "board_id": "rklm84wd", "internal_name": "5psp"},
+		"DVD Games": {"aliases": ["dvd", "dvdgames", "hpdvdgames"], "board_id": "jdr966xd", "internal_name": "dvd"}
 	},
 	"sub_categories": {
 		"100% Glitchless": ["100gless", "hundogless", "100%gless", "100glitchless", "hundoglitchless", "100%glitchless"],
@@ -75,8 +75,6 @@ LEADERBOARD_DATA = {
 		"Wizarding World": ["ww", "wizardingworld"]
 	},
 	"hp_1pc": {
-		"board": "1PC",
-		"board_id": "xd1j7vwd",
 		"variables": [
 			{"name": "100gless", "var_id": "789x9o08", "value_id": "9qj95y0l"},
 			{"name": "allchests", "var_id": "789x9o08", "value_id": "qj7o0j3q"},
@@ -86,7 +84,6 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_2pc": {
-		"board": "2PC",
 		"variables": [
 			{"name": "100gless", "var_id": "2lg3d4on", "value_id": "013pyekl"},
 			{"name": "allchests", "var_id": "2lg3d4on", "value_id": "le23je6l"},
@@ -103,13 +100,11 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_3pc": {
-		"board": "3PC",
 		"variables": [
 			{"name": "highjump", "var_id": "5lyy5yyl", "value_id": "1dkge4pl"}
 		]
 	},
 	"hp_4pc": {
-		"board": "4PC",
 		"variables": [
 			{"var_id": "5ly156yl", "value_id": "0q5p0zrl"},
 			{"name": "1p", "aliases": ["1player", "sp", "singleplayer"], "var_id": "2lgk0jo8", "value_id": "14oy0mkq"},
@@ -118,7 +113,6 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_5pc": {
-		"board": "5PC",
 		"variables": [
 			{"name": "amg", "var_id": "rn1zmxpl", "value_id": "5q8pm8rl"},
 			{"name": "allp", "var_id": "rn1zmxpl", "value_id": "4qy96o3l"},
@@ -127,13 +121,11 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_6pc": {
-		"board": "6PC",
 		"variables": [
 			{"name": "pr", "var_id": "gnx606jn", "value_id": "12v2om4q"}
 		]
 	},
 	"hp_1ps1": {
-		"board": "1PS1",
 		"variables": [
 			{"name": "awc", "var_id": "jlzx03x8", "value_id": "xqkxnyd1"},
 			{"name": "superspeed", "var_id": "jlzx03x8", "value_id": "gq76xmpl"},
@@ -141,35 +133,30 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_2ps1": {
-		"board": "2PS1",
 		"variables": [
 			{"name": "awc", "var_id": "yn23geel", "value_id": "q8kk0p6q"},
 			{"name": "superspeed", "var_id": "yn23geel", "value_id": "qoxkedgq"}
 		]
 	},
 	"hp_4psp": {
-		"board": "4PSP",
 		"variables": [
 			{"name": "any", "var_id": "38de521n", "value_id": "qyzzymd1"},
 			{"name": "100", "var_id": "38de521n", "value_id": "ln8807nl"}
 		]
 	},
 	"hp_5psp": {
-		"board": "5PSP",
 		"variables": [
 			{"name": "any", "var_id": "r8rewy2l", "value_id": "q655xwol"},
 			{"name": "100", "var_id": "r8rewy2l", "value_id": "lmoo4e01"}
 		]
 	},
 	"hp_mr": {
-		"board": "Multiruns",
 		"variables": [
 			{"name": "glessduo", "var_id": "p85rz75n", "value_id": "810prjjl"},
 			{"name": "rpgtri", "var_id": "p85rz75n", "value_id": "9qj95n0l"}
 		]
 	},
 	"hp_insane": {
-		"board": "Insane%",
 		"variables": [
 			{"name": "hp1_pc", "var_id": "7896d298", "value_id": "21d7dm41"},
 			{"name": "hp2_pc", "var_id": "7896d298", "value_id": "klrw7rj1"},
@@ -193,7 +180,6 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_sy": {
-		"board": "Single Year",
 		"variables": [
 			{"name": "hp1", "var_id": "2lgr1v7n", "value_id": "4qye4641"},
 			{"name": "hp2", "var_id": "2lgr1v7n", "value_id": "mln6320q"},
@@ -208,7 +194,6 @@ LEADERBOARD_DATA = {
 		]
 	},
 	"hp_dvd": {
-		"board": "DVD Games",
 		"variables": [
 			{"name": "hc", "var_id": "r8r7v77n", "value_id": "jqzd3e4l"},
 			{"name": "ww", "var_id": "r8r7v77n", "value_id": "klrm240q"}
