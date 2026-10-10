@@ -78,6 +78,8 @@ class Utilities:
 
 		Returns either the dictionary containing the relevant data, or None.
 		"""
+		if not data:
+			return None
 		if int_key in data:
 			return data[int_key]
 		if cat_key in data:
