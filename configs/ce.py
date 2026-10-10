@@ -116,10 +116,7 @@ CATEGORY_ALIASES = {
 		}
 	},
 	"legacy_ce": {
-		"fd": {
-			"intro": ["intro"],
-			"nointro": ["ni", "nointro", "noint"]
-		},
+		"fd": {"story": ["story"], "hard": ["hard"]},
 		"allb": {"story": ["story"], "hard": ["hard"]},
 		"alla": {"story": ["story"], "hard": ["hard"]},
 		"da": {"story": ["story"], "hard": ["hard"]},

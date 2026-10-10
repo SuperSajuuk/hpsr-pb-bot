@@ -77,8 +77,6 @@ LEADERBOARD_DATA = {
 			}
 		},
 		"sub_categories": {
-			"Intro": ["intro"],
-			"No Intro": ["ni", "nointro", "noint"],
 			"Story": ["story"],
 			"Hard": ["hard"]
 		},
