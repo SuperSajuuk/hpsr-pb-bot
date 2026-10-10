@@ -83,6 +83,7 @@ class MultiRun:
 		# random user input always maps to the correct internal
 		# value).
 		board_token = None
+		category_id = None
 		for name, aliases in alias_table.get(tb_int_name, {}).items():
 			if mr_category_board in aliases:
 				board_token = name
@@ -97,7 +98,21 @@ class MultiRun:
 		# To avoid issues, ce_board is overwritten with the value of
 		# board_token above.
 		flags["mr_board"] = board_token
-		run = self.lookup_multi_run(game_id, game_cats, cfg[internal_key], player, flags)
+		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == mr_top_board_name:
+				category_id = cat_id
+				break
+
+		# If category_obj is still None, then the category does not exist.
+		if not category_id:
+			raise InvalidCategory("Multirun category not found in multirun game.")
+
+		# Check if place_num was set.
+		if flags["place_num"] > 0:
+			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
+		else:
+			run = self.lookup_multi_run(game_id, category_id, player, var_filters)
 
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
@@ -111,34 +126,21 @@ class MultiRun:
 		# Return the run object and the alias_name produced.
 		return run, cat_clean_name, mr_top_board_name
 
-	def lookup_multi_run(self, game_id: str, game_cats: dict, cat_data: dict, player: str, flags: dict) -> SpeedRun | None:
+	def lookup_multi_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Multirun Board run using the same SRDC logic as normal runs,
 		but with multirun-specific variables.
 		"""
-		# Using the Multirun Category config, search the SRDC Game categories
-		# list to find the matching board name.
-		category_id = None
-		for cat_id, cat_name in game_cats.items():
-			if cat_name == cat_data["board"]:
-				category_id = cat_id
-				break
-
-		# If category_obj is still None, then the category does not exist.
-		if not category_id:
-			raise InvalidCategory("Multirun category not found in multirun game")
-
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.api.get_srdc_user(player)
-		mr_cat_vars = self.utils.generate_var_filters(cat_data["variables"], flags)
-		runs = self.api.search_runs(game_id, category_id, user_id, mr_cat_vars)
+		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
 		# Unlike CE's, multiruns tend to have fewer sub-categories, however the
 		# returned list will contain a lot of additional runs. The list of runs
 		# must be filtered to get the correct run that the user asked for.
-		filtered_runs = self.utils.filter_all_runs(runs, mr_cat_vars)
+		filtered_runs = self.utils.filter_all_runs(runs, var_filters)
 		if not filtered_runs:
 			return None
 
@@ -148,7 +150,7 @@ class MultiRun:
 		# leaderboard. Return the SpeedRun object for this run using the helpers.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], mr_cat_vars)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

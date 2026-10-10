@@ -188,7 +188,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 			continue
 
 		# Check if the token represents a sub-board for custom content.
-		# Game must be cc/custom to actually trigger this block.
+		# Game must be set to CC or custom to actually trigger this block.
 		cc_match = False
 		if game in ["cc", "custom"]:
 			for _, aliases in cc_config.SUB_CATEGORY_MAP.items():

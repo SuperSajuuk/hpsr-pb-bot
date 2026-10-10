@@ -155,54 +155,11 @@ class NormalRun:
 		if flags["world_record"]:
 			run = self.wr.lookup_world_record_run(game_id, category_id, var_filters)
 		elif flags["place_num"] > 0:
-			run = self.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
+			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
 			run = self.lookup_run(game_id, category_id, var_filters, player)
 
 		return run, cat_clean_name, game_name
-
-	def find_run_at_position(self, game_id: str, category_id: str, position: int, var_filters: list) -> SpeedRun | None:
-		"""
-		Look up the fastest verified run in a specific game/category at a defined position.
-		This doesn't use the player argument, as it will be derived from the run object
-		returned by SRDC.
-
-		Returns a SpeedRun object or None, if no run was found.
-		"""
-		# Check the value of the position number given.
-		# -1 means no number, or an invalid number, was provided.
-		# Anything greater than 200 raises an error currently.
-		if position == -1:
-			raise InvalidPosNumber("No position number has been provided. A whole number between 1-200 inclusive is required.")
-		if position > 200:
-			raise InvalidPosNumber("You can only use the --position flag on leaderboards up to a maximum of run 200 at this time.")
-
-		# Look for a run that matches requirements.
-		# Unlike normal runs, this only uses leaderboard lookup, as it's the only
-		# route that includes place numbers. The max number of runs returned is
-		# constrained by the position argument for simplicity.
-		runs = self.api.get_leaderboard(game_id, category_id, position, var_filters)
-		if not runs:
-			return None
-
-		# Rather than handing to a specific utility function here, instead
-		# just loop all runs until it finds the one with the given
-		# position.
-		run = None
-		for entry in runs["runs"]:
-			if entry["place"] == position:
-				run = entry
-				break
-
-		# Didn't find it (which would be strange...)
-		if run is None:
-			return None
-
-		# Extract run details from the object.
-		player = self.api.get_srdc_user(run["run"]["players"][0]["id"], arg_type="user_id")
-		sr = self.utils.extract_run(run["run"], player)
-		sr.place = run["place"]
-		return sr
 
 	def lookup_run(self, game_id: str, category_id: str, var_filters: list, player: str) -> SpeedRun | None:
 		"""

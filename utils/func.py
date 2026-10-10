@@ -16,6 +16,51 @@ class Utilities:
 		self.lb_config = lb_config
 		self.platform_map = platform_map
 
+	def find_run_at_position(self, game_id: str, category_id: str, position: int, var_filters: list) -> SpeedRun | None:
+		"""
+		Look for the fastest verified run at a defined position, based on game_id, category_id
+		and variables, if defined.
+
+		Player will be derived from the data provided by SRDC, rather than being provided by the
+		end user.
+
+		Returns a SpeedRun object or None, if no run was found.
+		"""
+		# Check the value of the position number given.
+		# -1 means no number, or an invalid number, was provided.
+		# Anything greater than 200 raises an error currently.
+		if position == -1:
+			raise InvalidPosNumber("No position number has been provided. A whole number between 1-200 inclusive is required.")
+		if position > 200:
+			raise InvalidPosNumber("You can only use the --position flag on leaderboards up to a maximum of run 200 at this time.")
+
+		# Look for a run that matches requirements.
+		# Unlike normal runs, this only uses leaderboard lookup, as it's the only
+		# route that includes place numbers. The max number of runs returned is
+		# constrained by the position argument for simplicity.
+		runs = self.api.get_leaderboard(game_id, category_id, position, var_filters)
+		if not runs:
+			return None
+
+		# Rather than handing to a specific utility function here, instead
+		# just loop all runs until it finds the one with the given
+		# position.
+		run = None
+		for entry in runs["runs"]:
+			if entry["place"] == position:
+				run = entry
+				break
+
+		# Didn't find it (which would be strange...)
+		if run is None:
+			return None
+
+		# Extract run details from the object.
+		player = self.api.get_srdc_user(run["run"]["players"][0]["id"], arg_type="user_id")
+		sr = self.extract_run(run["run"], player)
+		sr.place = run["place"]
+		return sr
+
 	def resolve_leaderboard_config(self, game_key: str, internal_key: str) -> dict | None:
 		"""
 		Resolves the relevant leaderboard config block, based on game_key

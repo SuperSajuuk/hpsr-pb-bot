@@ -84,6 +84,7 @@ class CategoryExtension:
 		# random user input always maps to the correct internal
 		# value).
 		board_token = None
+		category_id = None
 		for name, aliases in alias_table.get(tb_int_name, {}).items():
 			if ce_category_board in aliases:
 				board_token = name
@@ -94,11 +95,25 @@ class CategoryExtension:
 		if board_token is None:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
-		# Look for the CE run.
-		# To avoid issues, ce_board is overwritten with the value of
-		# board_token above.
+		# Generate the variable filters and set the category ID.
+		# Am not convinced we need to overwrite the ce_board flag
+		# with the board token, but it is fine for now.
 		flags["ce_board"] = board_token
-		run = self.lookup_ce_run(game_id, game_cats, cfg[internal_key], player, flags)
+		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == ce_top_board_name:
+				category_id = cat_id
+				break
+
+		# If category_id is still None, then the category does not exist.
+		if not category_id:
+			raise InvalidCategory("CE category not found in category extension game.")
+
+		# Check if place_num was set.
+		if flags["place_num"] > 0:
+			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
+		else:
+			run = self.lookup_ce_run(game_id, category_id, player, var_filters)
 
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
@@ -113,36 +128,23 @@ class CategoryExtension:
 		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)
 		return run, cat_alias_name, ce_top_board_name
 
-	def lookup_ce_run(self, game_id: str, game_cats: dict, cat_data: dict, player: str, flags: dict = None) -> SpeedRun | None:
+	def lookup_ce_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Category Extensions run using the same SRDC logic as normal runs,
 		but with CE-specific variables.
 
 		Returns a SpeedRun object or None if nothing was found.
 		"""
-		# Using the CE Category config, search the SRDC Game categories
-		# list to find the matching board name.
-		category_id = None
-		for cat_id, cat_name in game_cats.items():
-			if cat_name == cat_data["board"]:
-				category_id = cat_id
-				break
-
-		# If category_id is still None, then the category does not exist.
-		if not category_id:
-			raise InvalidCategory("CE category not found in category extension game")
-
 		# Resolve the user ID, capture the category vars and then search for runs.
 		user_id = self.api.get_srdc_user(player)
-		ce_cat_vars = self.utils.generate_var_filters(cat_data["variables"], flags)
-		runs = self.api.search_runs(game_id, category_id, user_id, ce_cat_vars)
+		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
 		# Because CE's contain a lot of sub-boards, the returned list will contain
 		# a lot of additional runs. The list of runs must be filtered to get the
 		# correct run that the user asked for.
-		filtered_runs = self.utils.filter_all_runs(runs, ce_cat_vars)
+		filtered_runs = self.utils.filter_all_runs(runs, var_filters)
 		if not filtered_runs:
 			return None
 
@@ -152,7 +154,7 @@ class CategoryExtension:
 		# leaderboard. Return the SpeedRun object for this run using the helpers.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], ce_cat_vars)
+		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters)
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

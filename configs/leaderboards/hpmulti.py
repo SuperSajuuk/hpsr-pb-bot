@@ -8,8 +8,8 @@ LEADERBOARD_DATA = {
 	"categories": {
 		"PC Trifecta": {"aliases": ["pctri", "pctrifecta"], "internal_name": "pctri"},
 		"7PC Duofecta": {"aliases": ["7pcduo", "7pcduofecta"], "internal_name": "7pcduo"},
-		"PS1 Duofecta": {"aliases": ["ps1duo", "ps1duofecta"], "internal_name": "7pcduo"},
-		"PC Octofecta": {"aliases": ["pcocto", "pcoctofecta"], "internal_name": "7pcduo"},
+		"PS1 Duofecta": {"aliases": ["ps1duo", "ps1duofecta"], "internal_name": "ps1duo"},
+		"PC Octofecta": {"aliases": ["pcocto", "pcoctofecta"], "internal_name": "pcocto"},
 		"6th Gen Trifecta": {
 			"aliases": ["6thgentri", "6thgentrifecta", "gcntri", "gcntrifecta", "xboxtri", "xboxtrifecta", "ps2tri", "ps2trifecta"],
 			"internal_name": "6thgentri"
