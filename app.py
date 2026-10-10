@@ -103,11 +103,10 @@ il = ind_lvl.IndividualLevel(
 lg = lego.LEGONormalRun(
 	api=api,
 	game_map=lego_config.GAME_MAP,
-	category_map=lego_config.BOARD_ALIASES,
 	category_aliases=lego_config.CATEGORY_ALIASES,
 	sub_category_aliases=lego_config.SUB_CATEGORY_ALIASES,
-	token_aliases=lego_config.BOARD_TOKEN_ALIASES,
 	md_aliases=config.METADATA_ALIASES,
+	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
 cat_ext = ce_run.CategoryExtension(

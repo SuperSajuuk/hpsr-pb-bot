@@ -19,48 +19,6 @@ GAME_MAP = {
 	"hp57": {"name": "LEGO Harry Potter Years 5-7", "slug": "lhp5_7"}
 }
 
-# Board aliases. Useful if you want multiple
-# user input choices to display the appropriate label.
-BOARD_ALIASES = {
-	"hp14": {
-		"Any%": ["any", "any%"],
-		"No Levels Early": ["nle", "noearly", "noearlylevels", "nolevelsearly"],
-		"Free Play": ["fp", "freeplay"],
-		"Replay Story": ["rs", "replay", "replaystory"],
-		"All Crests": ["ac", "allcrests"],
-		"100%": ["100", "hundo", "100%"]
-	},
-	"hp57": {
-		"Any%": ["any", "any%"],
-		"No Levels Early": ["nle", "noearly", "noearlylevels", "nolevelsearly"],
-		"Free Play": ["fp", "freeplay"],
-		"Replay Story": ["rs", "replay", "replaystory"],
-		"All Crests": ["ac", "allcrests"],
-		"100%": ["100", "hundo", "100%"]
-	}
-}
-
-# Board token aliases.
-# This is used to map user input to the name that
-# is used internally to reference a specific
-# top-level board for a category extension.
-BOARD_TOKEN_ALIASES = {
-	"lhp1_4": {
-		"nle": ["noearly", "noearlylevels", "nolevelsearly"],
-		"fp": ["freeplay"],
-		"replay": ["rs", "replaystory"],
-		"ac": ["allcrests"],
-		"100": ["hundo"]
-	},
-	"lhp5_7": {
-		"nle": ["noearly", "noearlylevels", "nolevelsearly"],
-		"freeplay": ["fp"],
-		"replay": ["rs", "replaystory"],
-		"ac": ["allcrests"],
-		"100": ["hundo"]
-	}
-}
-
 # Category aliases
 # Like board aliases, this is used to map user input
 # to the name that is used internally to reference

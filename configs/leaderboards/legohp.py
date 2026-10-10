@@ -6,6 +6,14 @@
 #
 LEADERBOARD_DATA = {
 	"hp14": {
+		"categories": {
+			"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+			"No Levels Early": {"aliases": ["nle", "noearly", "noearlylevels", "nolevelsearly"], "internal_name": "nle"},
+			"Free Play": {"aliases": ["fp", "freeplay"], "internal_name": "fp"},
+			"Replay Story": {"aliases": ["rs", "replay", "replaystory"], "internal_name": "replay"},
+			"All Crests": {"aliases": ["ac", "allcrests"], "internal_name": "ac"},
+			"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"}
+		},
 		"any_solo_nocut": {
 			"board": "Any%",
 			"variables": [
@@ -144,6 +152,14 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"hp57": {
+		"categories": {
+			"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+			"No Levels Early": {"aliases": ["nle", "noearly", "noearlylevels", "nolevelsearly"], "internal_name": "nle"},
+			"Free Play": {"aliases": ["fp", "freeplay"], "internal_name": "fp"},
+			"Replay Story": {"aliases": ["rs", "replay", "replaystory"], "internal_name": "replay"},
+			"All Crests": {"aliases": ["ac", "allcrests"], "internal_name": "ac"},
+			"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"}
+		},
 		"any_solo_nocut": {
 			"board": "Any%",
 			"variables": [
