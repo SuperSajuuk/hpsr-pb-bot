@@ -148,7 +148,7 @@ class NormalRun:
 		cat_cfg = self.utils.resolve_category_config(board_cfg, int_key, int_name)
 		var_filters = None
 		if cat_cfg and cat_cfg.get("variables", None):
-			var_filters = self.utils.generate_var_filters(board_cfg["variables"], flags)
+			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags)
 
 		# Depending on whether the world_record flag is set, lookup the
 		# relevant run, then return it.
