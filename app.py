@@ -113,7 +113,6 @@ cat_ext = ce_run.CategoryExtension(
 	api=api,
 	game_map=ce_config.GAME_MAP,
 	category_aliases=ce_config.CATEGORY_ALIASES,
-	board_aliases=ce_config.BOARD_ALIASES,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils

@@ -16,11 +16,10 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CategoryExtension:
-	def __init__(self, api, game_map, category_aliases, board_aliases, md_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_aliases, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
 		self.category_aliases = category_aliases
-		self.board_aliases = board_aliases
 		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
@@ -135,26 +134,42 @@ class CategoryExtension:
 
 		Returns a SpeedRun object or None if nothing was found.
 		"""
-		# Resolve the user ID, capture the category vars and then search for runs.
+		# Resolve the user ID and then search for runs.
 		user_id = self.api.get_srdc_user(player)
 		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
 		# Because CE's contain a lot of sub-boards, the returned list will contain
-		# a lot of additional runs. The list of runs must be filtered to get the
-		# correct run that the user asked for.
+		# a lot of additional runs that aren't wanted. The list of runs must be
+		# filtered to get the correct run that the user asked for.
 		filtered_runs = self.utils.filter_all_runs(runs, var_filters)
 		if not filtered_runs:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
-		# As this is likely to be a very short list, the expected run would be
-		# the most recently submitted. Select it, then find its placement on the
-		# leaderboard. Return the SpeedRun object for this run using the helpers.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters)
+
+		# Before looking up placements, capture the leaderboard in full so we can
+		# find the right run and its placement.
+		ldr_brd = self.api.get_leaderboard(game_id, category_id, variables=var_filters)
+		run_to_places = {}
+		for run in ldr_brd["runs"]:
+			run_to_places[run["run"]["id"]] = run["place"]
+
+		# As this is likely to be a very short list, the expected run would be
+		# the most recently submitted. However, obsolete runs may have been returned.
+		best_run = None
+		place = -1
+		for run in filtered_runs:
+			place = run_to_places.get(run["id"])
+			if place is not None:
+				best_run = run
+				break
+		if best_run is None:
+			return None
+
+		# Return the required run.
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

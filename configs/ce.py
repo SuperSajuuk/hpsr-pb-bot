@@ -16,21 +16,6 @@ GAME_MAP = {
 	"legacy": {"name": "Hogwarts Legacy Category Extensions", "id": "legacy_ce"}
 }
 
-# Board aliases. Useful if you want multiple
-# user input choices to display the appropriate label.
-BOARD_ALIASES = {
-	"First Day": ["fd", "first", "firstday"],
-	"All Beasts": ["ab", "allb", "allbeasts"],
-	"All Achievements": ["aa", "alla", "allachievements"],
-	"Dark Arts%": ["da", "darkarts", "darkarts%"],
-	"Flight School": ["fs", "flight", "flightschool"],
-	"Map Chamber": ["mc", "map", "chamber", "mapchamber"],
-	"First Trial": ["ft1", "trial1", "firsttrial", "1sttrial", "percival", "rackham"],
-	"Second Trial": ["st", "trial2", "secondtrial", "2ndtrial", "charles", "rookwood"],
-	"Third Trial": ["tt", "trial3", "thirdtrial", "3rdtrial", "niamh", "fitzgerland"],
-	"Fourth Trial": ["ft4", "trial4", "fourthtrial", "4thtrial", "sanbakar", "bakar"]
-}
-
 # Category aliases
 # Like board aliases, this is used to map user input
 # to the name that is used internally to reference
@@ -132,7 +117,8 @@ CATEGORY_ALIASES = {
 	},
 	"legacy_ce": {
 		"fd": {
-
+			"intro": ["intro"],
+			"nointro": ["ni", "nointro", "noint"]
 		}
 	}
 }
