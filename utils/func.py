@@ -28,17 +28,15 @@ class Utilities:
 		"""
 		# Check the value of the position number given.
 		# -1 means no number, or an invalid number, was provided.
-		# Anything greater than 200 raises an error currently.
 		if position == -1:
 			raise InvalidPosNumber("No position number has been provided. A whole number between 1-200 inclusive is required.")
-		if position > 200:
-			raise InvalidPosNumber("You can only use the --position flag on leaderboards up to a maximum of run 200 at this time.")
 
 		# Look for a run that matches requirements.
 		# Unlike normal runs, this only uses leaderboard lookup, as it's the only
-		# route that includes place numbers. The max number of runs returned is
-		# constrained by the position argument for simplicity.
-		runs = self.api.get_leaderboard(game_id, category_id, position, var_filters)
+		# route that includes place numbers. For some reason, SRDC does not respect
+		# &max=<some_number> on this route, so passing position as a way to cap the
+		# response size is now ignored.
+		runs = self.api.get_leaderboard(game_id, category_id, variables=var_filters)
 		if not runs:
 			return None
 
