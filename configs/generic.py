@@ -59,9 +59,6 @@ METADATA_ALIASES = {
 	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"},
 	"Quads": {"aliases": ["q", "qs"]},
 	"Quadless": {"aliases": ["ql", "qless", "quadless"]},
-	"Single": {"aliases": ["single"], "int_key": "single"},
-	"Triple": {"aliases": ["triple"], "int_key": "triple"},
-	"Blackout": {"aliases": ["bo", "blackout"], "int_key": "bo"},
 	"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
 	"Set Seed": {"aliases": ["set", "ss", "setseed"]}
 }

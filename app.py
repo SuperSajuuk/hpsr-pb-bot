@@ -120,9 +120,7 @@ cat_ext = ce_run.CategoryExtension(
 cust_con = cc_run.CustomContent(
 	api=api,
 	game_map=cc_config.GAME_MAP,
-	category_map=cc_config.SUB_CATEGORY_MAP,
 	category_aliases=cc_config.CATEGORY_ALIASES,
-	board_aliases=cc_config.BOARD_ALIASES,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
@@ -189,11 +187,9 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Game must be set to CC or custom to actually trigger this block.
 		cc_match = False
 		if game in ["cc", "custom"]:
-			for _, aliases in cc_config.SUB_CATEGORY_MAP.items():
-				if token in aliases:
-					flags["cc_board"] = token
-					cc_match = True
-					break
+			if token in lb_config.CC_TOKEN_LOOKUP:
+				flags["cc_board"] = token
+				cc_match = True
 		if cc_match:
 			continue
 

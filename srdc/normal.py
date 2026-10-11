@@ -185,19 +185,12 @@ class NormalRun:
 		if not runs:
 			return None
 
-		# Sort the runs by the most recently verified run (newest at the top)
+		# Sort the runs by the most recently verified run (newest at the top).
+		# Then, extract the best non-obsolete run and its placement on the board.
 		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = runs[0]
-
-		# Find the placement of the run in the leaderboard.
-		# In some very rare instances, such as when two runs are submitted
-		# at the same time, place lookup may return None. If that occurs,
-		# then perform a second lookup using the next run in the list.
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
-		if place is None:
-			best_run = runs[1]
-			if best_run is not None:
-				place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters if var_filters is not None else None)
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, runs, var_filters)
+		if best_run is None:
+			return None
 
 		# Extract all run details and the leaderboard placement, then return the run object.
 		sr = self.utils.extract_run(best_run, player)

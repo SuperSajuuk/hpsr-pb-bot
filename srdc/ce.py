@@ -150,20 +150,11 @@ class CategoryExtension:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
+		# Then, pass the sorted run list to a helper method that will find
+		# the best run and its placement. This is in case we've received obsolete
+		# runs which cannot be used.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-
-		# Find the best run which is not obsolete and obtain its position of the leaderboard.
-		# To do that, we need to download the leaderboard and map run IDs to place numbers.
-		# This helps with our filtering loop below.
-		lb = self.api.get_leaderboard(game_id, category_id, variables=var_filters)
-		run_to_places = {r["run"]["id"]: r["place"] for r in lb["runs"]}
-		best_run = None
-		place = -1
-		for run in filtered_runs:
-			place = run_to_places.get(run["id"], -1)
-			if place != -1:
-				best_run = run
-				break
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, filtered_runs, var_filters)
 		if best_run is None:
 			return None
 

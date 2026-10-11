@@ -86,23 +86,6 @@ class Utilities:
 			return data[cat_key]
 		return None
 
-	def lookup_run_place(self, game_id, category_id, run_id, variables: list | None, alt_url: str = None):
-		"""
-		Looks up the leaderboard for a game and returns the
-		place number representing the provided run.
-		"""
-		# Try partial leaderboard first
-		lb_partial = self.api.get_leaderboard(game_id, category_id, max_runs=100, variables=variables, alt_url=alt_url)
-		place = self.find_run_placement(lb_partial, run_id)
-
-		# If place is None here, the run wasn't in the top 100.
-		# Return all runs and then find it.
-		if place is None:
-			lb_full = self.api.get_leaderboard(game_id, category_id, max_runs=None, variables=variables, alt_url=alt_url)
-			place = self.find_run_placement(lb_full, run_id)
-
-		return place
-
 	def resolve_platform_id(self, platform_id):
 		"""
 		Resolves the platform_id obtained from extract_run to
@@ -116,14 +99,6 @@ class Utilities:
 		for key, data in self.platform_map.items():
 			if data["id"] == platform_id:
 				return data
-		return None
-
-	@staticmethod
-	def find_run_placement(leaderboard, run_id: str) -> int | None:
-		"""Return the leaderboard placement for a given run ID."""
-		for entry in leaderboard["runs"]:
-			if entry["run"]["id"] == run_id:
-				return entry["place"]
 		return None
 
 	@staticmethod
@@ -183,6 +158,24 @@ class Utilities:
 
 		# Return the modified category name and internal key, if any.
 		return cat_name, int_key
+
+	def get_run_and_place(self, game_id, category_id, run_list, var_filters, alt_url=None):
+		"""
+		Extracts the best run (which is not obsolete) and its placement on the leaderboard
+
+		Returns a tuple containing the run object and its placement if it is found.
+		Returns None and -1 respectively if no such run could be found.
+		"""
+		lb = self.api.get_leaderboard(game_id, category_id, variables=var_filters, alt_url=alt_url)
+		run_to_places = {r["run"]["id"]: r["place"] for r in lb["runs"]}
+		best_run = None
+		place = -1
+		for run in run_list:
+			place = run_to_places.get(run["id"], -1)
+			if place != -1:
+				best_run = run
+				break
+		return best_run, place
 
 	@staticmethod
 	def generate_var_filters(var_list, flags):

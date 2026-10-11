@@ -16,12 +16,10 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CustomContent:
-	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, md_aliases, lb_config, utils):
+	def __init__(self, api, game_map, category_aliases, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.category_map = category_map
 		self.category_aliases = category_aliases
-		self.board_aliases = board_aliases
 		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
@@ -43,22 +41,43 @@ class CustomContent:
 		if not cc_key:
 			lk = self.api.get_ce_mr_game(base_game, "lyn97m9o", "custom content")
 			if not lk:
-				raise InvalidGame(f"Unknown CE game series: '{base_game}'. Check for typos or whether this is a supported series for CE lookups.")
+				raise InvalidGame(f"Unknown custom content game series: '{base_game}'. Check for typos or whether this is a supported series for CE lookups.")
 			cc_key = {"name": lk["names"]["international"], "id": lk["abbreviation"]}
 
-		# Check for a table of aliases referring to the categories.
+		# Pull in game id and game cats from cache/SRDC, alongside
+		# the leaderboard data. Custom Content boards will often contain
+		# leaderboard data, so require it -- even if its very limited.
+		slug_id = cc_key["id"]
+		game_id, game_cats = self.api.get_game_code(slug_id)
+		cfg = self.lb_config.get(slug_id)
+		if cfg is None:
+			raise MissingInternalData(f"No leaderboard config found for custom content game slug: {slug_id}")
+
+		# Check if the ce_top_board is in the defined category list.
+		tb_int_name = None
+		cc_top_board_name = None
+		cc_top_board_id = None
+		for board_name, data in cfg["categories"].items():
+			if cc_top_board in data["aliases"]:
+				tb_int_name = data["internal_name"]
+				cc_top_board_id = data["board_id"]
+				cc_top_board_name = board_name
+				break
+
+		# Build the internal key and check if it can be found in the key list.
+		internal_key = f"{base_game}_{tb_int_name}"
+		if internal_key not in cfg:
+			raise MissingInternalData(f"Internal key '{internal_key}' cannot be found.")
+
+		# Check for a table of aliases referring to the categories. Also,
+		# do a check for tb_int_name being in the alias_table.
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
 		alias_table = self.category_aliases.get(cc_key["id"])
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{cc_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-
-		# Check if the top board is defined in the alias list.
-		# Currently, this does not support alternative aliases from
-		# user input, as CC boards usually contain smaller amounts
-		# of data.
-		if cc_top_board not in alias_table:
+		if tb_int_name not in alias_table:
 			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
 		# Use the board_token (the top-level board) to find the
@@ -66,7 +85,8 @@ class CustomContent:
 		# random user input always maps to the correct internal
 		# value).
 		board_token = None
-		for name, aliases in alias_table.get(cc_top_board, {}).items():
+		category_id = None
+		for name, aliases in alias_table.get(tb_int_name, {}).items():
 			if cc_category_board in aliases:
 				board_token = name
 				break
@@ -76,74 +96,48 @@ class CustomContent:
 		if board_token is None:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
+		# Generate the variable filters and set the category ID.
+		# Am not convinced we need to overwrite the ce_board flag
+		# with the board token, but it is fine for now.
+		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
+		for cat_id, cat_name in game_cats.items():
+			if cat_name == cc_top_board_name or cat_id == cc_top_board_id:
+				category_id = cat_id
+				break
+
+		# If category_id is still None, then the category does not exist.
+		if not category_id:
+			raise InvalidCategory("CE category not found in category extension game.")
+
+		# Check if place_num was set.
+		if flags["place_num"] > 0:
+			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
+		else:
+			run = self.lookup_cc_run(game_id, category_id, player, var_filters)
+
 		# Produce a clean name based on the alias value. This allows one
 		# "output" name against lots of aliases for tidiness of the
 		# board aliases.
-		board_alias_name = None
-		for name, aliases in self.category_map.items():
+		cat_alias_name = None
+		for name, aliases in cfg["sub_categories"].items():
 			if cc_category_board in aliases:
-				board_alias_name = name
+				cat_alias_name = name
 				break
 
-		# Generate the internal key, process additional metadata and
-		# then look up the custom category run.
-		internal_key = f"{cc_top_board}_{board_token}"
-		board_alias_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, board_alias_name, internal_key, cat_name_extend=False)
-		run = self.lookup_cc_run(cc_key["id"], int_key, player, flags)
+		# Return the run object and the alias_name produced.
+		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)
+		return run, cc_top_board_name, cat_alias_name
 
-		# Create the category name output string
-		# Currently, this is crafted from the additional metadata, but
-		# that isn't very ideal, in future I'll move this to a better
-		# system.
-		alias_name = ""
-		for val in flags["additional_metadata"].values():
-			for name, data in self.md_aliases.items():
-				if val in data["aliases"]:
-					alias_name += f"{name} "
-					break
-
-		return run, board_alias_name, alias_name.strip()
-
-	def lookup_cc_run(self, slug_id: str, cc_category: str, player: str, flags: dict = None) -> SpeedRun | None:
+	def lookup_cc_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:
 		"""
 		Resolve and fetch a Custom Content run using the same SRDC logic as normal runs,
 		but with CC-specific variables.
 
 		Returns a SpeedRun object or None if nothing was found.
 		"""
-		# Resolve the Slug ID for its SRDC ID and all categories,
-		# then capture the leaderboard data.
-		game_id, game_cats = self.api.get_game_code(slug_id)
-		cfg = self.lb_config.get(slug_id)
-		if cfg is None:
-			raise MissingInternalData(f"No leaderboard config found for Custom Content game slug: {slug_id}")
-
-		# Category metadata is necessary for Custom Content boards: if nothing is found,
-		# or the CC category cannot be found in the configuration, return an error.
-		if cc_category not in cfg:
-			raise MissingInternalData(f"Unknown Custom Content category key: {cc_category}")
-
-		# Using the CE Category config, search the SRDC Game categories
-		# list to find the matching board name.
-		category_meta = cfg[cc_category]
-		category_id = None
-		for cat_id, cat_name in game_cats.items():
-			if cat_name.strip() == category_meta["board"]:
-				category_id = cat_id
-				break
-
-		# If category_id is still None, then the category does not exist.
-		if not category_id:
-			raise InvalidCategory("Custom Content category not found in CC game.")
-
-		# Resolve the user ID and capture the category vars. If the
-		# metadata parameter is not None, set a slice to capture the
-		# specific piece of metadata that was asked for.
+		# Resolve the user ID and then search for runs.
 		user_id = self.api.get_srdc_user(player)
-		cc_cat_vars = self.utils.generate_var_filters(category_meta, flags)
-
-		# Search for runs, if none found then return.
-		runs = self.api.search_runs(game_id, category_id, user_id, cc_cat_vars)
+		runs = self.api.search_runs(game_id, category_id, user_id, var_filters)
 		if not runs:
 			return None
 
@@ -151,17 +145,20 @@ class CustomContent:
 		# to them involving modded content, which tend to contain a limited number
 		# of boards. Still though, the list of runs must be filtered to get the
 		# correct run that the user asked for.
-		filtered_runs = self.utils.filter_all_runs(runs, cc_cat_vars)
+		filtered_runs = self.utils.filter_all_runs(runs, var_filters)
 		if not filtered_runs:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
 		# As this is likely to be a very short list, the expected run would be
-		# the most recently submitted. Select it, then find its placement on the
-		# leaderboard. Return the SpeedRun object for this run using the helpers.
+		# the most recently submitted. However, just in case, use the helper to
+		# find it.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], cc_cat_vars)
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, filtered_runs, var_filters)
+		if best_run is None:
+			return None
+
+		# Extract the run object and return it.
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

@@ -38,14 +38,24 @@ for _, module_name, _ in pkgutil.iter_modules(leaderboards.__path__):
 			raise RuntimeError(f"Duplicate leaderboard key detected: {key}")
 	LEADERBOARD_CONFIG.update(data)
 
-# Build a set of all aliases representing category extensions.
-# This is needed to support extract_flags for token matching.
-CE_TOKEN_LOOKUP = set()
-for cfg in LEADERBOARD_CONFIG.values():
-	sub_cats = cfg.get("sub_categories", None)
-	if not sub_cats:
-		continue
-	for aliases in sub_cats.values():
-		if not isinstance(aliases, list):
+
+# Method to build sets for token lookups
+def build_token_set(cfg: dict, board: str) -> set:
+	lookup = set()
+	for cfg_data in cfg.values():
+		if cfg_data.get("board_type") != board:
 			continue
-		CE_TOKEN_LOOKUP.update(aliases)
+
+		sub_cats = cfg_data.get("sub_categories", None)
+		if not sub_cats:
+			continue
+		for aliases in sub_cats.values():
+			if not isinstance(aliases, list):
+				continue
+			lookup.update(aliases)
+	return lookup
+
+
+# Build sets containing aliases for token matching in extract_flags.
+CE_TOKEN_LOOKUP = build_token_set(LEADERBOARD_CONFIG, "ce")
+CC_TOKEN_LOOKUP = build_token_set(LEADERBOARD_CONFIG, "cc")

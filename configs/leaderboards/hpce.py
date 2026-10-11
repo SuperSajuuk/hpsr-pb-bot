@@ -5,6 +5,7 @@
 #
 ROOT_KEY = "hpce"
 LEADERBOARD_DATA = {
+	"board_type": "ce",
 	"categories": {
 		"1PC": {"aliases": ["1pc", "hp1pc"], "board_id": "xd1j7vwd", "internal_name": "1pc"},
 		"2PC": {"aliases": ["2pc", "hp2pc"], "board_id": "zd3j7xr2", "internal_name": "2pc"},

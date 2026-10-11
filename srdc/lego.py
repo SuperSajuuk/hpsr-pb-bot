@@ -133,14 +133,14 @@ class LEGONormalRun:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top)
-		# The run at the top of the index will then be used to get its placement
-		# in the leaderboard. To avoid duplication, leaderboard placement is
-		# parsed by a helper function.
+		# Then, find that run and its placement on the leaderboard, in case
+		# we have obsolete runs in this list.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = filtered_runs[0]
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, filtered_runs, var_filters)
+		if best_run is None:
+			return None
 
-		# Extract all run details and the leaderboard placement, then return the run object.
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters)
+		# Extract all run details and return it
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

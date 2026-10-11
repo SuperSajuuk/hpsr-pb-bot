@@ -146,21 +146,20 @@ class IndividualLevel:
 		if not runs:
 			return None
 
-		# Sort the runs by the most recently verified run (newest at the top).
 		# A small portion of ILs may have variables assigned to them. If that
 		# is the case, filter all run objects and return the requested one.
-		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = runs[0]
 		if variables:
-			# For some reason, this filtered list will be in reverse.
-			# Simply reverse the order and return the top value.
-			filtered_runs = self.utils.filter_all_runs(runs, variables)
-			filtered_runs.reverse()
-			best_run = filtered_runs[0]
+			runs = self.utils.filter_all_runs(runs, variables)
 
-		# Extract all run details and the leaderboard placement, then return the run object.
+		# Sort the runs by the most recently verified run (newest at the top).
+		# Then, find that run on the leaderboard to get placement.
+		runs.sort(key=lambda rx: rx["submitted"], reverse=True)
 		lb_q = f"leaderboards/{game_id}/level/{level_id}/{category_id}?embed=variables"
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], variables=variables, alt_url=lb_q)
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, runs, variables, alt_url=lb_q)
+		if best_run is None:
+			return None
+
+		# Extract run details and return it.
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr

@@ -145,12 +145,13 @@ class MultiRun:
 			return None
 
 		# Sort the runs by the most recently verified run (newest at the top).
-		# As this is likely to be a very short list, the expected run would be
-		# the most recently submitted. Select it, then find its placement on the
-		# leaderboard. Return the SpeedRun object for this run using the helpers.
+		# Then, find the best non-obsolete run and its placement on the board.
 		filtered_runs.sort(key=lambda rx: rx["submitted"], reverse=True)
-		best_run = filtered_runs[0]
-		place = self.utils.lookup_run_place(game_id, category_id, best_run["id"], var_filters)
+		best_run, place = self.utils.get_run_and_place(game_id, category_id, filtered_runs, var_filters)
+		if best_run is None:
+			return None
+
+		# Extract run details and return it.
 		sr = self.utils.extract_run(best_run, player)
 		sr.place = place
 		return sr
