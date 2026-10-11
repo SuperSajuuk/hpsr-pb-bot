@@ -191,10 +191,17 @@ class Utilities:
 
 		# Build the var filters based on the tokens list.
 		for x in var_list:
+			# If name key is missing, its a required variable.
 			if "name" not in x:
 				var_filters.append({x["var_id"]: x["value_id"]})
 				continue
-			if x["name"] in selected_tokens:
+
+			# Check for name in selected_tokens or if it's in the alias list.
+			matched = (
+				x["name"] in selected_tokens
+				or any(alias in selected_tokens for alias in x.get("aliases", []))
+			)
+			if matched:
 				var_filters.append({x["var_id"]: x["value_id"]})
 				continue
 
