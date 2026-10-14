@@ -251,5 +251,5 @@ INTERNAL_KEY_MAPPING = {
 	"hp2_cc": ["hp2_cc", "cc_hp2", "cc_2pc", "2pc_cc"],
 	"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
 	"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_wii"],
-	"hp72": ["hp72_pc", "hp72_ps3", "hp71_xbox", "hp71_wii", "hp7.1_pc", "hp7.1_ps3", "hp7.1_xbox", "hp7.1_wii"]
+	"hp72": ["hp72_pc", "hp72_ps3", "hp72_xbox", "hp72_wii", "hp7.2_pc", "hp7.2_ps3", "hp7.2_xbox", "hp7.2_wii"]
 }

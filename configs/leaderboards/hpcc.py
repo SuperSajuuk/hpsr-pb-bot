@@ -20,18 +20,34 @@ LEADERBOARD_DATA = {
 			"aliases": ["bingo", "2bingo"], "board_id": "wdm1r8od", "internal_name": "bingo"
 		},
 		"[2PC] Tourney Client": {
-			"aliases": ["tc", "2tc", "2tourney", "tc2", "tourney2", "tourneyclient2", "2tourneyclient"],  "board_id": "z27zn8ok", "internal_name": "2tc"
+			"aliases": ["tc", "2tc", "2tourney", "tc2", "tourney2", "tourneyclient2", "2tourneyclient"], "board_id": "z27zn8ok", "internal_name": "2tc"
 		}
 	},
 	"sub_categories": {
-		"Any%": ["any", "any%"],
-		"100%": ["100", "hundo", "100%"],
-		"Glitchless": ["gl", "gless", "glitchless"],
-		"All Wizard Cards": ["awc", "wizardcards", "allwizardcards"],
-		"Warpless": ["wl", "wless", "warpless"],
-		"Single": ["single"],
-		"Triple": ["triple"],
-		"Blackout": ["bo", "bout", "blackout"]
+		"Any%": {
+			"aliases": ["any", "any%"], "internal_name": "any"
+		},
+		"100%": {
+			"aliases": ["100", "hundo", "100%"], "internal_name": "100"
+		},
+		"Glitchless": {
+			"aliases": ["gl", "gless", "glitchless"], "internal_name": "gless"
+		},
+		"All Wizard Cards": {
+			"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"
+		},
+		"Warpless": {
+			"aliases": ["wl", "wless", "warpless"], "internal_name": "wl"
+		},
+		"Single": {
+			"aliases": ["single"], "internal_name": "single"
+		},
+		"Triple": {
+			"aliases": ["triple"], "internal_name": "triple"
+		},
+		"Blackout": {
+			"aliases": ["bo", "bout", "blackout"], "internal_name": "blackout"
+		}
 	},
 	"hp_fm": {
 		"variables": [
@@ -57,7 +73,7 @@ LEADERBOARD_DATA = {
 		"variables": [
 			{"name": "single", "var_id": "0nwgdpk8", "value_id": "1w4792oq"},
 			{"name": "triple", "var_id": "0nwgdpk8", "value_id": "qoxj9epq"},
-			{"name": "blackout", "aliases": ["bo"], "var_id": "0nwgdpk8", "value_id": "139xpkd1"},
+			{"name": "blackout", "aliases": ["bo", "bout"], "var_id": "0nwgdpk8", "value_id": "139xpkd1"},
 			{"name": "random", "var_id": "7893m168", "value_id": "qvvx927q"},
 			{"name": "set", "var_id": "7893m168", "value_id": "le2n5y5l"}
 		]

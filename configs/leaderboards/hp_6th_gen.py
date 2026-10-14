@@ -9,13 +9,13 @@ LEADERBOARD_DATA = {
 		"any": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
-				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"},
+				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"}
 			]
 		},
 		"100": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "9l7ro37n", "value_id": "klr8pkj1"},
-				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"},
+				{"name": "emulator", "var_id": "9l7ro37n", "value_id": "21dpz841"}
 			]
 		},
 		"nms": {
@@ -29,13 +29,13 @@ LEADERBOARD_DATA = {
 		"any": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
-				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"},
+				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"}
 			]
 		},
 		"100": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "kn0vxg0l", "value_id": "5lm72p0l"},
-				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"},
+				{"name": "emulator", "var_id": "kn0vxg0l", "value_id": "21dpz841"}
 			]
 		},
 		"nms": {
@@ -49,13 +49,13 @@ LEADERBOARD_DATA = {
 		"any": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
-				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"},
+				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"}
 			]
 		},
 		"100": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "yn2wrvjn", "value_id": "5q8n6vgq"},
-				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"},
+				{"name": "emulator", "var_id": "yn2wrvjn", "value_id": "4qykp241"}
 			]
 		},
 		"nms": {
@@ -76,14 +76,14 @@ LEADERBOARD_DATA = {
 		"any": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "yn20gk2l", "value_id": "139v60r1"},
-				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"},
-			],
+				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"}
+			]
 		},
 		"100": {
 			"variables": [
 				{"name": "console", "default": True, "var_id": "yn20gk2l", "value_id": "139v60r1"},
-				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"},
-			],
+				{"name": "emulator", "var_id": "yn20gk2l", "value_id": "qvv4y7rq"}
+			]
 		},
 		"noeds": {
 			"variables": [

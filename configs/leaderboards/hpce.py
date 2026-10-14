@@ -23,57 +23,162 @@ LEADERBOARD_DATA = {
 		"DVD Games": {"aliases": ["dvd", "dvdgames", "hpdvdgames"], "board_id": "jdr966xd", "internal_name": "dvd"}
 	},
 	"sub_categories": {
-		"100% Glitchless": ["100gless", "hundogless", "100%gless", "100glitchless", "hundoglitchless", "100%glitchless"],
-		"AWC Glitchless": ["awcgless", "awcglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
-		"Boostless": ["bl", "boostless"],
-		"Cutscene%": ["cs", "cutscene", "cutscene%"],
-		"Chungus%": ["chungus", "chungus%"],
-		"Harry Potter Wizard Card": ["hpwc", "hpwizardcard", "harrypotterwc", "harrypotterwizardcard"],
-		"High Jump": ["hj", "highjump"],
-		"Jumpless": ["jl", "jumpless"],
-		"Lowcast": ["lc", "lowcast"],
-		"NG+": ["ng", "ngplus", "newgameplus", "ng+"],
-		"No Major Glitches": ["nmg", "nomajorglitches"],
-		"All Vanishing Cards": ["avc", "vanishingcards", "allvanishingcards"],
-		"All Chests": ["ac", "allchests"],
-		"All Minigames": ["amg", "allmg", "allminigames"],
-		"All Portraits": ["ap", "allp", "allportraits"],
-		"All Symbols": ["as", "allsymbols"],
-		"Chess%": ["chess", "chess%"],
-		"Potions Rush": ["pr", "potions", "potionsrush"],
-		"All Wizard Cards": ["awc", "allwizardcards"],
-		"Superspeed": ["ss", "superspeed"],
-		"PC Glitchless Duofecta": ["glessduo", "glessduofecta", "glitchlessduo", "glitchlessduofecta", "pcglessduo", "pcglessduofecta", "pcglitchlessduo", "pcglitchlessduofecta"],
-		"RPG Trifecta": ["rpgtri", "rpgtrifecta"],
-		"HP1 PC": ["hp1pc", "1pc"],
-		"HP2 PC": ["hp2pc", "2pc"],
-		"HP3 PC": ["hp3pc", "3pc"],
-		"HP4 PC": ["hp4pc", "4pc"],
-		"HP5 PC": ["hp5pc", "5pc"],
-		"HP6 PC": ["hp6pc", "6pc"],
-		"HP7.1 PC": ["hp71pc", "71pc"],
-		"HP7.2 PC": ["hp72pc", "72pc"],
-		"HP1 PS1": ["1ps1", "hp1ps1"],
-		"HP2 PS1": ["2ps1", "hp2ps1"],
-		"HP2 6th Gen": ["hp26thgen", "hp2xbox", "hp2gcn"],
-		"HP3 6th Gen": ["hp36thgen", "hp3xbox", "hp3gcn", "hp3ps2"],
-		"HP1 GBA": ["hp1gba", "1gba"],
-		"HP2 GBA": ["hp2gba", "2gba"],
-		"HP3 GBA": ["hp3gba", "3gba"],
-		"QWC GBA": ["qwcgba", "quidditchworldcupgba"],
-		"HP6 DS": ["hp6ds", "6ds"],
-		"HP7.1 DS": ["hp71ds", "71ds"],
-		"HP7.2 DS": ["hp72ds", "72ds"],
-		"HP1": ["hp1"],
-		"HP2": ["hp2"],
-		"HP3": ["hp3"],
-		"HP4": ["hp4"],
-		"HP5": ["hp5"],
-		"HP6": ["hp6"],
-		"HP7.1": ["hp71", "hp7.1", "7.1", "hp7p1"],
-		"HP7.2": ["hp72", "hp7.2", "7.2", "hp7p2"],
-		"Hogwarts Challenge": ["hc", "hogwartschallenge"],
-		"Wizarding World": ["ww", "wizardingworld"]
+		"100% Glitchless": {
+			"aliases": ["100gless", "glundo", "hundogless", "100%gless", "100glitchless", "hundoglitchless", "100%glitchless"],
+			"internal_name": "100gless"
+		},
+		"AWC Glitchless": {
+			"aliases": ["awcgless", "awcglitchless", "wizardcardsgless", "wizardcardsglitchless", "allwizardcardsgless", "allwizardcardsglitchless"],
+			"internal_name": "awcgless"
+		},
+		"Boostless": {
+			"aliases": ["bl", "bless", "boostless"], "internal_name": "boostless"
+		},
+		"Cutscene%": {
+			"aliases": ["cs", "cs%", "cutscene", "cutscene%"], "internal_name": "cutscene"
+		},
+		"Chungus%": {
+			"aliases": ["chungus", "chungus%"], "internal_name": "chungus"
+		},
+		"Harry Potter Wizard Card": {
+			"aliases": ["hpwc", "hpwizardcard", "harrypotterwc", "harrypotterwizardcard"], "internal_name": "hpwc"
+		},
+		"High Jump": {
+			"aliases": ["hj", "hjump", "highjump"], "internal_name": "highjump"
+		},
+		"Jumpless": {
+			"aliases": ["jl", "jless", "jumpless"], "internal_name": "jumpless"
+		},
+		"Lowcast": {
+			"aliases": ["lc", "lowcast"], "internal_name": "lowcast"
+		},
+		"NG+": {
+			"aliases": ["ng", "ngplus", "newgameplus", "ng+", "newgame+"], "internal_name": "ng"
+		},
+		"No Major Glitches": {
+			"aliases": ["nmg", "nomajorglitches"], "internal_name": "nmg"
+		},
+		"All Vanishing Cards": {
+			"aliases": ["avc", "vanishingcards", "allvanishingcards"], "internal_name": "avc"
+		},
+		"All Chests": {
+			"aliases": ["ac", "allc", "allchests"], "internal_name": "allchests"
+		},
+		"All Minigames": {
+			"aliases": ["amg", "allmg", "allminigames"], "internal_name": "amg"
+		},
+		"All Portraits": {
+			"aliases": ["ap", "allp", "allportraits"], "internal_name": "allp"
+		},
+		"All Symbols": {
+			"aliases": ["as", "alls", "allsymbols"], "internal_name": "alls"
+		},
+		"Chess%": {
+			"aliases": ["chess", "chess%"], "internal_name": "chess"
+		},
+		"Potions Rush": {
+			"aliases": ["pr", "potions", "potionsrush"], "internal_name": "pr"
+		},
+		"All Wizard Cards": {
+			"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"
+		},
+		"Superspeed": {
+			"aliases": ["ss", "superspeed"], "internal_name": "superspeed"
+		},
+		"PC Glitchless Duofecta": {
+			"aliases": ["glessduo", "glessduofecta", "glitchlessduo", "glitchlessduofecta", "pcglessduo", "pcglessduofecta", "pcglitchlessduo", "pcglitchlessduofecta"],
+			"internal_name": "glessduo"
+		},
+		"RPG Trifecta": {
+			"aliases": ["rpgtri", "rpgtrifecta"], "internal_name": "rpgtri"
+		},
+		"HP1 PC": {
+			"aliases": ["hp1pc", "1pc"], "internal_name": "hp1_pc"
+		},
+		"HP2 PC": {
+			"aliases": ["hp2pc", "2pc"], "internal_name": "hp2_pc"
+		},
+		"HP3 PC": {
+			"aliases": ["hp3pc", "3pc"], "internal_name": "hp3_pc"
+		},
+		"HP4 PC": {
+			"aliases": ["hp4pc", "4pc"], "internal_name": "hp4_pc"
+		},
+		"HP5 PC": {
+			"aliases": ["hp5pc", "5pc"], "internal_name": "hp5_pc"
+		},
+		"HP6 PC": {
+			"aliases": ["hp6pc", "6pc"], "internal_name": "hp6_pc"
+		},
+		"HP7.1 PC": {
+			"aliases": ["hp71pc", "71pc"], "internal_name": "hp71_pc"
+		},
+		"HP7.2 PC": {
+			"aliases": ["hp72pc", "72pc"], "internal_name": "hp72_pc"
+		},
+		"HP1 PS1": {
+			"aliases": ["1ps1", "hp1ps1"], "internal_name": "1ps1"
+		},
+		"HP2 PS1": {
+			"aliases": ["2ps1", "hp2ps1"], "internal_name": "2ps1"
+		},
+		"HP2 6th Gen": {
+			"aliases": ["hp26thgen", "hp2xbox", "hp2gcn", "26thgen", "2xbox", "2gcn"], "internal_name": "hp2_6th_gen"
+		},
+		"HP3 6th Gen": {
+			"aliases": ["hp36thgen", "hp3xbox", "hp3gcn", "hp3ps2", "36thgen", "3xbox", "3gcn", "3ps2"], "internal_name": "hp3_6th_gen"
+		},
+		"HP1 GBA": {
+			"aliases": ["hp1gba", "1gba"], "internal_name": "hp1_gba"
+		},
+		"HP2 GBA": {
+			"aliases": ["hp2gba", "2gba"], "internal_name": "hp2_gba"
+		},
+		"HP3 GBA": {
+			"aliases": ["hp3gba", "3gba"], "internal_name": "hp3_gba"
+		},
+		"QWC GBA": {
+			"aliases": ["qwcgba", "worldcupgba", "quidditchgba", "quidditchworldcupgba"], "internal_name": "qwc_gba"
+		},
+		"HP6 DS": {
+			"aliases": ["hp6ds", "6ds"], "internal_name": "hp6_ds"
+		},
+		"HP7.1 DS": {
+			"aliases": ["hp71ds", "71ds"], "internal_name": "hp71_ds"
+		},
+		"HP7.2 DS": {
+			"aliases": ["hp72ds", "72ds"], "internal_name": "hp72_ds"
+		},
+		"HP1": {
+			"aliases": ["hp1"], "internal_name": "hp1"
+		},
+		"HP2": {
+			"aliases": ["hp2"], "internal_name": "hp2"
+		},
+		"HP3": {
+			"aliases": ["hp3"], "internal_name": "hp3"
+		},
+		"HP4": {
+			"aliases": ["hp4"], "internal_name": "hp4"
+		},
+		"HP5": {
+			"aliases": ["hp5"], "internal_name": "hp5"
+		},
+		"HP6": {
+			"aliases": ["hp6"], "internal_name": "hp6"
+		},
+		"HP7.1": {
+			"aliases": ["hp71", "hp7.1", "7.1", "hp7p1"], "internal_name": "hp71"
+		},
+		"HP7.2": {
+			"aliases": ["hp72", "hp7.2", "7.2", "hp7p2"], "internal_name": "hp72"
+		},
+		"Hogwarts Challenge": {
+			"aliases": ["hc", "hogwarts", "hogwartschallenge"], "internal_name": "hc"
+		},
+		"Wizarding World": {
+			"aliases": ["ww", "wizarding", "wizardingworld"], "internal_name": "ww"
+		}
 	},
 	"hp_1pc": {
 		"variables": [

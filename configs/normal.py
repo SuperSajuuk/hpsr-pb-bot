@@ -14,95 +14,191 @@
 GAME_MAP = {
 	"hp1": {
 		"name": "Harry Potter and the Philosopher's Stone",
-		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"]
+		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"],
+		"slugs": {
+			"hp1ps1": ["hp1_ps1"],
+			"hp1pc": ["hp1_pc"],
+			"hp1_6th_gen": ["hp1_ps2", "hp1_xbox", "hp1_gcn"],
+			"hp1gba": ["hp1_gba"],
+			"hp1gbc": ["hp1_gbc"],
+			"hpcc": ["hp1_cc"]
+		}
 	},
 	"hp2": {
 		"name": "Harry Potter and the Chamber of Secrets",
-		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"]
+		"platforms": ["ps1", "ps2", "xbox", "gcn", "pc", "gba", "gbc"],
+		"slugs": {
+			"hp2ps1": ["hp2_ps1"],
+			"hp2pc": ["hp2_pc"],
+			"hp2ps2": ["hp2_ps2"],
+			"hp2_6th_gen": ["hp2_xbox", "hp2_gcn"],
+			"hp2gba": ["hp2_gba"],
+			"hp2gbc": ["hp2_gbc"],
+			"hpcc": ["hp2_cc"]
+		}
 	},
 	"hp3": {
 		"name": "Harry Potter and the Prisoner of Azkaban",
-		"platforms": ["ps2", "xbox", "gcn", "pc", "gba"]
+		"platforms": ["ps2", "xbox", "gcn", "pc", "gba"],
+		"slugs": {
+			"hp3pc": ["hp3_pc"],
+			"hp3_6th_gen": ["hp3_ps2", "hp3_xbox", "hp3_gcn"],
+			"hp3gba": ["hp3_gba"]
+		}
 	},
 	"hp4": {
 		"name": "Harry Potter and the Goblet of Fire",
-		"platforms": ["ps2", "xbox", "gcn", "pc", "gba", "ds"]
+		"platforms": ["ps2", "xbox", "gcn", "pc", "gba", "ds"],
+		"slugs": {
+			"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
+			"hp4gba": ["hp4_gba", "hp4_ds"]
+		}
 	},
 	"hp5": {
 		"name": "Harry Potter and the Order of the Phoenix",
-		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "gba", "ds"]
+		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "gba", "ds"],
+		"slugs": {
+			"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_x360", "hp5_wii"],
+			"hp5gbads": ["hp5_gba", "hp5_ds"]
+		}
 	},
 	"hp6": {
 		"name": "Harry Potter and the Half Blood Prince",
-		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "ds"]
+		"platforms": ["ps2", "ps3", "xbox", "wii", "x360", "pc", "ds"],
+		"slugs": {
+			"hp6": ["hp6_pc", "hp6_ps2", "hp6_ps3", "hp6_xbox", "hp6_x360", "hp6_wii"],
+			"hp6ds": ["hp6_ds"]
+		}
 	},
 	"hp7.1": {
 		"name": "Harry Potter and the Deathly Hallows Part 1",
 		"aliases": ["hp71", "hp7p1"],
-		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"]
+		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"],
+		"slugs": {
+			"hp7p1": ["hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"],
+			"hp7p1ds": ["hp7.1_ds"]
+		}
 	},
 	"hp7.2": {
 		"name": "Harry Potter and the Deathly Hallows Part 2",
 		"aliases": ["hp72", "hp7p2"],
-		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"]
+		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"],
+		"slugs": {
+			"hp7p2": [
+				"hp72_pc", "hp7.2_pc", "hp7p2_pc", "hp7.2_ps3", "hp7.2_ps3", "hp7p2_ps3",
+				"hp7.2_xbox", "hp7.2_xbox", "hp7p2_xbox", "hp7.2_wii" "hp7.2_wii", "hp7p2_wii"
+			],
+			"hp7p2ds": ["hp7.2_ds", "hp72_ds", "hp7p2_ds"]
+		}
 	},
 	"qwc": {
 		"name": "Harry Potter: Quidditch World Cup",
 		"aliases": ["hpqwc"],
-		"platforms": ["gba", "gcn", "ps2", "xbox", "pc"]
+		"platforms": ["gba", "gcn", "ps2", "xbox", "pc"],
+		"slugs": {
+			"hpquidditch": ["qwc_pc", "qwc_ps2", "qwc_gcn", "qwc_xbox"],
+			"quidditch_gba": ["qwc_gba"]
+		}
 	},
 	"legacy": {
 		"name": "Hogwarts Legacy",
 		"aliases": ["hl", "hogwartslegacy"],
-		"platforms": ["ps4", "ps5", "pc", "xbone", "xbss", "xbsx"]
+		"platforms": ["ps4", "ps5", "pc", "xbone", "xbss", "xbsx"],
+		"slugs": {
+			"legacy": ["legacy_pc", "legacy_ps4", "legacy_ps5"]
+		}
 	},
 	"dbb": {
 		"name": "Disney's Brother Bear",
 		"aliases": ["disneysbrotherbear", "brotherbear"],
-		"platforms": ["pc"]
+		"platforms": ["pc"],
+		"slugs": {
+			"disneys_brother_bear": ["dbb_pc"]
+		}
 	},
 	"r1": {
 		"name": "Rayman",
 		"ordering": "pf",
 		"aliases": ["rayman", "rayman1"],
-		"platforms": ["ps1", "psx", "pc", "ds", "gba", "ss", "saturn", "segasaturn", "aj", "jaguar", "atari", "atarijaguar"]
+		"platforms": ["ps1", "psx", "pc", "ds", "gba", "ss", "saturn", "segasaturn", "aj", "jaguar", "atari", "atarijaguar"],
+		"slugs": {
+			"rayman_1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"]
+		}
 	},
 	"r3": {
 		"name": "Rayman 3: Hoodlum Havoc",
 		"ordering": "pf",
 		"aliases": ["rayman3"],
-		"platforms": ["gcn", "pc", "ps2", "hd", "ps3", "x360", "xss", "xbox"]
+		"platforms": ["gcn", "pc", "ps2", "hd", "ps3", "x360", "xss", "xbox"],
+		"slugs": {
+			"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"]
+		}
 	},
 	"ssbfbbr": {
 		"name": "SpongeBob SquarePants: Battle for Bikini Bottom - Rehydrated",
 		"ordering": "pf",
 		"aliases": ["bfbbr"],
-		"platforms": ["ps4", "xbone", "pc", "xboxone"]
+		"platforms": ["ps4", "xbone", "pc", "xboxone"],
+		"slugs": {
+			"rehydrated": ["ssbfbbr_pc"]
+		}
 	},
 	"hm": {
 		"name": "Hannah Montana",
-		"aliases": ["montana", "hannahmontana"],
-		"platforms": ["ds"]
+		"aliases": ["hm", "montana", "hannahmontana"],
+		"platforms": ["ds"],
+		"slugs": {
+			"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"]
+		}
 	},
 	"shrek2": {
 		"name": "Shrek 2",
 		"aliases": ["s2"],
-		"platforms": ["pc", "ps2", "xbox", "gcn"]
+		"platforms": ["pc", "ps2", "xbox", "gcn"],
+		"slugs": {
+			"shrek_2": ["shrek2_pc", "s2_pc"],
+			"shrek_2_c": ["shrek2_ps2", "shrek2_gcn", "shrek2_xbox", "s2_ps2", "s2_gcn", "s2_xbox"]
+		}
 	},
 	"traod": {
 		"name": "Tomb Raider: The Angel of Darkness",
 		"aliases": ["angelofdarkness", "aod", "tombraideraod"],
-		"platforms": ["ps2", "pc"]
+		"platforms": ["ps2", "pc"],
+		"slugs": {
+			"traod": ["traod_pc", "angelofdarkness_pc", "aod_pc", "tombraideraod_pc"]
+		}
 	},
 	"popww": {
 		"name": "Prince of Persia: Warrior Within",
 		"aliases": ["warriorwithin"],
-		"platforms": ["gcn", "ps2", "ps3", "pc", "psp", "xbox", "psvita", "vita", "wii"]
+		"platforms": ["gcn", "ps2", "ps3", "pc", "psp", "xbox", "psvita", "vita", "wii"],
+		"slugs": {
+			"pop_ww": ["popww_pc", "popww_ps2"]
+		}
 	},
 	"kao2": {
 		"name": "Kao the Kangaroo: Round 2",
 		"aliases": ["ktk2", "ktkr2"],
-		"platforms": ["gcn", "ps2", "xbox", "pc", "wii"]
+		"platforms": ["gcn", "ps2", "xbox", "pc", "wii"],
+		"slugs": {
+			"kao2": [
+				"kao2_gcn", "kao2_ps2", "kao2_xbox", "kao2_pc", "kao2_wii",
+				"ktk2_gcn", "ktk2_ps2", "ktk2_xbox", "ktk2_pc", "ktk2_wii",
+				"ktkr2_gcn", "ktkr2_ps2", "ktkr2_xbox", "ktkr2_pc", "ktkr2_wii"
+			]
+		}
+	},
+	"pepsiman": {
+		"name": "Pepsiman",
+		"aliases": ["pman", "pepsi"],
+		"platforms": ["ps1", "ps2", "ps3"],
+		"slugs": {
+			"pepsiman": [
+				"pepsiman_ps1", "pman_ps1", "pepsi_ps1",
+				"pepsiman_ps2", "pman_ps2", "pepsi_ps2",
+				"pepsiman_ps3", "pman_ps3", "pepsi_ps3"
+			]
+		}
 	}
 }
 
@@ -116,10 +212,7 @@ CATEGORY_MAP = {
 	"Glitchless": {"aliases": ["gless", "glitchless"], "internal_name": "gless"},
 	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
-	"All Crests": {"aliases": ["ac", "crests", "allcrests"], "internal_name": "allc"},
-	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"},
-	"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"},
-	"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"}
+	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"}
 }
 
 # Platform category map
@@ -147,54 +240,4 @@ PLATFORM_CATEGORY_MAP = {
 		"Console": ["ps4", "ps5", "xbone", "xboxone"],
 		"Mobile": ["iOS", "ios", "android"]
 	}
-}
-
-# Board slug mapping. This is used to map the values produced by
-# concatenating platform and game in the code.
-#
-# There should be one key for each board slug: its value should be
-# a list of all internal keys that represent it.
-BOARD_GAME_SLUG = {
-	"hp1ps1": ["hp1_ps1"],
-	"hp2ps1": ["hp2_ps1"],
-	"hp1pc": ["hp1_pc"],
-	"hp2pc": ["hp2_pc"],
-	"hp3pc": ["hp3_pc"],
-	"hp4": ["hp4_pc", "hp4_ps2", "hp4_xbox", "hp4_gcn"],
-	"hp5": ["hp5_pc", "hp5_ps2", "hp5_ps3", "hp5_xbox", "hp5_x360", "hp5_wii"],
-	"hp6": ["hp6_pc", "hp6_ps2", "hp6_ps3", "hp6_xbox", "hp6_x360", "hp6_wii"],
-	"hp7p1": ["hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"],
-	"hp7p2": ["hp7.2_ps3", "hp7.2_xbox", "hp7.2_pc", "hp7.2_wii"],
-	"hp1_6th_gen": ["hp1_ps2", "hp1_xbox",	"hp1_gcn"],
-	"hp2ps2": ["hp2_ps2"],
-	"hp3_6th_gen": ["hp3_ps2", "hp3_xbox", "hp3_gcn"],
-	"hp2_6th_gen": ["hp2_xbox", "hp2_gcn"],
-	"hp1gba": ["hp1_gba"],
-	"hp2gba": ["hp2_gba"],
-	"hp3gba": ["hp3_gba"],
-	"hp4gba": ["hp4_gba", "hp4_ds"],
-	"hp5gbads": ["hp5_gba", "hp5_ds"],
-	"hp1gbc": ["hp1_gbc"],
-	"hp2gbc": ["hp2_gbc"],
-	"hp6ds": ["hp6_ds"],
-	"hp7p1ds": ["hp7.1_ds"],
-	"hp7p2ds": ["hp7.2_ds"],
-	"hpquidditch": ["qwc_pc", "qwc_ps2", "qwc_gcn",	"qwc_xbox"],
-	"quidditch_gba": ["qwc_gba"],
-	"disneys_brother_bear": ["dbb_pc"],
-	"hpcc": ["hp2_cc"],
-	"legacy": ["legacy_pc", "legacy_ps4", "legacy_ps5"],
-	"rayman_1": ["r1_ps1", "r1_pc", "r1_ds", "r1_ss", "r1_aj"],
-	"r3": ["r3_gcn", "r3_ps3", "r3_x360", "r3_ps2", "r3_pc"],
-	"rehydrated": ["ssbfbbr_pc"],
-	"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"],
-	"shrek_2": ["shrek2_pc", "s2_pc"],
-	"shrek_2_c": ["shrek2_ps2", "shrek2_gcn", "shrek2_xbox", "s2_ps2", "s2_gcn", "s2_xbox"],
-	"traod": ["traod_pc", "angelofdarkness_pc", "aod_pc", "tombraideraod_pc"],
-	"pop_ww": ["popww_pc", "popww_ps2"],
-	"kao2": [
-		"kao2_gcn", "kao2_ps2", "kao2_xbox", "kao2_pc", "kao2_wii",
-		"ktk2_gcn", "ktk2_ps2", "ktk2_xbox", "ktk2_pc", "ktk2_wii",
-		"ktkr2_gcn", "ktkr2_ps2", "ktkr2_xbox", "ktkr2_pc", "ktkr2_wii"
-	]
 }

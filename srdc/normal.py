@@ -16,13 +16,12 @@ from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, Unsu
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, board_slugs, md_aliases, wr, utils):
+	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, md_aliases, wr, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
 		self.plat_cat_map = plat_category_map
 		self.category_map = category_map
-		self.board_slugs = board_slugs
 		self.md_aliases = md_aliases
 		self.wr = wr
 		self.utils = utils
@@ -42,12 +41,14 @@ class NormalRun:
 		game_int_name = None
 		game_name = None
 		ordering_mode = None
+		board_slugs = None
 		slug = None
 		for key_name, data in self.game_map.items():
 			if game == key_name or game in data.get("aliases", []):
 				no_game = False
 				game_int_name = key_name
 				game_name = data["name"]
+				board_slugs = data["slugs"]
 				supported_platforms = data.get("platforms", [])
 				is_unsupported = data.get("unsupported", False)
 				ordering_mode = data.get("ordering", "cf")
@@ -65,7 +66,7 @@ class NormalRun:
 
 		# Produce an internal key and get the slug URL.
 		internal_key = f"{game_int_name}_{platform}"
-		for slug_url, aliases in self.board_slugs.items():
+		for slug_url, aliases in board_slugs.items():
 			if internal_key in aliases:
 				slug = slug_url
 				break

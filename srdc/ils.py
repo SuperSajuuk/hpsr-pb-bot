@@ -13,13 +13,12 @@ from utils.model import SpeedRun
 # API for an individual level submission. This is
 # used by !run only.
 class IndividualLevel:
-	def __init__(self, srdc_api, api, game_map, levels_map, category_map, board_slugs, ik_mapping, utils):
+	def __init__(self, srdc_api, api, game_map, levels_map, category_map, ik_mapping, utils):
 		self.srdc = srdc_api
 		self.api = api
 		self.game_map = game_map
 		self.levels_map = levels_map
 		self.category_map = category_map
-		self.board_slugs = board_slugs
 		self.ik_mapping = ik_mapping
 		self.utils = utils
 
@@ -54,7 +53,7 @@ class IndividualLevel:
 		# Return the full list.
 		return all_runs
 
-	def process_il(self, game: str, platform: str, level: str, category: str, player: str, is_wr: bool):
+	def process_il(self, game, platform, level, category, player, is_wr):
 		"""
 		This method will capture all the requirements of finding an IL, which is
 		then passed over to lookup_il to find it.
@@ -65,13 +64,24 @@ class IndividualLevel:
 		# is for a different platform. If this key isn't in
 		# the alias list, we just use it as is.
 		internal_key = f"{game}_{platform}"
+		il_internal_key = None
 		for ik, aliases in self.ik_mapping.items():
 			if internal_key in aliases:
-				internal_key = ik
+				il_internal_key = ik
+				break
+
+		# Find the relevant game entry: this is necessary to capture
+		# the relevant board slug for later.
+		board_slugs = None
+		game_name = None
+		for key_name, data in self.game_map.items():
+			if game == key_name or game in data.get("aliases", []):
+				game_name = data["name"]
+				board_slugs = data["slugs"]
 				break
 
 		# Check if this internal key is in the aliases map.
-		level_aliases = self.levels_map.get(internal_key)
+		level_aliases = self.levels_map.get(il_internal_key or internal_key)
 		if not level_aliases:
 			raise ValueError("This combination of game and platform does not map to any configuration. Perhaps this game isn't supported in config yet, or it doesn't have any ILs supported.")
 
@@ -104,16 +114,17 @@ class IndividualLevel:
 
 		# If the flag "world_record" has been set, lookup only the WR on these parameters.
 		# Otherwise, look up the users' specific IL submission.
+		var_filters = self.utils.generate_var_filters(variables, None)
 		if is_wr:
-			run = self.lookup_il_world_record(internal_key, ind_level_id, cat_name)
+			run = self.lookup_il_world_record(internal_key, board_slugs, ind_level_id, cat_name)
 		else:
-			run = self.lookup_il(internal_key, ind_level_id, cat_name, player, variables)
+			run = self.lookup_il(internal_key, board_slugs, ind_level_id, cat_name, player, var_filters)
 
 		# Set the clean name and return the run that was found.
 		cat_clean_name = f"{ind_level_name} {cat_name}"
-		return run, cat_clean_name
+		return run, cat_clean_name, game_name
 
-	def lookup_il(self, internal_key: str, level_id: str, category_meta: str, player: str, variables: dict = None) -> SpeedRun | None:
+	def lookup_il(self, internal_key, slugs, level_id, category_meta, player, variables=None) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in an individual level submission.
 		As ILs are much simpler in SRDC due to lesser options, the code similarly
@@ -121,7 +132,7 @@ class IndividualLevel:
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = None
-		for slug_url, aliases in self.board_slugs.items():
+		for slug_url, aliases in slugs.items():
 			if internal_key in aliases:
 				slug = slug_url
 				break
@@ -164,14 +175,14 @@ class IndividualLevel:
 		sr.place = place
 		return sr
 
-	def lookup_il_world_record(self, internal_key, level_id, category_meta) -> SpeedRun | None:
+	def lookup_il_world_record(self, internal_key, slugs, level_id, category_meta) -> SpeedRun | None:
 		"""
 		Queries SRDC to find the current world record submission
 		for an IL.
 		"""
 		# Parse the internal_key and cat_key to obtain the game and category.
 		slug = None
-		for slug_url, aliases in self.board_slugs.items():
+		for slug_url, aliases in slugs.items():
 			if internal_key in aliases:
 				slug = slug_url
 				break

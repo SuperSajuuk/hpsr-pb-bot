@@ -37,8 +37,6 @@ PLATFORM_MAP = {
 # metadata to a human-readable value. Very small list for
 # a rare number of instances
 METADATA_ALIASES = {
-	"Story": {"aliases": ["story"]},
-	"Hard": {"aliases": ["hard"]},
 	"Intro": {"aliases": ["intro"]},
 	"No Intro": {"aliases": ["ni", "nointro", "noint"]},
 	"1 Player": {"aliases": ["1p", "1player"]},

@@ -124,7 +124,7 @@ LEADERBOARD_DATA = {
 	"hp6": {
 		"categories": {
 			"All Crests": {
-				"aliases": ["ac", "crests", "allcrests"],
+				"aliases": ["ac", "allc", "crests", "allcrests"],
 				"board_id": "xd17168d",
 				"internal_name": "allc"
 			}

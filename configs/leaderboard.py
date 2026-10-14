@@ -49,10 +49,10 @@ def build_token_set(cfg: dict, board: str) -> set:
 		sub_cats = cfg_data.get("sub_categories", None)
 		if not sub_cats:
 			continue
-		for aliases in sub_cats.values():
-			if not isinstance(aliases, list):
+		for _, block in sub_cats.items():
+			if not isinstance(block["aliases"], list):
 				continue
-			lookup.update(aliases)
+			lookup.update(block["aliases"])
 	return lookup
 
 

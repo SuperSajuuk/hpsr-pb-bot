@@ -90,5 +90,29 @@ LEADERBOARD_DATA = {
 				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
 			]
 		}
+	},
+	"hannah_montana": {
+		"categories": {
+			"All Mysteries": {"aliases": ["am", "allm", "mysteries", "allmysteries"], "internal_name": "mysteries"}
+		}
+	},
+	"traod": {
+		"categories": {
+			"Better than Glitchless": {"aliases": ["bettergless", "bg", "btg", "betterglitchless"], "internal_name": "btg"}
+		}
+	},
+	"pepsiman": {
+		"any": {
+			"variables": [
+				{"name": "console", "var_id": "kn00yj3n", "value_id": "qox8264q"},
+				{"name": "emulator", "default": True, "var_id": "kn00yj3n", "value_id": "1w4vrx6q"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "console", "var_id": "kn00yj3n", "value_id": "qox8264q"},
+				{"name": "emulator", "default": True, "var_id": "kn00yj3n", "value_id": "1w4vrx6q"}
+			]
+		},
 	}
 }

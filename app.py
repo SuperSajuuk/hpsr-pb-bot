@@ -75,7 +75,6 @@ world = wr.WorldRecords(
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
-	board_slugs=nm_config.BOARD_GAME_SLUG,
 	md_aliases=config.METADATA_ALIASES,
 	utils=utils
 )
@@ -85,7 +84,6 @@ normal = normal_run.NormalRun(
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
-	board_slugs=nm_config.BOARD_GAME_SLUG,
 	md_aliases=config.METADATA_ALIASES,
 	wr=world,
 	utils=utils
@@ -96,7 +94,6 @@ il = ind_lvl.IndividualLevel(
 	game_map=nm_config.GAME_MAP,
 	levels_map=il_config.LEVELS_MAP,
 	category_map=nm_config.CATEGORY_MAP,
-	board_slugs=nm_config.BOARD_GAME_SLUG,
 	ik_mapping=il_config.INTERNAL_KEY_MAPPING,
 	utils=utils
 )
@@ -112,7 +109,6 @@ lg = lego.LEGONormalRun(
 cat_ext = ce_run.CategoryExtension(
 	api=api,
 	game_map=ce_config.GAME_MAP,
-	category_aliases=ce_config.CATEGORY_ALIASES,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
@@ -291,7 +287,7 @@ def individual_level(owner, game, platform, level, category, args):
 
 	# Hand over results processing to the processor. This will either
 	# return a SpeedRun object or None, if nothing was found.
-	result, il_cat_name = il.process_il(game, platform, level, category, player, flags["world_record"])
+	result, il_cat_name, game_name = il.process_il(game, platform, level, category, player, flags["world_record"])
 	if not result:
 		return "No individual level submission could be found with these parameters."
 
@@ -299,7 +295,7 @@ def individual_level(owner, game, platform, level, category, args):
 	# Note that the output will be dependent on the flag "--world-record".
 	# platform_repl is a bodge to support a specific set of ILs.
 	platform_repl = platform.replace("cc", "pc")
-	clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
+	clean_name = f'{game_name} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
 	if flags["world_record"]:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"

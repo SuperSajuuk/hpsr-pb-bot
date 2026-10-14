@@ -44,6 +44,7 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"legacy_ce": {
+		"board_type": "ce",
 		"categories": {
 			"First Day": {
 				"aliases": ["fd", "first", "firstday"], "board_id": "wdm1on4d", "internal_name": "fd"
@@ -77,8 +78,8 @@ LEADERBOARD_DATA = {
 			}
 		},
 		"sub_categories": {
-			"Story": ["story"],
-			"Hard": ["hard"]
+			"Story": {"aliases": ["story"], "internal_name": "story"},
+			"Hard": {"aliases": ["hard"], "internal_name": "hard"}
 		},
 		"legacy_fd": {
 			"variables": [
