@@ -39,6 +39,8 @@ PLATFORM_MAP = {
 METADATA_ALIASES = {
 	"Intro": {"aliases": ["intro"]},
 	"No Intro": {"aliases": ["ni", "nointro", "noint"]},
+	"Story": {"aliases": ["story"]},
+	"Hard": {"aliases": ["hard"]},
 	"1 Player": {"aliases": ["1p", "1player"]},
 	"2 Players": {"aliases": ["2p", "2players"]},
 	"3 Players": {"aliases": ["3p", "3players"]},
