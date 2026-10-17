@@ -80,14 +80,14 @@ LEADERBOARD_DATA = {
 	"kao2": {
 		"any": {
 			"variables": [
-				{"name": "quads", "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
+				{"name": "quads", "default": True, "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
 				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "quads", "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
-				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
+				{"name": "dupeless", "default": True, "aliases": ["dl", "dless"], "var_id": "wlex5028", "value_id": "zqor3g5q"},
+				{"name": "coindupe", "aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe"], "var_id": "wlex5028", "value_id": "0135mjrq"}
 			]
 		}
 	},
@@ -113,6 +113,6 @@ LEADERBOARD_DATA = {
 				{"name": "console", "var_id": "kn00yj3n", "value_id": "qox8264q"},
 				{"name": "emulator", "default": True, "var_id": "kn00yj3n", "value_id": "1w4vrx6q"}
 			]
-		},
+		}
 	}
 }

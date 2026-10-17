@@ -361,17 +361,14 @@ def latest_run(owner, game, platform, board, args):
 	if result is None:
 		return "No run found for this criteria."
 
-	# Output the relevant text, after a little processing,
+	# Return the relevant output text to the user, based on the run data.
 	emulator_text = " (Emulator)" if result.emulator and result.platform != "8gej2n93" else ""
-	place = getattr(result, "place", "?")
-	time = getattr(result, "time", "unknown time")
-	link = getattr(result, "link", "no link")
-	is_current_wr = "👑 " if place == 1 else ""
+	is_current_wr = "👑 " if result.place == 1 else ""
 	if flags["world_record"]:
 		return f"The current world record for {clean_name}{emulator_text} is held by {result.player} with a time of {result.time}: {result.link}"
 	if flags["place_num"] > 0:
-		return f"{is_current_wr}{result.player} holds position {place} in {clean_name}{emulator_text} with a time of {result.time}: {result.link}"
-	return f"{is_current_wr}The most recent verified run for {player} in {clean_name}{emulator_text} is {time} (#{place}): {link}"
+		return f"{is_current_wr}{result.player} holds position {result.place} in {clean_name}{emulator_text} with a time of {result.time}: {result.link}"
+	return f"{is_current_wr}The most recent verified run for {player} in {clean_name}{emulator_text} is {result.time} (#{result.place}): {result.link}"
 
 
 # Find a PB for the given player and category.

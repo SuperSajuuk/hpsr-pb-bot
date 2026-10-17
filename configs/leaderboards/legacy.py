@@ -5,7 +5,7 @@
 # both main boards and CE's
 #
 LEADERBOARD_DATA = {
-	"legacy_pc": {
+	"legacy": {
 		"categories": {
 			"Kill Ranrok": {
 				"aliases": ["ranrok", "killranrok"], "board_id": "mke8rznk", "internal_name": "ranrok"
@@ -14,32 +14,40 @@ LEADERBOARD_DATA = {
 				"aliases": ["aq", "quests", "allq", "allquests"], "board_id": "5dwv880k", "internal_name": "allq"
 			}
 		},
+		"platform_mapping": {
+			"pc": ["pc"],
+			"console": ["ps4", "ps5", "xbone", "xbsx", "xbss", "switch"]
+		},
 		"ranrok": {
 			"variables": [
-				{"var_id": "e8mqwzvn", "value_id": "10vomkpl"},
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"}
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "pc", "var_id": "e8mqwzvn", "value_id": "10vomkpl"},
+				{"name": "console", "var_id": "e8mqwzvn", "value_id": "192yx8yq"}
 			]
 		},
 		"any": {
 			"variables": [
-				{"var_id": "e8mqwzvn", "value_id": "10vomkpl"},
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"}
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "pc", "var_id": "e8mqwzvn", "value_id": "10vomkpl"},
+				{"name": "console", "var_id": "e8mqwzvn", "value_id": "192yx8yq"}
 			]
 		},
 		"100": {
 			"variables": [
-				{"var_id": "e8mqwzvn", "value_id": "10vomkpl"},
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"}
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "pc", "var_id": "e8mqwzvn", "value_id": "10vomkpl"},
+				{"name": "console", "var_id": "e8mqwzvn", "value_id": "192yx8yq"}
 			]
 		},
 		"allq": {
 			"variables": [
-				{"var_id": "e8mqwzvn", "value_id": "10vomkpl"},
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
-				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"}
+				{"name": "hard", "var_id": "r8r4kz2n", "value_id": "q8kx0w6q"},
+				{"name": "pc", "var_id": "e8mqwzvn", "value_id": "10vomkpl"},
+				{"name": "console", "var_id": "e8mqwzvn", "value_id": "192yx8yq"}
 			]
 		}
 	},

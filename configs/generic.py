@@ -59,6 +59,8 @@ METADATA_ALIASES = {
 	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"},
 	"Quads": {"aliases": ["q", "qs"]},
 	"Quadless": {"aliases": ["ql", "qless", "quadless"]},
+	"Dupeless": {"aliases": ["dl", "dless", "dupeless",]},
+	"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"]},
 	"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
 	"Set Seed": {"aliases": ["set", "ss", "setseed"]}
 }

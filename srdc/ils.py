@@ -112,31 +112,31 @@ class IndividualLevel:
 		if not cat_name:
 			raise ValueError("The category you have requested could not be found for this IL. Check your spelling and try again. If this persists, it might be a bug.")
 
+		# Obtain the slug URL based on the internal key variable.
+		slug = None
+		for slug_url, aliases in board_slugs.items():
+			if internal_key in aliases:
+				slug = slug_url
+				break
+
 		# If the flag "world_record" has been set, lookup only the WR on these parameters.
 		# Otherwise, look up the users' specific IL submission.
 		var_filters = self.utils.generate_var_filters(variables, None)
 		if is_wr:
-			run = self.lookup_il_world_record(internal_key, board_slugs, ind_level_id, cat_name)
+			run = self.lookup_il_world_record(slug, ind_level_id, cat_name)
 		else:
-			run = self.lookup_il(internal_key, board_slugs, ind_level_id, cat_name, player, var_filters)
+			run = self.lookup_il(slug, ind_level_id, cat_name, player, var_filters)
 
 		# Set the clean name and return the run that was found.
 		cat_clean_name = f"{ind_level_name} {cat_name}"
 		return run, cat_clean_name, game_name
 
-	def lookup_il(self, internal_key, slugs, level_id, category_meta, player, variables=None) -> SpeedRun | None:
+	def lookup_il(self, slug, level_id, category_meta, player, variables=None) -> SpeedRun | None:
 		"""
 		Look up the fastest verified run for a player in an individual level submission.
 		As ILs are much simpler in SRDC due to lesser options, the code similarly
 		does minimal processing and relies on the data provided by SRDC.
 		"""
-		# Parse the internal_key and cat_key to obtain the game and category.
-		slug = None
-		for slug_url, aliases in slugs.items():
-			if internal_key in aliases:
-				slug = slug_url
-				break
-
 		# Return the game code and then parse the category name for ID.
 		game_id, game_cats = self.api.get_game_code(slug, redis_key="levels", type_filter="per-level")
 		category_id = None
@@ -175,23 +175,16 @@ class IndividualLevel:
 		sr.place = place
 		return sr
 
-	def lookup_il_world_record(self, internal_key, slugs, level_id, category_meta) -> SpeedRun | None:
+	def lookup_il_world_record(self, slug, level_id, category_name) -> SpeedRun | None:
 		"""
 		Queries SRDC to find the current world record submission
 		for an IL.
 		"""
-		# Parse the internal_key and cat_key to obtain the game and category.
-		slug = None
-		for slug_url, aliases in slugs.items():
-			if internal_key in aliases:
-				slug = slug_url
-				break
-
 		# Return the game code and then parse the category name for ID.
 		game_id, game_cats = self.api.get_game_code(slug, redis_key="levels", type_filter="per-level")
 		category_id = None
 		for cat_id, cat_name in game_cats.items():
-			if cat_name == category_meta:
+			if cat_name == category_name:
 				category_id = cat_id
 				break
 

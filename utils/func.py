@@ -176,7 +176,7 @@ class Utilities:
 		return best_run, place
 
 	@staticmethod
-	def generate_var_filters(var_list, flags):
+	def generate_var_filters(var_list, flags, platform=None, platform_vars=None):
 		# Pull in all flags (where flag item is True or its in additional metadata).
 		var_filters = []
 		selected_tokens = set()
@@ -188,6 +188,12 @@ class Utilities:
 			selected_tokens.update(
 				v for v in (flags["ce_board"], flags["cc_board"], flags["mr_board"]) if v is not None
 			)
+
+		# Check if there are platform variable mappings and tokenise them.
+		if platform_vars:
+			for plat_name, aliases in platform_vars.items():
+				if platform in aliases:
+					selected_tokens.add(plat_name)
 
 		# Build the var filters based on the tokens list.
 		for x in var_list:
