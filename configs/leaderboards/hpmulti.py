@@ -19,6 +19,12 @@ LEADERBOARD_DATA = {
 		"Handheld Octofecta": {"aliases": ["hhocto", "hhoctofecta", "handheldocto", "handheldoctofecta"], "internal_name": "hhocto"},
 		"Full Series": {"aliases": ["fs", "fullseries"], "internal_name": "fs"}
 	},
+	"sub_categories": {
+		"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+		"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
+		"All Wizard Cards": {"aliases": ["awc", "wizardcards", "allwizardcards"], "internal_name": "awc"},
+		"No Major Skips": {"aliases": ["nms", "nomajorskips"], "internal_name": "nms"}
+	},
 	"hp_pctri": {
 		"board": "PC Trifecta",
 		"variables": [

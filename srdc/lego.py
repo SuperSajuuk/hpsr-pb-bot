@@ -18,11 +18,9 @@ from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, Miss
 # API for a LEGO Games run submission. This is
 # used by !run only.
 class LEGONormalRun:
-	def __init__(self, api, game_map, category_aliases, sub_category_aliases, md_aliases, lb_config, utils):
+	def __init__(self, api, game_map, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.category_aliases = category_aliases
-		self.sub_category_aliases = sub_category_aliases
 		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
@@ -51,26 +49,29 @@ class LEGONormalRun:
 				top_board_name = name
 				break
 
-		# Check for a table of aliases referring to the categories. Also,
-		# do a check for tb_int_name being in the alias_table.
+		# Check for a table of aliases referring to the categories.
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
-		alias_table = self.category_aliases.get(game)
+		alias_table = cfg.get("sub_categories", None)
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{slug_id}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-		if tb_int_name not in alias_table:
-			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
-		# Use the board_token (the top-level board) to find
+		# Use the board_token (the top-level board) to find the
 		# actual internal token name (this is needed to ensure
 		# random user input always maps to the correct internal
 		# value).
-		#
-		# If this returns None, then whatever token they provided
-		# does not exist in the alias table.
 		sub_category_board = lego_md.get("main_sub_category", None)
-		board_token = alias_table[board_name].get(sub_category_board, None)
+		board_token = None
+		sub_cat_name = None
+		for name, data in alias_table.items():
+			if sub_category_board in data["aliases"]:
+				sub_cat_name = name
+				board_token = data["internal_name"]
+				break
+
+		# After the loop above, if this is still None, then whatever
+		# token they provided does not exist in the alias table.
 		if not board_token:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
@@ -83,7 +84,7 @@ class LEGONormalRun:
 			scn_nocut_mode = " N0CUT5" if is_nocut5_mode else " Standard"
 
 		# Do some additional lookups.
-		internal_key = f"{board_name}_{sub_category_board}{ik_nocut_mode}"
+		internal_key = f"{tb_int_name}_{sub_category_board}{ik_nocut_mode}"
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == top_board_name:
@@ -99,13 +100,6 @@ class LEGONormalRun:
 			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
 			run = self.lookup_lego_run(game_id, category_id, player, var_filters)
-
-		# Unlike other boards, cat_clean_name can be derived from user flags
-		sub_cat_name = None
-		for name, aliases in self.sub_category_aliases[game].items():
-			if sub_category_board in aliases:
-				sub_cat_name = name
-				break
 
 		# Process the additional metadata, create the cat name output
 		# and return the data.

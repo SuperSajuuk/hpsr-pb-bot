@@ -17,12 +17,9 @@ import srcomapi.datatypes as dt
 # API for a Multirun submission.
 # This is used by !run only.
 class MultiRun:
-	def __init__(self, api, game_map, category_map, category_aliases, board_aliases, lb_config, utils):
+	def __init__(self, api, game_map, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.category_map = category_map
-		self.category_aliases = category_aliases
-		self.board_aliases = board_aliases
 		self.lb_config = lb_config
 		self.utils = utils
 
@@ -72,11 +69,9 @@ class MultiRun:
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
-		alias_table = self.category_aliases.get(slug_id)
+		alias_table = cfg.get("sub_categories", Non)
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{slug_id}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-		if mr_board not in alias_table:
-			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
 		# Use the board_token (the top-level board) to find the
 		# actual internal token name (this is needed to ensure
@@ -84,9 +79,11 @@ class MultiRun:
 		# value).
 		board_token = None
 		category_id = None
-		for name, aliases in alias_table.get(tb_int_name, {}).items():
-			if mr_category_board in aliases:
-				board_token = name
+		cat_clean_name = None
+		for name, data in alias_table.items():
+			if mr_category_board in data["aliases"]:
+				cat_clean_name = name
+				board_token = data["internal_name"]
 				break
 
 		# After the loop above, if this is still None, then whatever
@@ -113,15 +110,6 @@ class MultiRun:
 			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
 			run = self.lookup_multi_run(game_id, category_id, player, var_filters)
-
-		# Produce a clean name based on the alias value. This allows one
-		# "output" name against lots of aliases for tidiness of the
-		# board aliases.
-		cat_clean_name = None
-		for name, data in self.category_map.items():
-			if mr_category_board in data["aliases"]:
-				cat_clean_name = name
-				break
 
 		# Return the run object and the alias_name produced.
 		return run, cat_clean_name, mr_top_board_name

@@ -59,10 +59,17 @@ METADATA_ALIASES = {
 	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"},
 	"Quads": {"aliases": ["q", "qs"]},
 	"Quadless": {"aliases": ["ql", "qless", "quadless"]},
-	"Dupeless": {"aliases": ["dl", "dless", "dupeless",]},
+	"Dupeless": {"aliases": ["dl", "dless", "dupeless"]},
 	"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"]},
 	"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
-	"Set Seed": {"aliases": ["set", "ss", "setseed"]}
+	"Set Seed": {"aliases": ["set", "ss", "setseed"]},
+	"All Gems": {"aliases": ["ag", "allg", "gems", "allgems"]},
+	"102%": {"aliases": ["102", "102%"]},
+	"105%": {"aliases": ["105", "105%"]},
+	"108%": {"aliases": ["108", "108%"]},
+	"Any% No OOB": {"aliases": ["nooob", "anynooob", "any%nooob"]},
+	"Secret Ending": {"aliases": ["se", "secret", "ending", "secretending"]},
+	"Major Glitches": {"aliases": ["mg", "majorglitches"]}
 }
 
 # Point to the docs if there is an error.

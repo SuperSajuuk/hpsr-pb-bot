@@ -16,10 +16,9 @@ import srcomapi.datatypes as dt
 # API for a category extension run submission.
 # This is used by !run only.
 class CustomContent:
-	def __init__(self, api, game_map, category_aliases, md_aliases, lb_config, utils):
+	def __init__(self, api, game_map, md_aliases, lb_config, utils):
 		self.api = api
 		self.game_map = game_map
-		self.category_aliases = category_aliases
 		self.md_aliases = md_aliases
 		self.lb_config = lb_config
 		self.utils = utils
@@ -46,7 +45,7 @@ class CustomContent:
 
 		# Pull in game id and game cats from cache/SRDC, alongside
 		# the leaderboard data. Custom Content boards will often contain
-		# leaderboard data, so require it -- even if its very limited.
+		# leaderboard data, so require it -- even if it's very limited.
 		slug_id = cc_key["id"]
 		game_id, game_cats = self.api.get_game_code(slug_id)
 		cfg = self.lb_config.get(slug_id)
@@ -69,16 +68,13 @@ class CustomContent:
 		if internal_key not in cfg:
 			raise MissingInternalData(f"Internal key '{internal_key}' cannot be found.")
 
-		# Check for a table of aliases referring to the categories. Also,
-		# do a check for tb_int_name being in the alias_table.
+		# Check for a table of aliases referring to the categories.
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
-		alias_table = self.category_aliases.get(cc_key["id"])
+		alias_table = cfg.get("sub_categories", None)
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{cc_key['id']}, which prevents category matching. Please report this as a bug on the GitHub repository.")
-		if tb_int_name not in alias_table:
-			raise InvalidCategory("The top-board category name provided could not be found in the alias table. Please check your input, and try again.")
 
 		# Use the board_token (the top-level board) to find the
 		# actual internal token name (this is needed to ensure
@@ -86,9 +82,11 @@ class CustomContent:
 		# value).
 		board_token = None
 		category_id = None
-		for name, aliases in alias_table.get(tb_int_name, {}).items():
-			if cc_category_board in aliases:
-				board_token = name
+		cat_alias_name = None
+		for name, data in alias_table.items():
+			if cc_category_board in data["aliases"]:
+				cat_alias_name = name
+				board_token = data["internal_name"]
 				break
 
 		# After the loop above, if this is still None, then whatever
@@ -114,15 +112,6 @@ class CustomContent:
 			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
 			run = self.lookup_cc_run(game_id, category_id, player, var_filters)
-
-		# Produce a clean name based on the alias value. This allows one
-		# "output" name against lots of aliases for tidiness of the
-		# board aliases.
-		cat_alias_name = None
-		for name, aliases in cfg["sub_categories"].items():
-			if cc_category_board in aliases:
-				cat_alias_name = name
-				break
 
 		# Return the run object and the alias_name produced.
 		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)

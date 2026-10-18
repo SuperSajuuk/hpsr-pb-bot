@@ -21,11 +21,8 @@ import redis
 import os
 
 # Import the config data.
+import configs.game_maps as games
 import configs.ils as il_config
-import configs.ce as ce_config
-import configs.cc as cc_config
-import configs.lego as lego_config
-import configs.multi as mr_config
 import configs.normal as nm_config
 import configs.leaderboard as lb_config
 import configs.generic as config
@@ -71,7 +68,7 @@ utils = func.Utilities(api, lb_config.LEADERBOARD_CONFIG, config.PLATFORM_MAP)
 world = wr.WorldRecords(
 	srdc_api=srdc_api,
 	api=api,
-	game_map=nm_config.GAME_MAP,
+	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
@@ -80,7 +77,7 @@ world = wr.WorldRecords(
 )
 normal = normal_run.NormalRun(
 	api=api,
-	game_map=nm_config.GAME_MAP,
+	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
@@ -91,7 +88,7 @@ normal = normal_run.NormalRun(
 il = ind_lvl.IndividualLevel(
 	srdc_api=srdc_api,
 	api=api,
-	game_map=nm_config.GAME_MAP,
+	game_map=games.NM_GAME_MAP,
 	levels_map=il_config.LEVELS_MAP,
 	category_map=nm_config.CATEGORY_MAP,
 	ik_mapping=il_config.INTERNAL_KEY_MAPPING,
@@ -99,34 +96,28 @@ il = ind_lvl.IndividualLevel(
 )
 lg = lego.LEGONormalRun(
 	api=api,
-	game_map=lego_config.GAME_MAP,
-	category_aliases=lego_config.CATEGORY_ALIASES,
-	sub_category_aliases=lego_config.SUB_CATEGORY_ALIASES,
+	game_map=games.LEGO_GAME_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
 cat_ext = ce_run.CategoryExtension(
 	api=api,
-	game_map=ce_config.GAME_MAP,
+	game_map=games.CE_GAME_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
 cust_con = cc_run.CustomContent(
 	api=api,
-	game_map=cc_config.GAME_MAP,
-	category_aliases=cc_config.CATEGORY_ALIASES,
+	game_map=games.CC_GAME_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
 multirun = multi.MultiRun(
 	api=api,
-	game_map=mr_config.GAME_MAP,
-	category_map=mr_config.SUB_CATEGORY_MAP,
-	category_aliases=mr_config.CATEGORY_ALIASES,
-	board_aliases=mr_config.BOARD_ALIASES,
+	game_map=games.MR_GAME_MAP,
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
@@ -235,8 +226,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 
 		# Check if the token contains either --world-record or
 		# the alias --wr. This tells the system only to look
-		# for the current world record run. For now, this is only
-		# usable in the /il/ route.
+		# for the current world record run.
 		if token in ["--world-record", "--wr"]:
 			flags["world_record"] = True
 			continue
@@ -244,7 +234,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Check if the token is a string connected to LEGO boards
 		# At the moment, this is a fairly restricted list, but plan
 		# is to make this handler better in the future.
-		if token in lego_config.FLAG_TOKEN_MATCHES:
+		if token in ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard"]:
 			# Check which token it matched.
 			match token:
 				case _ if token in ["solo", "co-op", "coop"]:
@@ -330,24 +320,24 @@ def latest_run(owner, game, platform, board, args):
 			# This is a custom content run: pass everything to
 			# the processor and store the result in a variable.
 			result, board_name, cat_clean_name = cust_con.process_custom_content(platform, board, flags["cc_board"], player, flags)
-			clean_name = f'{cc_config.GAME_MAP[platform]["name"]} ({board_name} - {cat_clean_name})'
+			clean_name = f'{games.CC_GAME_MAP[platform]["name"]} ({board_name} - {cat_clean_name})'
 		case _ if game in ("ce", "catext"):
 			# This is a category extension: pass everything to
 			# the processor and store the result in a variable.
 			result, cat_clean_name, alias_name = cat_ext.process_category_extension(platform, board, flags["ce_board"], player, flags)
-			clean_name = f'{ce_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
+			clean_name = f'{games.CE_GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _ if game in ("multirun", "multi", "mr"):
 			# This is a multi-run: pass everything to
 			# the processor and store the result in a variable.
 			result, cat_clean_name, alias_name = multirun.process_multi_run(platform, board, flags["mr_board"], player, flags)
-			clean_name = f'{mr_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
+			clean_name = f'{games.MR_GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case "lego":
 			# This is a LEGO main-board game.
 			# Due to LEGO games having more sub-categories than regular
 			# main board categories, they're handled separately due to
 			# extra metadata being needed.
 			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_md"], player, flags)
-			clean_name = f'{lego_config.GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
+			clean_name = f'{games.LEGO_GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# This is a normal main board run which didn't meet any of
 			# the specific conditions above. Pass to the processor and
@@ -402,7 +392,7 @@ def personal_best(owner, game, platform, board, args):
 	lb_cfg = None
 	board_name = None
 	internal_key = f"{game}_{platform}"
-	for key, val in nm_config.GAME_MAP.items():
+	for key, val in games.NM_GAME_MAP.items():
 		if game == key:
 			# Determine the Slug URL
 			mode = "main"
@@ -424,7 +414,7 @@ def personal_best(owner, game, platform, board, args):
 					break
 			break
 	if mode is None:
-		for key, val in ce_config.GAME_MAP.items():
+		for key, val in games.CE_GAME_MAP.items():
 			if game == val["id"]:
 				# Capture leaderboard data
 				mode = "ce"
@@ -434,7 +424,7 @@ def personal_best(owner, game, platform, board, args):
 					alias_table = lb_cfg["sub_categories"]
 				break
 	if mode is None:
-		for key, val in mr_config.GAME_MAP.items():
+		for key, val in games.MR_GAME_MAP.items():
 			if game == val["id"]:
 				mode = "mr"
 				slug = val["id"]
@@ -458,7 +448,7 @@ def personal_best(owner, game, platform, board, args):
 	# Check if board is in the category map.
 	# If it's not there, then the run is not valid and should return.
 	if mode is None:
-		raise exc.InvalidCategory(f"Unknown category: {board}. Try again, or refer to the docs: {config.COMMAND_USAGE_DOC}")
+		raise exc.InvalidCategory(f"Unknown category: {board}. This might be due to an invalid input or this category does not exist.")
 
 	# Switch the mode to set some other missing details.
 	match mode:
@@ -475,12 +465,12 @@ def personal_best(owner, game, platform, board, args):
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
 				raise exc.InvalidCategory(
-					f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+					f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias."
 				)
 
 			# Generate a clean output name.
 			game_name = None
-			for key, val in ce_config.GAME_MAP.items():
+			for key, val in games.CE_GAME_MAP.items():
 				if val["id"] == game:
 					game_name = val["name"]
 					break
@@ -497,12 +487,12 @@ def personal_best(owner, game, platform, board, args):
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
 				raise exc.InvalidCategory(
-					f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias. Check the docs: {config.COMMAND_USAGE_DOC}"
+					f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias."
 				)
 
 			# Generate a clean output name.
 			game_name = None
-			for key, val in mr_config.GAME_MAP.items():
+			for key, val in games.MR_GAME_MAP.items():
 				if val["id"] == game or game in val.get("aliases", []):
 					game_name = val["name"]
 					break
@@ -517,7 +507,7 @@ def personal_best(owner, game, platform, board, args):
 	# If mode is set to "main", derive the clean name here, as we'll use the result data for it.
 	if mode == "main":
 		is_emulator = " (Emulator)" if result.emulator else ""
-		clean_name = f'{nm_config.GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
+		clean_name = f'{games.NM_GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
 
 	# Return the standard string to represent this PB.
 	is_current_wr = "👑 " if result.place == 1 else ""

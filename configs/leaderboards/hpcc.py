@@ -84,5 +84,5 @@ LEADERBOARD_DATA = {
 			{"name": "gless", "var_id": "r8rrqw28", "value_id": "le2eyppl"},
 			{"name": "awc", "var_id": "r8rrqw28", "value_id": "1pyxk9e1"}
 		]
-	},
+	}
 }

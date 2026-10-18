@@ -44,7 +44,16 @@ class NormalRun:
 		board_slugs = None
 		slug = None
 		for key_name, data in self.game_map.items():
-			if game == key_name or game in data.get("aliases", []):
+			# Check for a match via standard methods, or in the shortcuts'
+			# dictionary.
+			matched = (game == key_name or game in data.get("aliases", []))
+			shortcuts = None
+			if not matched:
+				shortcuts = data.get("shortcuts", {}).get(game)
+
+			# Was a match found?
+			if matched or shortcuts:
+				# Assign standard variables from the data block.
 				no_game = False
 				game_int_name = key_name
 				game_name = data["name"]
@@ -52,6 +61,12 @@ class NormalRun:
 				supported_platforms = data.get("platforms", [])
 				is_unsupported = data.get("unsupported", False)
 				ordering_mode = data.get("ordering", "cf")
+
+				# Extend/rewrite some variables from the shortcuts data if present.
+				if shortcuts:
+					am_num = len(flags["additional_metadata"]) + 1
+					flags["additional_metadata"][f"key_{am_num}"] = board
+					board = shortcuts["board_name"]
 				break
 
 		# Do some initial validation checks before continuing.
