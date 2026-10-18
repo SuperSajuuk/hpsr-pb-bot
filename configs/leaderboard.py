@@ -59,3 +59,4 @@ def build_token_set(cfg: dict, board: str) -> set:
 # Build sets containing aliases for token matching in extract_flags.
 CE_TOKEN_LOOKUP = build_token_set(LEADERBOARD_CONFIG, "ce")
 CC_TOKEN_LOOKUP = build_token_set(LEADERBOARD_CONFIG, "cc")
+MR_TOKEN_LOOKUP = build_token_set(LEADERBOARD_CONFIG, "mr")

@@ -194,11 +194,9 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Game must be in the list to trigger this block.
 		mr_match = False
 		if game in ["multirun", "multi", "mr"]:
-			for _, data in mr_config.SUB_CATEGORY_MAP.items():
-				if token in data["aliases"]:
-					flags["mr_board"] = token
-					mr_match = True
-					break
+			if token in lb_config.MR_TOKEN_LOOKUP:
+				flags["mr_board"] = token
+				mr_match = True
 		if mr_match:
 			continue
 

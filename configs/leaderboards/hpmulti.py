@@ -5,6 +5,7 @@
 #
 ROOT_KEY = "hpmulti"
 LEADERBOARD_DATA = {
+	"board_type": "mr",
 	"categories": {
 		"PC Trifecta": {"aliases": ["pctri", "pctrifecta"], "internal_name": "pctri"},
 		"7PC Duofecta": {"aliases": ["7pcduo", "7pcduofecta"], "internal_name": "7pcduo"},
