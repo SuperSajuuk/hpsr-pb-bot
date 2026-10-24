@@ -32,44 +32,18 @@ PLATFORM_MAP = {
 	"wii": {"name": "Wii", "id": "v06dk3e4"}
 }
 
-# Additional metadata aliases
-# Converts the value of the key_1 key in the additional
-# metadata to a human-readable value. Very small list for
-# a rare number of instances
+# This is a set list of normal metadata that most
+# boards will support in some form. This will be
+# joined with game-specific metadata lists when
+# processing any additional metadata.
 METADATA_ALIASES = {
-	"Intro": {"aliases": ["intro"]},
-	"No Intro": {"aliases": ["ni", "nointro", "noint"]},
-	"Story": {"aliases": ["story"]},
-	"Hard": {"aliases": ["hard"]},
-	"1 Player": {"aliases": ["1p", "1player"]},
-	"2 Players": {"aliases": ["2p", "2players"]},
-	"3 Players": {"aliases": ["3p", "3players"]},
-	"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"]},
-	"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"]},
 	"Single Player": {"aliases": ["1p", "sp", "singleplayer"]},
 	"Co-op": {"aliases": ["coop", "co-op"]},
 	"Standard": {"aliases": ["std", "standard"]},
-	"Zipless": {"aliases": ["zl", "zless", "zipless"]},
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"]},
 	"Any%": {"aliases": ["any", "any%"]},
 	"100%": {"aliases": ["100", "100%", "hundo"]},
-	"Glitchless": {"aliases": ["gless", "glitchless"]},
-	"All Wizard Cards": {"aliases": ["awc", "allwizardcards"]},
-	"Unrestricted": {"aliases": ["ur", "unrestricted"], "int_key": "unrestricted"},
-	"Restricted": {"aliases": ["restricted"], "int_key": "restricted"},
-	"Quads": {"aliases": ["q", "qs"]},
-	"Quadless": {"aliases": ["ql", "qless", "quadless"]},
-	"Dupeless": {"aliases": ["dl", "dless", "dupeless"]},
-	"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"]},
-	"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
-	"Set Seed": {"aliases": ["set", "ss", "setseed"]},
-	"All Gems": {"aliases": ["ag", "allg", "gems", "allgems"]},
-	"102%": {"aliases": ["102", "102%"]},
-	"105%": {"aliases": ["105", "105%"]},
-	"108%": {"aliases": ["108", "108%"]},
-	"Any% No OOB": {"aliases": ["nooob", "anynooob", "any%nooob"]},
-	"Secret Ending": {"aliases": ["se", "secret", "ending", "secretending"]},
-	"Major Glitches": {"aliases": ["mg", "majorglitches"]}
+	"Glitchless": {"aliases": ["gless", "glitchless"]}
 }
 
 # Point to the docs if there is an error.

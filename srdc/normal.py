@@ -108,8 +108,11 @@ class NormalRun:
 		if not_board:
 			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
-		# Process additional metadata and then get the Game ID/Category list from SRDC.
-		cat_clean_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, category_name, internal_key)
+		# Combine the standard metadata list with any game specific metadata.
+		# Then, process the additional metadata and get the Game ID/Category list.
+		all_metadata = self.md_aliases.copy()
+		all_metadata.update(board_cfg.get("metadata", {}))
+		cat_clean_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
 		game_id, game_cats = self.api.get_game_code(slug)
 
 		# Check that there is a category matching the one we asked for.
@@ -208,7 +211,5 @@ class NormalRun:
 		if best_run is None:
 			return None
 
-		# Extract all run details and the leaderboard placement, then return the run object.
-		sr = self.utils.extract_run(best_run, player)
-		sr.place = place
-		return sr
+		# Return the run object.
+		return self.utils.extract_run(best_run, player, place)

@@ -44,10 +44,15 @@ LEADERBOARD_DATA = {
 	"hp4": {
 		"categories": {
 			"All Shields": {
-				"aliases": ["as", "shields", "allshields"],
+				"aliases": ["as", "alls", "shields", "allshields"],
 				"board_id": "wkp197jk",
 				"internal_name": "allshields"
 			}
+		},
+		"metadata": {
+			"1 Player": {"aliases": ["1p", "1player"]},
+			"2 Players": {"aliases": ["2p", "2players"]},
+			"3 Players": {"aliases": ["3p", "3players"]}
 		},
 		"any": {
 			"variables": [

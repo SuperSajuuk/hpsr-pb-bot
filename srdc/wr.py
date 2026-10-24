@@ -58,5 +58,4 @@ class WorldRecords:
 		# This doesn't need to be sorted, nor do we need to find run placement, as the
 		# parameters ensure only one run will be returned, which will be the world record.
 		# Just return this run from the data given.
-		sr = self.utils.extract_run(run["runs"][0]["run"], run["players"]["data"][0]["names"]["international"])
-		return sr
+		return self.utils.extract_run(run["runs"][0]["run"], run["players"]["data"][0]["names"]["international"])

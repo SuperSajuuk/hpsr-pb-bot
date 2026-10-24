@@ -200,10 +200,8 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		if mr_match:
 			continue
 
-		# Check if the token contains the string --player=
-		# or its alias --p=. If no value is provided, it will
-		# still be set to None and thus ignored.
-		if token.startswith("--player=") or token.startswith("--p="):
+		# Check if the token starts with --player= or its alias --p=.
+		if token.startswith(("--player=", "--p=")):
 			_, _, p_name = token.partition("=")
 			p_name = p_name.lstrip("=")
 			flags["player"] = p_name if p_name else None
@@ -212,7 +210,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Check if the token contains --position or its aliases.
 		# This is used when a requestor wants to know who submitted
 		# a run at a specific place on a leaderboard. The default value
-		# is -1, which will be ignored. Only usable in /run/ at the moment.
+		# is -1, which will be ignored.
 		if token.startswith(("--position=", "--pos=", "--place=")):
 			_, _, pos_num = token.partition("=")
 			pos_num = pos_num.lstrip("=")
@@ -241,9 +239,9 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 					flags["lego_md"]["nocut_mode"] = True if token != "standard" else False
 			continue
 
-		# Nothing was found. Perhaps its additional metadata:
-		# add an incrementing key number value pair to the
-		# metadata list
+		# Nothing was found: simply add an incrementing
+		# key number value pair to the metadata list, where
+		# the value is the un-matched token.
 		flags["additional_metadata"][f"key_{key_num}"] = token
 		key_num += 1
 

@@ -114,7 +114,9 @@ class CustomContent:
 			run = self.lookup_cc_run(game_id, category_id, player, var_filters)
 
 		# Return the run object and the alias_name produced.
-		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, cat_alias_name)
+		all_metadata = self.md_aliases.copy()
+		all_metadata.update(cfg.get("metadata", {}))
+		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
 		return run, cc_top_board_name, cat_alias_name
 
 	def lookup_cc_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:
@@ -148,6 +150,4 @@ class CustomContent:
 			return None
 
 		# Extract the run object and return it.
-		sr = self.utils.extract_run(best_run, player)
-		sr.place = place
-		return sr
+		return self.utils.extract_run(best_run, player, place)

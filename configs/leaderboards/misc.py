@@ -11,6 +11,10 @@ LEADERBOARD_DATA = {
 			"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
 			"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"}
 		},
+		"metadata": {
+			"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"]},
+			"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"]}
+		},
 		"1s": {
 			"variables": [
 				{"var_id": "onvj5pwn", "value_id": "9qj9mgel"},
@@ -48,6 +52,9 @@ LEADERBOARD_DATA = {
 				"internal_name": "te"
 			}
 		},
+		"metadata": {
+			"Zipless": {"aliases": ["zl", "zless", "zipless"]}
+		},
 		"any": {
 			"variables": [
 				{"name": "std", "aliases": ["standard"], "var_id": "6nj54el4", "value_id": "0q5mvvlp"},
@@ -78,6 +85,12 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"kao2": {
+		"metadata": {
+			"Quads": {"aliases": ["q", "qs"]},
+			"Quadless": {"aliases": ["ql", "qless", "quadless"]},
+			"Dupeless": {"aliases": ["dl", "dless", "dupeless"]},
+			"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"]}
+		},
 		"any": {
 			"variables": [
 				{"name": "quads", "default": True, "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},

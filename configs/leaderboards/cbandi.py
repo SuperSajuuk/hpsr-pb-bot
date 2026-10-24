@@ -14,6 +14,15 @@ LEADERBOARD_DATA = {
 			"pc": ["pc"],
 			"console": ["ps4", "ps5", "xbone", "xbsx", "xbss", "switch"]
 		},
+		"metadata": {
+			"All Gems": {"aliases": ["ag", "allg", "gems", "allgems"]},
+			"102%": {"aliases": ["102", "102%"]},
+			"105%": {"aliases": ["105", "105%"]},
+			"108%": {"aliases": ["108", "108%"]},
+			"Any% No OOB": {"aliases": ["nooob", "anynooob", "any%nooob"]},
+			"Secret Ending": {"aliases": ["se", "secret", "ending", "secretending"]},
+			"Major Glitches": {"aliases": ["mg", "majorglitches"]}
+		},
 		"cb1": {
 			"variables": [
 				{"name": "any", "var_id": "789763nw", "value_id": "8149w3vq"},

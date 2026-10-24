@@ -171,9 +171,7 @@ class IndividualLevel:
 			return None
 
 		# Extract run details and return it.
-		sr = self.utils.extract_run(best_run, player)
-		sr.place = place
-		return sr
+		return self.utils.extract_run(best_run, player, place)
 
 	def lookup_il_world_record(self, slug, level_id, category_name) -> SpeedRun | None:
 		"""
@@ -208,5 +206,4 @@ class IndividualLevel:
 		# This doesn't need to be sorted, nor do we need to find run placement, as the
 		# parameters ensure only one run will be returned, which will be the world record.
 		# Just return this run from the data given.
-		sr = self.utils.extract_run(run["runs"][0]["run"], run["players"]["data"][0]["names"]["international"])
-		return sr
+		return self.utils.extract_run(run["runs"][0]["run"], run["players"]["data"][0]["names"]["international"])

@@ -49,6 +49,10 @@ LEADERBOARD_DATA = {
 			"aliases": ["bo", "bout", "blackout"], "internal_name": "blackout"
 		}
 	},
+	"metadata": {
+		"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
+		"Set Seed": {"aliases": ["set", "ss", "setseed"]}
+	},
 	"hp_fm": {
 		"variables": [
 			{"name": "any", "var_id": "e8mp25x8", "value_id": "14o9nevq"},

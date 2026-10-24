@@ -135,6 +135,4 @@ class LEGONormalRun:
 			return None
 
 		# Extract all run details and return it
-		sr = self.utils.extract_run(best_run, player)
-		sr.place = place
-		return sr
+		return self.utils.extract_run(best_run, player, place)

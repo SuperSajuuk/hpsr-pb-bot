@@ -196,7 +196,7 @@ GAME_MAP_DATA = {
 	"cnst": {
 		"name": "Crash Bandicoot: N. Sane Trilogy",
 		"aliases": ["crashnst", "cnsane", "crashnsane"],
-		"platforms": ["ps4", "ps5", "xbone", "xb1x", "xbss", "xbsx"],
+		"platforms": ["pc", "ps4", "ps5", "xbone", "xb1x", "xbss", "xbsx"],
 		"slugs": {
 			"crashnst": [
 				"cnst_ps4", "cnst_ps5", "cnst_xbone", "cnst_xb1x", "cnst_xbss", "cnst_xbsx",

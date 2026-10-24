@@ -180,6 +180,11 @@ LEADERBOARD_DATA = {
 			"aliases": ["ww", "wizarding", "wizardingworld"], "internal_name": "ww"
 		}
 	},
+	"metadata": {
+		"1 Player": {"aliases": ["1p", "1player"]},
+		"2 Players": {"aliases": ["2p", "2players"]},
+		"3 Players": {"aliases": ["3p", "3players"]}
+	},
 	"hp_1pc": {
 		"variables": [
 			{"name": "100gless", "var_id": "789x9o08", "value_id": "9qj95y0l"},

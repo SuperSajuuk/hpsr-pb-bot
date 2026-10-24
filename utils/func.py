@@ -29,7 +29,7 @@ class Utilities:
 		# Check the value of the position number given.
 		# -1 means no number, or an invalid number, was provided.
 		if position == -1:
-			raise InvalidPosNumber("No position number has been provided. A whole number between 1-200 inclusive is required.")
+			raise InvalidPosNumber("No position number has been provided. A whole number is required.")
 
 		# Look for a run that matches requirements.
 		# Unlike normal runs, this only uses leaderboard lookup, as it's the only
@@ -55,9 +55,7 @@ class Utilities:
 
 		# Extract run details from the object.
 		player = self.api.get_srdc_user(run["run"]["players"][0]["id"], arg_type="user_id")
-		sr = self.extract_run(run["run"], player)
-		sr.place = run["place"]
-		return sr
+		return self.extract_run(run["run"], player, run["place"])
 
 	def resolve_leaderboard_config(self, game_key: str, internal_key: str) -> dict | None:
 		"""

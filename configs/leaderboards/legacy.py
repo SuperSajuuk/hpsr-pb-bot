@@ -18,6 +18,10 @@ LEADERBOARD_DATA = {
 			"pc": ["pc"],
 			"console": ["ps4", "ps5", "xbone", "xbsx", "xbss", "switch"]
 		},
+		"metadata": {
+			"Story": {"aliases": ["story"]},
+			"Hard": {"aliases": ["hard"]}
+		},
 		"ranrok": {
 			"variables": [
 				{"name": "story", "var_id": "r8r4kz2n", "value_id": "1dkjyxgl"},
@@ -88,6 +92,10 @@ LEADERBOARD_DATA = {
 		"sub_categories": {
 			"Story": {"aliases": ["story"], "internal_name": "story"},
 			"Hard": {"aliases": ["hard"], "internal_name": "hard"}
+		},
+		"metadata": {
+			"Intro": {"aliases": ["intro"]},
+			"No Intro": {"aliases": ["ni", "nointro", "noint"]}
 		},
 		"legacy_fd": {
 			"variables": [
