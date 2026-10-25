@@ -219,5 +219,22 @@ GAME_MAP_DATA = {
 			"dx": ["dx_pc", "dx_ps2", "dex_pc", "dex_ps2", "deusex_pc", "deusex_ps2"]
 		}
 	},
-	"": {}
+	"skyrim": {
+		"name": "The Elder Scrolls V: Skyrim",
+		"aliases": ["tesv", "tesskyrim", "esvskyrim", "tesvs"],
+		"platforms": ["pc", "ps3", "ps4", "ps5", "xbone", "x360", "xbss", "xbsx", "switch"],
+		"slugs": {
+			"skyrim": [
+				"skyrim_pc", "skyrim_ps3", "skyrim_ps4", "skyrim_ps5", "skyrim_xbone", "skyrim_x360",
+				"skyrim_xbss", "skyrim_xbsx", "skyrim_switch", "tesv_pc", "tesv_ps3", "tesv_ps4",
+				"tesv_ps5",	"tesv_xbone", "tesv_x360", "tesv_xbss", "tesv_xbsx", "tesv_switch",
+				"tesskyrim_pc", "tesskyrim_ps3", "tesskyrim_ps4", "tesskyrim_ps5", "tesskyrim_xbone",
+				"tesskyrim_x360", "tesskyrim_xbss", "tesskyrim_xbsx", "tesskyrim_switch", "esvskyrim_pc",
+				"esvskyrim_ps3", "esvskyrim_ps4", "esvskyrim_ps5", "esvskyrim_xbone", "esvskyrim_x360",
+				"esvskyrim_xbss", "esvskyrim_xbsx", "esvskyrim_switch", "tesvs_pc", "tesvs_ps3",
+				"tesvs_ps4", "tesvs_ps5", "tesvs_xbone", "tesvs_x360", "tesvs_xbss", "tesvs_xbsx",
+				"tesvs_switch"
+			]
+		}
+	}
 }
