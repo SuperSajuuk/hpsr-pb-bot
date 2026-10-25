@@ -218,5 +218,6 @@ GAME_MAP_DATA = {
 		"slugs": {
 			"dx": ["dx_pc", "dx_ps2", "dex_pc", "dex_ps2", "deusex_pc", "deusex_ps2"]
 		}
-	}
+	},
+	"": {}
 }

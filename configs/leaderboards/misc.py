@@ -132,12 +132,12 @@ LEADERBOARD_DATA = {
 		"categories": {
 			"All Skillpoints": {"aliases": ["as", "alls", "skill", "skillpoints", "allskills", "allskillpoints"], "internal_name": "alls"},
 			"Ultimate Run": {"aliases": ["ur", "ultimate", "urun", "ultimaterun"], "internal_name": "ur"},
-			"Training": {"aliases": ["t", "training"], "internal_name": "training"},
-			"Challenge Runs": {"aliases": ["cr", "challenge", "runs", "challengeruns"], "internal_name": "cr"}
+			"Training": {"aliases": ["t", "training"], "internal_name": "training"}
 		},
 		"metadata": {
 			"User.ini edits": {"aliases": ["ini", "uini", "userini", "iniedits"], "var_key": "ini"},
 			"No user.ini edits": {"aliases": ["noini", "nouini", "noiniedits", "nouserini"], "var_key": "noini"},
+			"Non-segmented": {"aliases": ["ns", "noseg", "nosegment", "nosegmented"], "var_key": "noseg"},
 			"Segmented": {"aliases": ["seg", "segment", "segmented"], "var_key": "seg"},
 			"420%": {"aliases": ["420", "420%"], "var_key": "420"}
 		},
@@ -148,6 +148,18 @@ LEADERBOARD_DATA = {
 				{"name": "seg", "var_id": "wl364mwl", "value_id": "013vnoyl"},
 				{"name": "gless", "var_id": "wl364mwl", "value_id": "81wmxv6q"},
 				{"name": "420", "var_id": "wl364mwl", "value_id": "zqoy6841"}
+			]
+		},
+		"ur": {
+			"variables": [
+				{"name": "noseg", "var_id": "2lgzxv68", "value_id": "8105kopq"},
+				{"name": "seg", "var_id": "2lgzxv68", "value_id": "mlnyj4n1"}
+			]
+		},
+		"training": {
+			"variables": [
+				{"name": "noseg", "var_id": "wle642r", "value_id": "5lek726l"},
+				{"name": "seg", "var_id": "wle642r", "value_id": "rqv45kyq"}
 			]
 		}
 	}
