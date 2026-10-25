@@ -18,30 +18,3 @@ CATEGORY_MAP = {
 	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
 	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"}
 }
-
-# Platform category map
-# This is an alternative version of CATEGORY_MAP, but designed
-# for game boards which set the top category to platform names
-PLATFORM_CATEGORY_MAP = {
-	"r1": {
-		"PS1": ["ps1", "psx"],
-		"PC": ["pc"],
-		"DSI": ["ds"],
-		"GBA": ["gba"],
-		"Sega Saturn": ["saturn", "segasaturn", "ss"],
-		"Atari Jaguar": ["jaguar", "atari", "atarijaguar", "aj"]
-	},
-	"r3": {
-		"GCN": ["gcn", "wii"],
-		"GCN Emu": ["gcn"],
-		"HD": ["hd", "ps3", "x360", "xss"],
-		"PC": ["pc"],
-		"PS2": ["ps2"],
-		"Xbox": ["xbox"]
-	},
-	"ssbfbbr": {
-		"PC": ["pc"],
-		"Console": ["ps4", "ps5", "xbone", "xboxone"],
-		"Mobile": ["iOS", "ios", "android"]
-	}
-}

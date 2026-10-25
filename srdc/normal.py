@@ -16,11 +16,10 @@ from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, Unsu
 # API for a normal run submission. This is
 # used by !run only.
 class NormalRun:
-	def __init__(self, api, game_map, platform_map, plat_category_map, category_map, md_aliases, wr, utils):
+	def __init__(self, api, game_map, platform_map, category_map, md_aliases, wr, utils):
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
-		self.plat_cat_map = plat_category_map
 		self.category_map = category_map
 		self.md_aliases = md_aliases
 		self.wr = wr
@@ -131,12 +130,12 @@ class NormalRun:
 						category_id = cat_id
 						break
 			case "pf":
-				# Use the internal key to get the pieces.
-				codes = internal_key.split("_")
-				pm = self.plat_cat_map[codes[0]]
+				# Take the list of platform categories defined,
+				# then see if it can be found in the aliases.
+				pcs = board_cfg.get("platform_categories", {})
 				wanted_category = None
-				for cat_name, aliases in pm.items():
-					if codes[1] not in aliases:
+				for cat_name, aliases in pcs.items():
+					if platform not in aliases:
 						continue
 					if flags["emulator"]:
 						if "emu" in cat_name.lower() or cat_name == "emulator":

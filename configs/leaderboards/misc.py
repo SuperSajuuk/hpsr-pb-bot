@@ -11,6 +11,11 @@ LEADERBOARD_DATA = {
 			"77 Spatulas": {"aliases": ["77s", "77spat", "77spatulas"], "internal_name": "77s"},
 			"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"}
 		},
+		"platform_categories": {
+			"PC": ["pc"],
+			"Console": ["ps4", "ps5", "xbone", "xboxone"],
+			"Mobile": ["iOS", "ios", "android"]
+		},
 		"metadata": {
 			"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"], "var_key": "nla"},
 			"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"], "var_key": "la"}

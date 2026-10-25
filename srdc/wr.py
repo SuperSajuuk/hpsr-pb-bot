@@ -15,12 +15,11 @@ from utils.exceptions import InvalidGame, InvalidCategory, InvalidPlatform, Unsu
 # handles WR's in !run, but the !il lookup will
 # move here once I know what bits to include.
 class WorldRecords:
-	def __init__(self, srdc_api, api, game_map, platform_map, plat_category_map, category_map, md_aliases, utils):
+	def __init__(self, srdc_api, api, game_map, platform_map, category_map, md_aliases, utils):
 		self.srdc = srdc_api
 		self.api = api
 		self.game_map = game_map
 		self.platform_map = platform_map
-		self.plat_cat_map = plat_category_map
 		self.category_map = category_map
 		self.md_aliases = md_aliases
 		self.utils = utils

@@ -9,6 +9,14 @@ LEADERBOARD_DATA = {
 			"Sax%": {"aliases": ["sax", "mrsax", "sax%", "mrsax%"], "internal_name": "sax"},
 			"Skops%": {"aliases": ["skops", "mrskops", "skops%", "mrskops%"], "internal_name": "skops"}
 		},
+		"platform_categories": {
+			"PS1": ["ps1", "psx"],
+			"PC": ["pc"],
+			"DSI": ["ds"],
+			"GBA": ["gba"],
+			"Sega Saturn": ["saturn", "segasaturn", "ss"],
+			"Atari Jaguar": ["jaguar", "atari", "atarijaguar", "aj"]
+		},
 		"100": {
 			"variables": [
 				{"var_id": "2lgzx5o8", "value_id": "xqkr5ky1"}
@@ -35,6 +43,14 @@ LEADERBOARD_DATA = {
 			"Glitched": {"aliases": ["glitched"], "internal_name": "glitched"},
 			"All Teensies": {"aliases": ["at", "allt", "allteensies"], "internal_name": "allt"},
 			"No Teensies": {"aliases": ["not", "noteensies"], "internal_name": "not"}
+		},
+		"platform_categories": {
+			"GCN": ["gcn", "wii"],
+			"GCN Emu": ["gcn"],
+			"HD": ["hd", "ps3", "x360", "xss"],
+			"PC": ["pc"],
+			"PS2": ["ps2"],
+			"Xbox": ["xbox"]
 		},
 		"any": {
 			"variables": [

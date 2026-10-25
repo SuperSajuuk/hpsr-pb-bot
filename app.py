@@ -71,7 +71,6 @@ world = wr.WorldRecords(
 	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
-	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	utils=utils
 )
@@ -80,7 +79,6 @@ normal = normal_run.NormalRun(
 	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
 	category_map=nm_config.CATEGORY_MAP,
-	plat_category_map=nm_config.PLATFORM_CATEGORY_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	wr=world,
 	utils=utils
