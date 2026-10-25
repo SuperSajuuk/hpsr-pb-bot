@@ -92,7 +92,7 @@ class MultiRun:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
 		# Look for the multi-run "run".
-		# To avoid issues, ce_board is overwritten with the value of
+		# To avoid issues, mr_board is overwritten with the value of
 		# board_token above.
 		flags["mr_board"] = board_token
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)

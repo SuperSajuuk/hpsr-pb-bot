@@ -1,5 +1,5 @@
 #
-# Find PBs on Speedrun.com
+# Find ILs, Runs or PBs on Speedrun.com
 #
 # This program instantiates and runs a Flask microservice
 # that queries the speedrun.com API.
@@ -230,7 +230,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# Check if the token is a string connected to LEGO boards
 		# At the moment, this is a fairly restricted list, but plan
 		# is to make this handler better in the future.
-		if token in ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard"]:
+		if game == "lego" and token in ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard"]:
 			# Check which token it matched.
 			match token:
 				case _ if token in ["solo", "co-op", "coop"]:
@@ -460,9 +460,7 @@ def personal_best(owner, game, platform, board, args):
 
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
-				raise exc.InvalidCategory(
-					f"CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias."
-				)
+				raise exc.InvalidCategory("CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias.")
 
 			# Generate a clean output name.
 			game_name = None
@@ -482,9 +480,7 @@ def personal_best(owner, game, platform, board, args):
 
 			# If alias_found is False, then the alias is invalid.
 			if not alias_found:
-				raise exc.InvalidCategory(
-					f"Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias."
-				)
+				raise exc.InvalidCategory("Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias.")
 
 			# Generate a clean output name.
 			game_name = None
@@ -544,7 +540,6 @@ def internal_error(error):
 
 @app.errorhandler(408)
 def timeout_error(error):
-	# Return timeout error
 	return f"Request timed out, try again later: {str(error)}."
 
 

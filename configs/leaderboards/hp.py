@@ -50,29 +50,29 @@ LEADERBOARD_DATA = {
 			}
 		},
 		"metadata": {
-			"1 Player": {"aliases": ["1p", "1player"]},
-			"2 Players": {"aliases": ["2p", "2players"]},
-			"3 Players": {"aliases": ["3p", "3players"]}
+			"1 Player": {"aliases": ["1p", "1player"], "var_key": "1p"},
+			"2 Players": {"aliases": ["2p", "2players"], "var_key": "2p"},
+			"3 Players": {"aliases": ["3p", "3players"], "var_key": "3p"}
 		},
 		"any": {
 			"variables": [
-				{"name": "1p", "default": True, "aliases": ["1player"], "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
-				{"name": "2p", "aliases": ["2players"], "var_id": "dlo3pjrl", "value_id": "klr786oq"},
-				{"name": "3p", "aliases": ["3players"], "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
+				{"name": "1p", "default": True, "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
+				{"name": "2p", "var_id": "dlo3pjrl", "value_id": "klr786oq"},
+				{"name": "3p", "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "1p", "default": True, "aliases": ["1player"], "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
-				{"name": "2p", "aliases": ["2players"], "var_id": "dlo3pjrl", "value_id": "klr786oq"},
-				{"name": "3p", "aliases": ["3players"], "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
+				{"name": "1p", "default": True, "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
+				{"name": "2p", "var_id": "dlo3pjrl", "value_id": "klr786oq"},
+				{"name": "3p", "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
 			]
 		},
 		"allshields": {
 			"variables": [
-				{"name": "1p", "default": True, "aliases": ["1player"], "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
-				{"name": "2p", "aliases": ["2players"], "var_id": "dlo3pjrl", "value_id": "klr786oq"},
-				{"name": "3p", "aliases": ["3players"], "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
+				{"name": "1p", "default": True, "var_id": "dlo3pjrl", "value_id": "5lerwd5q"},
+				{"name": "2p", "var_id": "dlo3pjrl", "value_id": "klr786oq"},
+				{"name": "3p", "var_id": "dlo3pjrl", "value_id": "gq7gyzyq"}
 			]
 		}
 	},

@@ -12,8 +12,8 @@ LEADERBOARD_DATA = {
 			"100 Spatulas": {"aliases": ["100s", "100spat", "100spatulas"], "internal_name": "100s"}
 		},
 		"metadata": {
-			"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"]},
-			"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"]}
+			"No Lag Abuse": {"aliases": ["nla", "nolag", "nolagabuse"], "var_key": "nla"},
+			"Lag Abuse": {"aliases": ["la", "lag", "lagabuse"], "var_key": "la"}
 		},
 		"1s": {
 			"variables": [
@@ -53,20 +53,20 @@ LEADERBOARD_DATA = {
 			}
 		},
 		"metadata": {
-			"Zipless": {"aliases": ["zl", "zless", "zipless"]}
+			"Zipless": {"aliases": ["zl", "zless", "zipless"], "var_key": "zl"}
 		},
 		"any": {
 			"variables": [
-				{"name": "std", "aliases": ["standard"], "var_id": "6nj54el4", "value_id": "0q5mvvlp"},
-				{"name": "zl", "aliases": ["zip", "zless", "zipless"], "var_id": "6nj54el4", "value_id": "4lxk5g12"},
-				{"name": "nmg", "aliases": ["nomajorglitches"], "var_id": "6nj54el4", "value_id": "zqo7k51y"}
+				{"name": "std", "var_id": "6nj54el4", "value_id": "0q5mvvlp"},
+				{"name": "zl", "var_id": "6nj54el4", "value_id": "4lxk5g12"},
+				{"name": "nmg", "var_id": "6nj54el4", "value_id": "zqo7k51y"}
 			]
 		},
 		"te": {
 			"variables": [
-				{"name": "std", "aliases": ["standard"], "var_id": "jlz2k0l2", "value_id": "013ydrl5"},
-				{"name": "zl", "aliases": ["zip", "zless", "zipless"], "var_id": "jlz2k0l2", "value_id": "5lexv6qo"},
-				{"name": "nmg", "aliases": ["nomajorglitches"], "var_id": "jlz2k0l2", "value_id": "rqvngr16"}
+				{"name": "std", "var_id": "jlz2k0l2", "value_id": "013ydrl5"},
+				{"name": "zl", "var_id": "jlz2k0l2", "value_id": "5lexv6qo"},
+				{"name": "nmg", "var_id": "jlz2k0l2", "value_id": "rqvngr16"}
 			]
 		}
 	},
@@ -86,21 +86,21 @@ LEADERBOARD_DATA = {
 	},
 	"kao2": {
 		"metadata": {
-			"Quads": {"aliases": ["q", "qs"]},
-			"Quadless": {"aliases": ["ql", "qless", "quadless"]},
-			"Dupeless": {"aliases": ["dl", "dless", "dupeless"]},
-			"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"]}
+			"Quads": {"aliases": ["q", "qs", "quads"], "var_key": "quads"},
+			"Quadless": {"aliases": ["ql", "qless", "quadless"], "var_key": "quadless"},
+			"Dupeless": {"aliases": ["dl", "dless", "dupeless"], "var_key": "dupeless"},
+			"Coin Duping": {"aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe", "coindupe"], "var_key": "coindupe"}
 		},
 		"any": {
 			"variables": [
-				{"name": "quads", "default": True, "aliases": ["qs", "q"], "var_id": "kn09kyon", "value_id": "qkeok0nq"},
-				{"name": "quadless", "aliases": ["qless", "ql"], "var_id": "kn09kyon", "value_id": "1pyewog1"}
+				{"name": "quads", "default": True, "var_id": "kn09kyon", "value_id": "qkeok0nq"},
+				{"name": "quadless", "var_id": "kn09kyon", "value_id": "1pyewog1"}
 			]
 		},
 		"100": {
 			"variables": [
-				{"name": "dupeless", "default": True, "aliases": ["dl", "dless"], "var_id": "wlex5028", "value_id": "zqor3g5q"},
-				{"name": "coindupe", "aliases": ["coinduping", "coins", "duping", "cd", "cduping", "cdupe"], "var_id": "wlex5028", "value_id": "0135mjrq"}
+				{"name": "dupeless", "default": True, "var_id": "wlex5028", "value_id": "zqor3g5q"},
+				{"name": "coindupe", "var_id": "wlex5028", "value_id": "0135mjrq"}
 			]
 		}
 	},
@@ -125,6 +125,29 @@ LEADERBOARD_DATA = {
 			"variables": [
 				{"name": "console", "var_id": "kn00yj3n", "value_id": "qox8264q"},
 				{"name": "emulator", "default": True, "var_id": "kn00yj3n", "value_id": "1w4vrx6q"}
+			]
+		}
+	},
+	"dx": {
+		"categories": {
+			"All Skillpoints": {"aliases": ["as", "alls", "skill", "skillpoints", "allskills", "allskillpoints"], "internal_name": "alls"},
+			"Ultimate Run": {"aliases": ["ur", "ultimate", "urun", "ultimaterun"], "internal_name": "ur"},
+			"Training": {"aliases": ["t", "training"], "internal_name": "training"},
+			"Challenge Runs": {"aliases": ["cr", "challenge", "runs", "challengeruns"], "internal_name": "cr"}
+		},
+		"metadata": {
+			"User.ini edits": {"aliases": ["ini", "uini", "userini", "iniedits"], "var_key": "ini"},
+			"No user.ini edits": {"aliases": ["noini", "nouini", "noiniedits", "nouserini"], "var_key": "noini"},
+			"Segmented": {"aliases": ["seg", "segment", "segmented"], "var_key": "seg"},
+			"420%": {"aliases": ["420", "420%"], "var_key": "420"}
+		},
+		"any": {
+			"variables": [
+				{"name": "ini", "default": True, "var_id": "wl364mwl", "value_id": "9qjzk6o1"},
+				{"name": "noini", "var_id": "wl364mwl", "value_id": "jq6469o1"},
+				{"name": "seg", "var_id": "wl364mwl", "value_id": "013vnoyl"},
+				{"name": "gless", "var_id": "wl364mwl", "value_id": "81wmxv6q"},
+				{"name": "420", "var_id": "wl364mwl", "value_id": "zqoy6841"}
 			]
 		}
 	}

@@ -155,8 +155,8 @@ LEADERBOARD_DATA = {
 			"Restricted": {"aliases": ["r", "res", "restricted"], "internal_name": "restricted"}
 		},
 		"metadata": {
-			"Unrestricted": {"aliases": ["ur", "unrestricted"], "int_key": "unrestricted"},
-			"Restricted": {"aliases": ["restricted"], "int_key": "restricted"}
+			"Unrestricted": {"aliases": ["ur", "unrestricted"], "var_key": "unrestricted", "int_key": "unrestricted"},
+			"Restricted": {"aliases": ["restricted"], "var_key": "restricted", "int_key": "restricted"}
 		},
 		"any_solo_nocut": {
 			"variables": [

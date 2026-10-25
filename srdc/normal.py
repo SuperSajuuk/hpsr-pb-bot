@@ -112,7 +112,7 @@ class NormalRun:
 		# Then, process the additional metadata and get the Game ID/Category list.
 		all_metadata = self.md_aliases.copy()
 		all_metadata.update(board_cfg.get("metadata", {}))
-		cat_clean_name, int_key = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
+		cat_clean_name, int_key, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
 		game_id, game_cats = self.api.get_game_code(slug)
 
 		# Check that there is a category matching the one we asked for.
@@ -167,7 +167,7 @@ class NormalRun:
 		cat_cfg = self.utils.resolve_category_config(board_cfg, int_key, int_name)
 		var_filters = None
 		if cat_cfg and cat_cfg.get("variables", None):
-			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags, platform, board_cfg.get("platform_mapping"))
+			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags, platform, board_cfg.get("platform_mapping"), resolved_md)
 
 		# Depending on whether the world_record flag is set, lookup the
 		# relevant run, then return it.

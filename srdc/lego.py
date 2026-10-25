@@ -85,7 +85,9 @@ class LEGONormalRun:
 
 		# Do some additional lookups.
 		internal_key = f"{tb_int_name}_{sub_category_board}{ik_nocut_mode}"
-		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
+		sub_cat_name, _, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
+		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
+		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags, extra_md=resolved_md)
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == top_board_name:
 				category_id = cat_id
@@ -101,10 +103,7 @@ class LEGONormalRun:
 		else:
 			run = self.lookup_lego_run(game_id, category_id, player, var_filters)
 
-		# Process the additional metadata, create the cat name output
-		# and return the data.
-		sub_cat_name, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
-		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
+		# Return the run object
 		return run, new_sub_cat_name, top_board_name
 
 	def lookup_lego_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:

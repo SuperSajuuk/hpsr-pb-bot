@@ -210,5 +210,13 @@ GAME_MAP_DATA = {
 			"c2nst": {"board_name": "crash2", "aliases": ["crash2nst", "c2nsane"]},
 			"c3nst": {"board_name": "crash3", "aliases": ["crash3nst", "c3nsane"]}
 		}
+	},
+	"dx": {
+		"name": "Deus Ex",
+		"aliases": ["dex", "deusex"],
+		"platforms": ["pc", "ps2"],
+		"slugs": {
+			"dx": ["dx_pc", "dx_ps2", "dex_pc", "dex_ps2", "deusex_pc", "deusex_ps2"]
+		}
 	}
 }

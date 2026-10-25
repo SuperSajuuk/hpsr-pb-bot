@@ -37,13 +37,13 @@ PLATFORM_MAP = {
 # joined with game-specific metadata lists when
 # processing any additional metadata.
 METADATA_ALIASES = {
-	"Single Player": {"aliases": ["1p", "sp", "singleplayer"]},
-	"Co-op": {"aliases": ["coop", "co-op"]},
-	"Standard": {"aliases": ["std", "standard"]},
-	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"]},
-	"Any%": {"aliases": ["any", "any%"]},
-	"100%": {"aliases": ["100", "100%", "hundo"]},
-	"Glitchless": {"aliases": ["gless", "glitchless"]}
+	"Single Player": {"aliases": ["1p", "sp", "singleplayer"], "var_key": "sp"},
+	"Co-op": {"aliases": ["coop", "co-op"], "var_key": "coop"},
+	"Standard": {"aliases": ["std", "standard"], "var_key": "std"},
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "var_key": "nmg"},
+	"Any%": {"aliases": ["any", "any%"], "var_key": "any"},
+	"100%": {"aliases": ["100", "100%", "hundo"], "var_key": "100"},
+	"Glitchless": {"aliases": ["gless", "glitchless"], "var_key": "gless"}
 }
 
 # Point to the docs if there is an error.

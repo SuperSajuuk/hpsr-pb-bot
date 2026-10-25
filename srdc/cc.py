@@ -95,9 +95,10 @@ class CustomContent:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
 		# Generate the variable filters and set the category ID.
-		# Am not convinced we need to overwrite the ce_board flag
-		# with the board token, but it is fine for now.
-		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags)
+		all_metadata = self.md_aliases.copy()
+		all_metadata.update(cfg.get("metadata", {}))
+		cat_alias_name, _, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
+		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags, extra_md=resolved_md)
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == cc_top_board_name or cat_id == cc_top_board_id:
 				category_id = cat_id
@@ -113,10 +114,7 @@ class CustomContent:
 		else:
 			run = self.lookup_cc_run(game_id, category_id, player, var_filters)
 
-		# Return the run object and the alias_name produced.
-		all_metadata = self.md_aliases.copy()
-		all_metadata.update(cfg.get("metadata", {}))
-		cat_alias_name, _ = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
+		# Return the run object.
 		return run, cc_top_board_name, cat_alias_name
 
 	def lookup_cc_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:

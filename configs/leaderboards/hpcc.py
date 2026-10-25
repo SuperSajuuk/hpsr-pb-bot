@@ -50,8 +50,8 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"metadata": {
-		"Random Seed": {"aliases": ["random", "rs", "randomseed"]},
-		"Set Seed": {"aliases": ["set", "ss", "setseed"]}
+		"Random Seed": {"aliases": ["random", "rs", "randomseed"], "var_key": "random"},
+		"Set Seed": {"aliases": ["set", "ss", "setseed"], "var_key": "set"}
 	},
 	"hp_fm": {
 		"variables": [

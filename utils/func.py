@@ -131,9 +131,10 @@ class Utilities:
 		"""
 		# If there isn't any metadata, just return.
 		if not metadata:
-			return cat_name, int_key
+			return cat_name, int_key, []
 
 		# Process all metadata values
+		resolved_md = []
 		for key_val in metadata.values():
 			found_alias = False
 			for human_name, data in aliases.items():
@@ -141,6 +142,8 @@ class Utilities:
 					found_alias = True
 					if cat_name_extend:
 						cat_name += f" {human_name}"
+					if data.get("var_key", None) is not None:
+						resolved_md.append(data["var_key"])
 
 					# If internal key was provided, and it exists in the
 					# data dictionary, extend it.
@@ -153,7 +156,7 @@ class Utilities:
 				continue
 
 		# Return the modified category name and internal key, if any.
-		return cat_name, int_key
+		return cat_name, int_key, resolved_md
 
 	def get_run_and_place(self, game_id, category_id, run_list, var_filters, alt_url=None):
 		"""
@@ -174,18 +177,18 @@ class Utilities:
 		return best_run, place
 
 	@staticmethod
-	def generate_var_filters(var_list, flags, platform=None, platform_vars=None):
+	def generate_var_filters(var_list, flags, platform=None, platform_vars=None, extra_md=None):
 		# Pull in all flags (where flag item is True or its in additional metadata).
 		var_filters = []
 		selected_tokens = set()
 		if flags:
 			selected_tokens.update(name for name, val in flags.items() if val is True)
-			selected_tokens.update(
-				flags.get("additional_metadata", {}).values()
-			)
-			selected_tokens.update(
-				v for v in (flags["ce_board"], flags["cc_board"], flags["mr_board"]) if v is not None
-			)
+			selected_tokens.update(flags.get("additional_metadata", {}).values())
+			selected_tokens.update(v for v in (flags["ce_board"], flags["cc_board"], flags["mr_board"]) if v is not None)
+
+		# If extra_md is not None, insert that metadata to the tokens list
+		if extra_md:
+			selected_tokens.update(x for x in extra_md)
 
 		# Check if there are platform variable mappings and tokenise them.
 		if platform_vars:

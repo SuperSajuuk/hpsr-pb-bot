@@ -181,9 +181,9 @@ LEADERBOARD_DATA = {
 		}
 	},
 	"metadata": {
-		"1 Player": {"aliases": ["1p", "1player"]},
-		"2 Players": {"aliases": ["2p", "2players"]},
-		"3 Players": {"aliases": ["3p", "3players"]}
+		"1 Player": {"aliases": ["1p", "1player", "sp", "singleplayer"], "var_key": "1p"},
+		"2 Players": {"aliases": ["2p", "2players"], "var_key": "2p"},
+		"3 Players": {"aliases": ["3p", "3players"], "var_key": "3p"}
 	},
 	"hp_1pc": {
 		"variables": [
@@ -218,9 +218,9 @@ LEADERBOARD_DATA = {
 	"hp_4pc": {
 		"variables": [
 			{"var_id": "5ly156yl", "value_id": "0q5p0zrl"},
-			{"name": "1p", "aliases": ["1player", "sp", "singleplayer"], "var_id": "2lgk0jo8", "value_id": "14oy0mkq"},
-			{"name": "2p", "aliases": ["2player", "2players"], "var_id": "2lgk0jo8", "value_id": "192moe4q"},
-			{"name": "3p", "aliases": ["3player", "3players"], "var_id": "2lgk0jo8", "value_id": "12vdyj2q"}
+			{"name": "1p", "var_id": "2lgk0jo8", "value_id": "14oy0mkq"},
+			{"name": "2p", "var_id": "2lgk0jo8", "value_id": "192moe4q"},
+			{"name": "3p", "var_id": "2lgk0jo8", "value_id": "12vdyj2q"}
 		]
 	},
 	"hp_5pc": {

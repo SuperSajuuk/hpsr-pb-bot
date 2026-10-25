@@ -94,13 +94,13 @@ LEADERBOARD_DATA = {
 			"Hard": {"aliases": ["hard"], "internal_name": "hard"}
 		},
 		"metadata": {
-			"Intro": {"aliases": ["intro"]},
-			"No Intro": {"aliases": ["ni", "nointro", "noint"]}
+			"Intro": {"aliases": ["intro"], "var_key": "intro"},
+			"No Intro": {"aliases": ["ni", "nointro", "noint"], "var_key": "nointro"}
 		},
 		"legacy_fd": {
 			"variables": [
 				{"name": "intro", "var_id": "dlo9jj5l", "value_id": "qyz57m61"},
-				{"name": "nointro", "aliases": ["ni", "noint"], "var_id": "dlo9jj5l", "value_id": "ln8de7ol"},
+				{"name": "nointro", "var_id": "dlo9jj5l", "value_id": "ln8de7ol"},
 				{"name": "story", "var_id": "jlz2447l", "value_id": "10v06nol"},
 				{"name": "hard", "var_id": "jlz2447l", "value_id": "qj7w2m7q"},
 				{"name": "pc", "var_id": "9l79jjzn", "value_id": "q65yvovl"},
