@@ -85,7 +85,7 @@ class LEGONormalRun:
 
 		# Do some additional lookups.
 		internal_key = f"{tb_int_name}_{sub_category_board}{ik_nocut_mode}"
-		sub_cat_name, _, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
+		sub_cat_name, _, resolved_md, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
 		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags, extra_md=resolved_md)
 		for cat_id, cat_name in game_cats.items():

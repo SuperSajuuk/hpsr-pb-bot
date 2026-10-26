@@ -97,7 +97,7 @@ class CustomContent:
 		# Generate the variable filters and set the category ID.
 		all_metadata = self.md_aliases.copy()
 		all_metadata.update(cfg.get("metadata", {}))
-		cat_alias_name, _, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
+		cat_alias_name, _, resolved_md, _ = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags, extra_md=resolved_md)
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == cc_top_board_name or cat_id == cc_top_board_id:
