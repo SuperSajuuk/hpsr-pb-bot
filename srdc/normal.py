@@ -86,9 +86,12 @@ class NormalRun:
 				break
 
 		# Capture the category data for the game, if any specific ones exist.
+		# Also bundles in the required levels of metadata if requested.
 		board_cfg = self.utils.resolve_leaderboard_config(slug, internal_key)
+		all_metadata = self.md_aliases.copy()
 		if board_cfg:
 			category_list.update(board_cfg.get("categories", {}))
+			all_metadata.update(board_cfg.get("metadata", {}))
 
 		# Check if the board name is in the category list.
 		not_board = True
@@ -107,10 +110,7 @@ class NormalRun:
 		if not_board:
 			raise InvalidCategory(f"Unknown category/board: '{board}'.")
 
-		# Combine the standard metadata list with any game specific metadata.
-		# Then, process the additional metadata and get the Game ID/Category list.
-		all_metadata = self.md_aliases.copy()
-		all_metadata.update(board_cfg.get("metadata", {}))
+		# Process the additional metadata and get the Game ID/Category list.
 		cat_clean_name, int_key, rmd, wanted_cat = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
 		game_id, game_cats = self.api.get_game_code(slug)
 
