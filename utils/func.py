@@ -142,7 +142,7 @@ class Utilities:
 				if key_val in data["aliases"]:
 					found_alias = True
 					wanted_cat = data.get("cat_override")
-					if cat_name_extend:
+					if cat_name_extend and not data["no_extend"]:
 						cat_name += f" {human_name}"
 					if data.get("var_key") is not None:
 						resolved_md.append(data["var_key"])

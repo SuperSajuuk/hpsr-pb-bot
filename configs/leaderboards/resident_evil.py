@@ -25,8 +25,8 @@ LEADERBOARD_DATA = {
 			"Knife Only": {"aliases": ["ko", "knife", "knifeonly"], "var_key": "ko"},
 			"Original": {"aliases": ["o", "orig", "original"], "var_key": "orig"},
 			"Arrange": {"aliases": ["a", "arrange"], "var_key": "arrange"},
-			"DuckStation": {"aliases": ["ds", "duck", "ducks", "duckstation"], "var_key": "ds"},
-			"Legacy Emu": {"aliases": ["le", "legacy", "lemu", "legacyemu"], "var_key": "le"}
+			"DuckStation": {"aliases": ["ds", "duck", "ducks", "duckstation"], "var_key": "ds", "no_extend": True},
+			"Legacy Emu": {"aliases": ["le", "legacy", "lemu", "legacyemu"], "var_key": "le", "no_extend": True}
 		},
 		"jill": {
 			"variables": [
