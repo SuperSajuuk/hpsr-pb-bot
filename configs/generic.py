@@ -16,6 +16,7 @@ PLATFORM_MAP = {
 	"ps4": {"name": "PS4", "id": "nzelkr6q"},
 	"ps5": {"name": "PS5", "id": "4p9zjrer"},
 	"psp": {"name": "PSP", "id": "5negk9y7"},
+	"vita": {"name": "PlayStation Vita", "id": "4p9z70er"},
 	"gba": {"name": "GBA", "id": "3167d6q2"},
 	"gbc": {"name": "GBC", "id": "gde3g9k1"},
 	"ds": {"name": "Nintendo DS", "id": "7g6m8erk"},

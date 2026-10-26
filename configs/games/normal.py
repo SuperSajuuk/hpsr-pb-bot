@@ -227,13 +227,29 @@ GAME_MAP_DATA = {
 			"skyrim": [
 				"skyrim_pc", "skyrim_ps3", "skyrim_ps4", "skyrim_ps5", "skyrim_xbone", "skyrim_x360",
 				"skyrim_xbss", "skyrim_xbsx", "skyrim_switch", "tesv_pc", "tesv_ps3", "tesv_ps4",
-				"tesv_ps5",	"tesv_xbone", "tesv_x360", "tesv_xbss", "tesv_xbsx", "tesv_switch",
+				"tesv_ps5", "tesv_xbone", "tesv_x360", "tesv_xbss", "tesv_xbsx", "tesv_switch",
 				"tesskyrim_pc", "tesskyrim_ps3", "tesskyrim_ps4", "tesskyrim_ps5", "tesskyrim_xbone",
 				"tesskyrim_x360", "tesskyrim_xbss", "tesskyrim_xbsx", "tesskyrim_switch", "esvskyrim_pc",
 				"esvskyrim_ps3", "esvskyrim_ps4", "esvskyrim_ps5", "esvskyrim_xbone", "esvskyrim_x360",
 				"esvskyrim_xbss", "esvskyrim_xbsx", "esvskyrim_switch", "tesvs_pc", "tesvs_ps3",
 				"tesvs_ps4", "tesvs_ps5", "tesvs_xbone", "tesvs_x360", "tesvs_xbss", "tesvs_xbsx",
 				"tesvs_switch"
+			]
+		}
+	},
+	"rs1": {
+		"name": "Resident Evil (1996)",
+		"aliases": ["rs", "residentevil", "revil"],
+		"ordering": "pf",
+		"platforms": ["pc", "ps1", "psx", "ps2", "ps3", "ps4", "ps5", "psp", "vita"],
+		"slugs": {
+			"residentevil": [
+				"rs1_pc", "rs1_ps1", "rs1_psx", "rs1_ps2", "rs1_ps3", "rs1_ps4", "rs1_ps5", "rs1_psp",
+				"rs1_vita", "rs_pc", "rs_ps1", "rs_psx", "rs_ps2", "rs_ps3", "rs_ps4", "rs_ps5",
+				"rs_psp", "rs_vita", "residentevil_pc", "residentevil_ps1", "residentevil_psx",
+				"residentevil_ps2", "residentevil_ps3", "residentevil_ps4",	"residentevil_ps5",
+				"residentevil_psp", "residentevil_vita", "revil_pc", "revil_ps1", "revil_psx",
+				"revil_ps2", "revil_ps3", "revil_ps4", "revil_ps5", "revil_psp", "revil_vita"
 			]
 		}
 	}

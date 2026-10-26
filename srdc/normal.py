@@ -111,7 +111,7 @@ class NormalRun:
 		# Then, process the additional metadata and get the Game ID/Category list.
 		all_metadata = self.md_aliases.copy()
 		all_metadata.update(board_cfg.get("metadata", {}))
-		cat_clean_name, int_key, resolved_md = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
+		cat_clean_name, int_key, rmd, wanted_cat = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, category_name, internal_key)
 		game_id, game_cats = self.api.get_game_code(slug)
 
 		# Check that there is a category matching the one we asked for.
@@ -132,19 +132,27 @@ class NormalRun:
 			case "pf":
 				# Take the list of platform categories defined,
 				# then see if it can be found in the aliases.
-				pcs = board_cfg.get("platform_categories", {})
-				wanted_category = None
-				for cat_name, aliases in pcs.items():
-					if platform not in aliases:
-						continue
-					if flags["emulator"]:
-						if "emu" in cat_name.lower() or cat_name == "emulator":
-							wanted_category = cat_name
-							break
-					else:
-						if "emu" not in cat_name.lower():
-							wanted_category = cat_name
-							break
+				if wanted_cat is None:
+					# category wasn't found in the metadata, so derive
+					# from the platform_categories key. Note that this
+					# checks for any matching categories and then determines
+					# the right one later.
+					pcs = board_cfg.get("platform_categories", {})
+					matching_categories = [name for name, aliases in pcs.items() if platform in aliases]
+					if len(matching_categories) == 1:
+						wanted_cat = matching_categories[0]
+					elif len(matching_categories) > 1:
+						# More than one category name is defined.
+						# Check if one is emulator or not and pick it if matched.
+						for cat_name in matching_categories:
+							cat_name_lower = cat_name.lower()
+							is_emu_cat = (cat_name_lower == "emu" or cat_name_lower.endswith(" emu"))
+							if flags["emulator"] and is_emu_cat:
+								wanted_cat = cat_name
+								break
+							if not flags["emulator"] and not is_emu_cat:
+								wanted_cat = cat_name
+								break
 
 				# Now do the same category loop we normally do
 				# but using the wanted_category because we are in
@@ -154,7 +162,7 @@ class NormalRun:
 					if cat_id == int_category_id:
 						category_id = cat_id
 						break
-					if cat_name == wanted_category:
+					if cat_name == wanted_cat:
 						category_id = cat_id
 						break
 
@@ -166,7 +174,7 @@ class NormalRun:
 		cat_cfg = self.utils.resolve_category_config(board_cfg, int_key, int_name)
 		var_filters = None
 		if cat_cfg and cat_cfg.get("variables", None):
-			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags, platform, board_cfg.get("platform_mapping"), resolved_md)
+			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags, platform, board_cfg.get("platform_mapping"), rmd, wanted_cat)
 
 		# Depending on whether the world_record flag is set, lookup the
 		# relevant run, then return it.
