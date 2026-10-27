@@ -33,13 +33,13 @@ LEADERBOARD_DATA = {
 				{"var_id": "p85077ng", "value_id": "21gny96l"},
 				{"name": "bade", "var_id": "yn2koen5", "value_id": "5le2d2ml"},
 				{"name": "beste", "var_id": "yn2koen5", "value_id": "0q5vkv7l"},
-				{"name": "mg", "platform_vars": {
+				{"name": "mg", "multi_vars": {
 					"PC": {"var_id": "9l7rp9n1", "value_id": "9qjk6014"},
 					"EMU": {"var_id": "dloregrl", "value_id": "jqzzr4gq"},
 					"PlayStation": {"var_id": "9l7rgw9n", "value_id": "4qygv44q"},
 					"PSN": {"var_id": "gnx2z3g8", "value_id": "21den35l"}
 				}},
-				{"name": "nmg", "platform_vars": {
+				{"name": "nmg", "multi_vars": {
 					"PC": {"var_id": "9l7rp9n1", "value_id": "810kojqv"},
 					"EMU": {"var_id": "dloregrl", "value_id": "21gzwgnl"},
 					"PlayStation": {"var_id": "9l7rp9n1", "value_id": "5q8wxzgq"},
@@ -58,13 +58,13 @@ LEADERBOARD_DATA = {
 				{"var_id": "p85077ng", "value_id": "jqznkg2q"},
 				{"name": "bade", "var_id": "yn2koen5", "value_id": "5le2d2ml"},
 				{"name": "beste", "var_id": "yn2koen5", "value_id": "0q5vkv7l"},
-				{"name": "mg", "platform_vars": {
+				{"name": "mg", "multi_vars": {
 					"PC": {"var_id": "9l7rp9n1", "value_id": "9qjk6014"},
 					"EMU": {"var_id": "dloregrl", "value_id": "jqzzr4gq"},
 					"PlayStation": {"var_id": "9l7rgw9n", "value_id": "4qygv44q"},
 					"PSN": {"var_id": "gnx2z3g8", "value_id": "21den35l"}
 				}},
-				{"name": "nmg", "platform_vars": {
+				{"name": "nmg", "multi_vars": {
 					"PC": {"var_id": "9l7rp9n1", "value_id": "810kojqv"},
 					"EMU": {"var_id": "dloregrl", "value_id": "21gzwgnl"},
 					"PlayStation": {"var_id": "9l7rp9n1", "value_id": "5q8wxzgq"},

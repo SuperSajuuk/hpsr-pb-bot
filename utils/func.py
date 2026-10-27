@@ -209,13 +209,13 @@ class Utilities:
 			# below assignment will be None for them.
 			var_id = x.get("var_id")
 			value_id = x.get("value_id")
-			if def_cat is not None and x.get("platform_vars") is not None:
-				plat_cfg = x["platform_vars"].get(def_cat)
-				if plat_cfg:
+			if def_cat is not None and x.get("multi_vars") is not None:
+				mv = x["multi_vars"].get(def_cat)
+				if mv:
 					# Found a match, overwrite the var/value ID here with these
 					# values instead.
-					var_id = plat_cfg["var_id"]
-					value_id = plat_cfg["value_id"]
+					var_id = mv["var_id"]
+					value_id = mv["value_id"]
 
 			# If name key is missing, it's a required variable.
 			if "name" not in x:

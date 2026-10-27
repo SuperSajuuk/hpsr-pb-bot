@@ -4,6 +4,47 @@
 # Contains all the leaderboard data for The Elder Scrolls games.
 #
 LEADERBOARD_DATA = {
+	"morrowind": {
+		"categories": {
+			"All Main Quests": {"aliases": ["amq", "allmq", "allq", "allquests", "allmain", "allmainquests"], "internal_name": "amq"},
+			"All Factions": {"aliases": ["af", "allf", "factions", "allfactions"], "internal_name": "af"},
+			"Tribunal": {"aliases": ["tb", "tribunal"], "internal_name": "tb"},
+			"Bloodmoon": {"aliases": ["bm", "bmoon", "bloodmoon"], "internal_name": "bm"}
+		},
+		"metadata": {
+			"Glitched": {"aliases": ["gd", "glitched"], "var_key": "glitched"},
+		},
+		"any": {
+			"variables": [
+				{"name": "glitched", "default": True, "var_id": "wlez1xl6", "value_id": "5q820v3q"},
+				{"name": "nmg", "var_id": "wlez1xl6", "value_id": "4qy5y221"}
+			]
+		},
+		"amq": {
+			"variables": [
+				{"name": "glitched", "default": True, "var_id": "wlez1xl6", "value_id": "5q820v3q"},
+				{"name": "nmg", "var_id": "wlez1xl6", "value_id": "4qy5y221"}
+			]
+		},
+		"af": {
+			"variables": [
+				{"name": "glitched", "default": True, "var_id": "wlez1xl6", "value_id": "5q820v3q"},
+				{"name": "nmg", "var_id": "wlez1xl6", "value_id": "4qy5y221"}
+			]
+		},
+		"tb": {
+			"variables": [
+				{"name": "glitched", "default": True, "var_id": "wlez1xl6", "value_id": "5q820v3q"},
+				{"name": "nmg", "var_id": "wlez1xl6", "value_id": "4qy5y221"}
+			]
+		},
+		"bm": {
+			"variables": [
+				{"name": "glitched", "default": True, "var_id": "wlez1xl6", "value_id": "5q820v3q"},
+				{"name": "nmg", "var_id": "wlez1xl6", "value_id": "4qy5y221"}
+			]
+		},
+	},
 	"skyrim": {
 		"categories": {
 			"Main Quest": {"aliases": ["mq", "main", "mainquest", "mquest"], "internal_name": "mq"},

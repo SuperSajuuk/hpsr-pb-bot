@@ -219,6 +219,22 @@ GAME_MAP_DATA = {
 			"dx": ["dx_pc", "dx_ps2", "dex_pc", "dex_ps2", "deusex_pc", "deusex_ps2"]
 		}
 	},
+	"morrowind": {
+		"name": "The Elder Scrolls III: Morrowind",
+		"aliases": ["tesiii", "tes3", "esiiim", "es3m"],
+		"platforms": ["pc", "xbone", "xbox", "x360", "xb1s", "xb1x", "xbss", "xbsx"],
+		"slugs": {
+			"morrowind": [
+				"morrowind_pc", "morrowind_xbone", "morrowind_xbox", "morrowind_x360", "morrowind_xb1s",
+				"morrowind_xb1x", "morrowind_xbss", "morrowind_xbsx", "tesiii_pc", "tesiii_xbone",
+				"tesiii_xbox", "tesiii_x360", "tesiii_xb1s", "tesiii_xb1x", "tesiii_xbss", "tesiii_xbsx",
+				"tes3_pc", "tes3_xbone", "tes3_xbox", "tes3_x360", "tes3_xb1s", "tes3_xb1x", "tes3_xbss",
+				"tes3_xbsx", "esiiim_pc", "esiiim_xbone", "esiiim_xbox", "esiiim_x360",	"esiiim_xb1s",
+				"esiiim_xb1x", "esiiim_xbss", "esiiim_xbsx", "es3m_pc", "es3m_xbone", "es3m_xbox",
+				"es3m_x360", "es3m_xb1s", "es3m_xb1x", "es3m_xbss", "es3m_xbsx"
+			]
+		}
+	},
 	"skyrim": {
 		"name": "The Elder Scrolls V: Skyrim",
 		"aliases": ["tesv", "tesskyrim", "esvskyrim", "tesvs"],
@@ -247,9 +263,22 @@ GAME_MAP_DATA = {
 				"rs1_pc", "rs1_ps1", "rs1_psx", "rs1_ps2", "rs1_ps3", "rs1_ps4", "rs1_ps5", "rs1_psp",
 				"rs1_vita", "rs_pc", "rs_ps1", "rs_psx", "rs_ps2", "rs_ps3", "rs_ps4", "rs_ps5",
 				"rs_psp", "rs_vita", "residentevil_pc", "residentevil_ps1", "residentevil_psx",
-				"residentevil_ps2", "residentevil_ps3", "residentevil_ps4",	"residentevil_ps5",
+				"residentevil_ps2", "residentevil_ps3", "residentevil_ps4", "residentevil_ps5",
 				"residentevil_psp", "residentevil_vita", "revil_pc", "revil_ps1", "revil_psx",
 				"revil_ps2", "revil_ps3", "revil_ps4", "revil_ps5", "revil_psp", "revil_vita"
+			]
+		}
+	},
+	"shar": {
+		"name": "The Simpsons: Hit and Run",
+		"aliases": ["shr", "hitandrun", "simpsonshar", "simpsonshitandrun"],
+		"platforms": ["pc", "ps2", "gcn", "xbox"],
+		"slugs": {
+			"shar": [
+				"shar_pc", "shar_ps2", "shar_gcn", "shar_xbox", "shr_pc", "shr_ps2", "shr_gcn", "shr_xbox",
+				"hitandrun_pc", "hitandrun_ps2", "hitandrun_gcn", "hitandrun_xbox", "simpsonshar_pc",
+				"simpsonshar_ps2", "simpsonshar_gcn", "simpsonshar_xbox", "simpsonshitandrun_pc",
+				"simpsonshitandrun_ps2", "simpsonshitandrun_gcn", "simpsonshitandrun_xbox"
 			]
 		}
 	}

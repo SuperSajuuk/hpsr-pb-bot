@@ -167,5 +167,58 @@ LEADERBOARD_DATA = {
 				{"name": "seg", "var_id": "wle642r", "value_id": "rqv45kyq"}
 			]
 		}
+	},
+	"shar": {
+		"categories": {
+			"All Story Missions": {"aliases": ["asm", "allsm", "alls", "allm", "allmissions", "allstorymissions"], "internal_name": "asm"},
+			"ASM (NG+)": {"aliases": ["asmng", "asmng+", "asmnewgame", "asmnewgame+"], "internal_name": "asmng"},
+			"No Mission Warps": {"aliases": ["nmw", "nowarp", "nowarps", "nomissionwarps"], "internal_name": "nmw"},
+			"All Tasks NLR": {"aliases": ["atnlr", "at", "allt", "alltasks", "nlr", "alltnlr", "alltasksnlr"], "internal_name": "atnlr"}
+		},
+		"metadata": {
+			"Unrestricted": {"aliases": ["ur", "unrestricted"], "var_key": "unrestricted"},
+			"Restricted": {"aliases": ["r", "res", "restricted"], "var_key": "restricted"}
+		},
+		"platform_mapping": {
+			"pc": ["pc"],
+			"console": ["ps2", "gcn", "xbox"]
+		},
+		"asm": {
+			"variables": [
+				{"name": "pc", "var_id": "ql6gj9v8", "value_id": "gq7nyov1"},
+				{"name": "console", "var_id": "ql6gj9v8", "value_id": "jqz6owg1"}
+			]
+		},
+		"any": {
+			"variables": [
+				{"name": "pc", "var_id": "kn0zej78", "value_id": "lx5gj0j1"},
+				{"name": "restricted", "var_id": "kn0zej78", "value_id": "0q57mr2l"},
+				{"name": "console", "var_id": "kn0zej78", "value_id": "81w545v1"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "pc", "var_id": "6njqp4el", "value_id": "9qjx743l"},
+				{"name": "console", "var_id": "6njqp4el", "value_id": "jq6z5xjl"}
+			]
+		},
+		"asmng": {
+			"variables": [
+				{"name": "pc", "var_id": "yn2165d8", "value_id": "4qyjzy2q"},
+				{"name": "console", "var_id": "yn2165d8", "value_id": "mlnz80jl"}
+			]
+		},
+		"nmw": {
+			"variables": [
+				{"name": "pc", "var_id": "9l71g74l", "value_id": "klry30mq"},
+				{"name": "console", "var_id": "9l71g74l", "value_id": "21d3ky5q"}
+			]
+		},
+		"atnlr": {
+			"variables": [
+				{"name": "pc", "var_id": "jlz56wyl", "value_id": "gq7r54dl"},
+				{"name": "console", "var_id": "jlz56wyl", "value_id": "21g2n48l"}
+			]
+		}
 	}
 }
