@@ -23,7 +23,6 @@ import os
 # Import the config data.
 import configs.game_maps as games
 import configs.ils as il_config
-import configs.normal as nm_config
 import configs.leaderboard as lb_config
 import configs.generic as config
 
@@ -70,7 +69,7 @@ world = wr.WorldRecords(
 	api=api,
 	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
-	category_map=nm_config.CATEGORY_MAP,
+	category_map=config.CATEGORY_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	utils=utils
 )
@@ -78,7 +77,7 @@ normal = normal_run.NormalRun(
 	api=api,
 	game_map=games.NM_GAME_MAP,
 	platform_map=config.PLATFORM_MAP,
-	category_map=nm_config.CATEGORY_MAP,
+	category_map=config.CATEGORY_MAP,
 	md_aliases=config.METADATA_ALIASES,
 	wr=world,
 	utils=utils
@@ -88,7 +87,7 @@ il = ind_lvl.IndividualLevel(
 	api=api,
 	game_map=games.NM_GAME_MAP,
 	levels_map=il_config.LEVELS_MAP,
-	category_map=nm_config.CATEGORY_MAP,
+	category_map=config.CATEGORY_MAP,
 	ik_mapping=il_config.INTERNAL_KEY_MAPPING,
 	utils=utils
 )
@@ -390,8 +389,9 @@ def personal_best(owner, game, platform, board, args):
 		if game == key:
 			# Determine the Slug URL
 			mode = "main"
-			alias_table = nm_config.CATEGORY_MAP.copy()
-			for slug_url, aliases in nm_config.BOARD_GAME_SLUG.items():
+			alias_table = config.CATEGORY_MAP.copy()
+			all_slugs = val["slugs"]
+			for slug_url, aliases in all_slugs.items():
 				if internal_key in aliases:
 					slug = slug_url
 					break
@@ -423,7 +423,7 @@ def personal_best(owner, game, platform, board, args):
 				mode = "mr"
 				slug = val["id"]
 				lb_cfg = lb_config.LEADERBOARD_CONFIG.get(game)
-				alias_table = nm_config.CATEGORY_MAP.copy()
+				alias_table = config.CATEGORY_MAP.copy()
 				break
 
 	# Parse the board value in both the CE and MR category maps.

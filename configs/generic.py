@@ -33,6 +33,18 @@ PLATFORM_MAP = {
 	"wii": {"name": "Wii", "id": "v06dk3e4"}
 }
 
+# This is a standard list of generic category boards found on the
+# majority of SRDC games. Game-specific categories should be defined
+# in the respective leaderboard config data.
+CATEGORY_MAP = {
+	"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
+	"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
+	"Glitchless": {"aliases": ["gless", "glitchless"], "internal_name": "gless"},
+	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
+	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"}
+}
+
 # This is a set list of normal metadata that most
 # boards will support in some form. This will be
 # joined with game-specific metadata lists when
