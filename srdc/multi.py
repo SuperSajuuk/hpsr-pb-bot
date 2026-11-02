@@ -69,7 +69,7 @@ class MultiRun:
 		# Even if the game object is returned by SRDC, an alias table
 		# is still required internally, as it's used to map user input
 		# to a hard-coded internal name.
-		alias_table = cfg.get("sub_categories", Non)
+		alias_table = cfg.get("sub_categories", None)
 		if not alias_table:
 			raise MissingInternalData(f"No alias table exists for ID '{slug_id}, which prevents category matching. Please report this as a bug on the GitHub repository.")
 
