@@ -79,11 +79,16 @@ class NormalRun:
 			raise UnsupportedGame(f"The platform '{platform}' cannot be used for this game, please try one of the allowed platforms: {', '.join(supported_platforms)}")
 
 		# Produce an internal key and get the slug URL.
+		# The loop check against the internal key is only
+		# done if board_slugs is a dictionary.
 		internal_key = f"{game_int_name}_{platform}"
-		for slug_url, aliases in board_slugs.items():
-			if internal_key in aliases:
-				slug = slug_url
-				break
+		if isinstance(board_slugs, dict):
+			for slug_url, aliases in board_slugs.items():
+				if internal_key in aliases:
+					slug = slug_url
+					break
+		else:
+			slug = board_slugs
 
 		# Capture the category data for the game, if any specific ones exist.
 		# Also bundles in the required levels of metadata if requested.
