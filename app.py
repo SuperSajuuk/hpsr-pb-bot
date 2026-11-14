@@ -419,7 +419,7 @@ def personal_best(owner, game, platform, board, args):
 	# based on mode.
 	entry = valid_pbs[0]
 	result = utils.extract_run(entry["run"], player, entry["place"])
-	is_emulator = " (Emulator)" if result.emulator else ""
+	is_emulator = " (Emulator)" if result.emulator and result.platform != "8gej2n93" else ""
 	is_current_wr = "👑 " if result.place == 1 else ""
 	match game:
 		case _ if game in ("cc", "custom"):
@@ -431,10 +431,10 @@ def personal_best(owner, game, platform, board, args):
 		case "lego":
 			clean_name = f'{games.LEGO_GAME_MAP[platform]["name"]} ({top_board_name} - {cat_clean_name})'
 		case _:
-			clean_name = f'{game_name} ({config.PLATFORM_MAP[platform]["name"]} - {cat_clean_name}){is_emulator}'
+			clean_name = f'{game_name} ({config.PLATFORM_MAP[platform]["name"]} - {cat_clean_name})'
 
 	# Return the string for the user.
-	return f"{is_current_wr}The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
+	return f"{is_current_wr}The current PB for {player} in {clean_name}{is_emulator} is {result.time}, currently placing #{result.place}: {result.link}"
 
 
 # Provide help and support to users calling the routes.
