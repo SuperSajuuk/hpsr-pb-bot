@@ -5,7 +5,7 @@
 # games
 #
 LEADERBOARD_DATA = {
-	"hp14": {
+	"lhp1_4": {
 		"categories": {
 			"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
 			"No Levels Early": {"aliases": ["nle", "noearly", "noearlylevels", "nolevelsearly"], "internal_name": "nle"},
@@ -16,56 +16,38 @@ LEADERBOARD_DATA = {
 		},
 		"sub_categories": {
 			"Solo": {"aliases": ["solo"], "internal_name": "solo"},
-			"Co-Op": {"aliases": ["coop", "co-op"], "internal_name": "coop"},
-			"N0CUT5": {"aliases": ["nocut5", "n0cut5"], "internal_name": "nocut"},
-			"Standard": {"aliases": ["standard"], "internal_name": "standard"}
+			"Co-Op": {"aliases": ["coop", "co-op"], "internal_name": "coop"}
 		},
-		"any_solo_nocut": {
+		"metadata": {
+			"N0CUT5": {"aliases": ["nc", "nocut", "nocut5", "n0cut5"], "var_key": "nocut"},
+			"Standard": {"aliases": ["s", "std", "standard"], "var_key": "standard"}
+		},
+		"any_solo": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "p85dm5xl", "value_id": "jq68d97l"}
+				{"name": "nocut", "var_id": "p85dm5xl", "value_id": "jq68d97l"},
+				{"name": "standard", "var_id": "p85dm5xl", "value_id": "mlngx4d1"}
 			]
 		},
-		"any_coop_nocut": {
+		"any_coop": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "p85dm5xl", "value_id": "jq68d97l"}
+				{"name": "nocut", "var_id": "p85dm5xl", "value_id": "jq68d97l"},
+				{"name": "standard", "var_id": "p85dm5xl", "value_id": "mlngx4d1"}
 			]
 		},
-		"any_solo_standard": {
+		"nle_solo": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "p85dm5xl", "value_id": "mlngx4d1"}
+				{"name": "nocut", "var_id": "p8554jx8", "value_id": "gq78jvn1"},
+				{"name": "standard", "var_id": "p8554jx8", "value_id": "xqkvjg9l"}
 			]
 		},
-		"any_coop_standard": {
+		"nle_coop": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "p85dm5xl", "value_id": "mlngx4d1"}
-			]
-		},
-		"nle_solo_nocut": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "p8554jx8", "value_id": "gq78jvn1"}
-			]
-		},
-		"nle_solo_standard": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "kn03d0n3"},
-				{"var_id": "p8554jx8", "value_id": "xqkvjg9l"}
-			]
-		},
-		"nle_coop_nocut": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "p8554jx8", "value_id": "gq78jvn1"}
-			]
-		},
-		"nle_coop_standard": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "p8554jx8", "value_id": "xqkvjg9l"}
+				{"name": "nocut", "var_id": "p8554jx8", "value_id": "gq78jvn1"},
+				{"name": "standard", "var_id": "p8554jx8", "value_id": "xqkvjg9l"}
 			]
 		},
 		"freeplay_solo": {
@@ -88,56 +70,36 @@ LEADERBOARD_DATA = {
 				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"}
 			]
 		},
-		"ac_solo_nocut": {
+		"ac_solo": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "38dwxmxn", "value_id": "5lm75r4l"}
+				{"name": "nocut", "var_id": "38dwxmxn", "value_id": "5lm75r4l"},
+				{"name": "standard", "var_id": "38dwxmxn", "value_id": "81024o5q"}
 			]
 		},
-		"ac_solo_standard": {
+		"ac_coop": {
+			"variables": [
+				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
+				{"name": "nocut", "var_id": "38dwxmxn", "value_id": "5lm75r4l"},
+				{"name": "standard", "var_id": "38dwxmxn", "value_id": "81024o5q"}
+			]
+		},
+		"100_solo": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "38dwxmxn", "value_id": "81024o5q"}
+				{"name": "nocut", "var_id": "r8rqjewl", "value_id": "81w6yv5l"},
+				{"name": "standard", "var_id": "r8rqjewl", "value_id": "9qjp36gq"}
 			]
 		},
-		"ac_coop_nocut": {
+		"100_coop": {
 			"variables": [
 				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "38dwxmxn", "value_id": "5lm75r4l"}
-			]
-		},
-		"ac_coop_standard": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "38dwxmxn", "value_id": "81024o5q"}
-			]
-		},
-		"100_solo_nocut": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "r8rqjewl", "value_id": "81w6yv5l"}
-			]
-		},
-		"100_solo_standard": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "xqkek0nq"},
-				{"var_id": "r8rqjewl", "value_id": "9qjp36gq"}
-			]
-		},
-		"100_coop_nocut": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "r8rqjewl", "value_id": "81w6yv5l"}
-			]
-		},
-		"100_coop_standard": {
-			"variables": [
-				{"var_id": "kn03d0n3", "value_id": "gq75ejv1"},
-				{"var_id": "r8rqjewl", "value_id": "9qjp36gq"}
+				{"name": "nocut", "var_id": "r8rqjewl", "value_id": "81w6yv5l"},
+				{"name": "standard", "var_id": "r8rqjewl", "value_id": "9qjp36gq"}
 			]
 		}
 	},
-	"hp57": {
+	"lhp5_7": {
 		"categories": {
 			"Any%": {"aliases": ["any", "any%"], "internal_name": "any"},
 			"No Levels Early": {"aliases": ["nle", "noearly", "noearlylevels", "nolevelsearly"], "internal_name": "nle"},
@@ -148,76 +110,46 @@ LEADERBOARD_DATA = {
 		},
 		"sub_categories": {
 			"Solo": {"aliases": ["solo"], "internal_name": "solo"},
-			"Co-Op": {"aliases": ["coop", "co-op"], "internal_name": "coop"},
-			"N0CUT5": {"aliases": ["nocut5", "n0cut5"], "internal_name": "nocut"},
-			"Standard": {"aliases": ["standard"], "internal_name": "standard"},
-			"Unrestricted": {"aliases": ["unr", "ur", "unrestricted"], "internal_name": "unrestricted"},
-			"Restricted": {"aliases": ["r", "res", "restricted"], "internal_name": "restricted"}
+			"Co-Op": {"aliases": ["coop", "co-op"], "internal_name": "coop"}
 		},
 		"metadata": {
-			"Unrestricted": {"aliases": ["ur", "unrestricted"], "var_key": "unrestricted", "int_key": "unrestricted"},
-			"Restricted": {"aliases": ["restricted"], "var_key": "restricted", "int_key": "restricted"}
+			"N0CUT5": {"aliases": ["nc", "nocut", "nocut5", "n0cut5"], "var_key": "nocut"},
+			"Standard": {"aliases": ["s", "std", "standard"], "var_key": "standard"},
+			"Unrestricted": {"aliases": ["ur", "unrestricted"], "var_key": "unrestricted"},
+			"Restricted": {"aliases": ["restricted"], "var_key": "restricted"}
 		},
-		"any_solo_nocut": {
+		"any_solo": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "dlorq6rl", "value_id": "mlngg2d1"},
+				{"name": "nocut", "var_id": "dlorq6rl", "value_id": "mlngg2d1"},
+				{"name": "standard", "var_id": "dlorq6rl", "value_id": "4qykk671"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
 		},
-		"any_solo_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "dlorq6rl", "value_id": "4qykk671"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"any_coop_nocut": {
+		"any_coop": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "dlorq6rl", "value_id": "mlngg2d1"},
+				{"name": "nocut", "var_id": "dlorq6rl", "value_id": "mlngg2d1"},
+				{"name": "standard", "var_id": "dlorq6rl", "value_id": "4qykk671"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
 		},
-		"any_coop_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "dlorq6rl", "value_id": "4qykk671"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"nle_solo_nocut": {
+		"nle_solo": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "jlzgmxxn", "value_id": "9qjpp5gq"},
+				{"name": "nocut", "var_id": "jlzgmxxn", "value_id": "9qjpp5gq"},
+				{"name": "standard", "var_id": "jlzgmxxn", "value_id": "81022r5q"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p85jw5lg"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
 		},
-		"nle_solo_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "jlzgmxxn", "value_id": "81022r5q"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p85jw5lg"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"nle_coop_nocut": {
+		"nle_coop": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "jlzgmxxn", "value_id": "9qjpp5gq"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p85jw5lg"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"nle_coop_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "jlzgmxxn", "value_id": "81022r5q"},
+				{"name": "nocut", "var_id": "jlzgmxxn", "value_id": "9qjpp5gq"},
+				{"name": "standard", "var_id": "jlzgmxxn", "value_id": "81022r5q"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p85jw5lg"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
@@ -250,66 +182,38 @@ LEADERBOARD_DATA = {
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			],
 		},
-		"ac_solo_nocut": {
+		"ac_solo": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "9l7rz59n", "value_id": "5lm7794l"},
+				{"name": "nocut", "var_id": "9l7rz59n", "value_id": "5lm7794l"},
+				{"name": "standard", "var_id": "9l7rz59n", "value_id": "jq688j7l"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"},
 			]
 		},
-		"ac_solo_standard": {
-			"variables": [
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"},
-				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "9l7rz59n", "value_id": "jq688j7l"}
-			]
-		},
-		"ac_coop_nocut": {
+		"ac_coop": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "9l7rz59n", "value_id": "5lm7794l"},
+				{"name": "nocut", "var_id": "9l7rz59n", "value_id": "5lm7794l"},
+				{"name": "standard", "var_id": "9l7rz59n", "value_id": "jq688j7l"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
 		},
-		"ac_coop_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "9l7rz59n", "value_id": "jq688j7l"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"100_solo_nocut": {
+		"100_solo": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "yn2w4m0n", "value_id": "zqozz72l"},
+				{"name": "nocut", "var_id": "yn2w4m0n", "value_id": "zqozz72l"},
+				{"name": "standard", "var_id": "yn2w4m0n", "value_id": "81w66k5l"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]
 		},
-		"100_solo_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "4qyzp371"},
-				{"var_id": "yn2w4m0n", "value_id": "81w66k5l"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"100_coop_nocut": {
+		"100_coop": {
 			"variables": [
 				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "yn2w4m0n", "value_id": "zqozz72l"},
-				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
-				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
-			]
-		},
-		"100_coop_standard": {
-			"variables": [
-				{"var_id": "p85jw5lg", "value_id": "mln8wrdl"},
-				{"var_id": "yn2w4m0n", "value_id": "81w66k5l"},
+				{"name": "nocut", "var_id": "yn2w4m0n", "value_id": "zqozz72l"},
+				{"name": "standard", "var_id": "yn2w4m0n", "value_id": "81w66k5l"},
 				{"name": "unrestricted", "var_id": "38dmm4z8", "value_id": "p12867d1"},
 				{"name": "restricted", "var_id": "38dmm4z8", "value_id": "z19wjnyq"}
 			]

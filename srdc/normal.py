@@ -102,7 +102,7 @@ class NormalRun:
 			if board in data["aliases"]:
 				not_board = False
 				category_name = board_name
-				int_category_id = data.get("board_id", None)
+				int_category_id = data.get("board_id")
 				int_name = data["internal_name"]
 				break
 
@@ -176,8 +176,8 @@ class NormalRun:
 		if cat_cfg and cat_cfg.get("variables", None):
 			var_filters = self.utils.generate_var_filters(cat_cfg["variables"], flags, platform, board_cfg.get("platform_mapping"), rmd, wanted_cat)
 
-		# Depending on whether the world_record flag is set, lookup the
-		# relevant run, then return it.
+		# Look for the required run: priority order is world record first,
+		# then position, and then any run if neither flag is set.
 		if flags["world_record"]:
 			run = self.wr.lookup_world_record_run(game_id, category_id, var_filters)
 		elif flags["place_num"] > 0:

@@ -25,7 +25,7 @@ class LEGONormalRun:
 		self.lb_config = lb_config
 		self.utils = utils
 
-	def process_lego_main_board(self, game: str, board_name: str, lego_md: dict, player: str, flags: dict):
+	def process_lego_main_board(self, game: str, board_name: str, sub_category_board: str, player: str, flags: dict):
 		# Check if the game provided is in the game map.
 		lego_key = self.game_map.get(game)
 		if not lego_key:
@@ -33,9 +33,9 @@ class LEGONormalRun:
 
 		# Pull in game id and game cats from SRDC, alongside the
 		# leaderboard data.
-		slug_id = lego_key["slug"]
+		slug_id = lego_key["id"]
 		game_id, game_cats = self.api.get_game_code(slug_id)
-		cfg = self.lb_config.get(game)
+		cfg = self.lb_config.get(slug_id)
 		if cfg is None:
 			raise MissingInternalData(f"No leaderboard config found for LEGO game slug: {slug_id}")
 
@@ -61,7 +61,6 @@ class LEGONormalRun:
 		# actual internal token name (this is needed to ensure
 		# random user input always maps to the correct internal
 		# value).
-		sub_category_board = lego_md.get("main_sub_category", None)
 		board_token = None
 		sub_cat_name = None
 		for name, data in alias_table.items():
@@ -75,18 +74,11 @@ class LEGONormalRun:
 		if not board_token:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
-		# Check if N0CUT5 mode was asked for.
-		is_nocut5_mode = lego_md.get("nocut_mode", None)
-		ik_nocut_mode = ""
-		scn_nocut_mode = ""
-		if is_nocut5_mode is not None:
-			ik_nocut_mode = "_nocut" if is_nocut5_mode else "_standard"
-			scn_nocut_mode = " N0CUT5" if is_nocut5_mode else " Standard"
-
 		# Do some additional lookups.
-		internal_key = f"{tb_int_name}_{sub_category_board}{ik_nocut_mode}"
-		sub_cat_name, _, resolved_md, _ = self.utils.process_additional_md(flags["additional_metadata"], self.md_aliases, sub_cat_name)
-		new_sub_cat_name = f"{sub_cat_name}{scn_nocut_mode}"
+		internal_key = f"{tb_int_name}_{board_token}"
+		all_metadata = self.md_aliases.copy()
+		all_metadata.update(cfg.get("metadata", {}))
+		sub_cat_name, _, resolved_md, _ = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, sub_cat_name)
 		var_filters = self.utils.generate_var_filters(cfg[internal_key]["variables"], flags, extra_md=resolved_md)
 		for cat_id, cat_name in game_cats.items():
 			if cat_name == top_board_name:
@@ -104,7 +96,7 @@ class LEGONormalRun:
 			run = self.lookup_lego_run(game_id, category_id, player, var_filters)
 
 		# Return the run object
-		return run, new_sub_cat_name, top_board_name
+		return run, sub_cat_name, top_board_name
 
 	def lookup_lego_run(self, game_id: str, category_id: str, player: str, var_filters: list) -> SpeedRun | None:
 		"""

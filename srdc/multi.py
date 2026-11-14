@@ -105,8 +105,11 @@ class MultiRun:
 		if not category_id:
 			raise InvalidCategory("Multirun category not found in multirun game.")
 
-		# Check if place_num was set.
-		if flags["place_num"] > 0:
+		# Look for the required run: priority order is world record first,
+		# then position, and then any run if neither flag is set.
+		if flags["world_record"]:
+			run = self.wr.lookup_world_record_run(game_id, category_id, var_filters)
+		elif flags["place_num"] > 0:
 			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)
 		else:
 			run = self.lookup_multi_run(game_id, category_id, player, var_filters)

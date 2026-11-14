@@ -68,8 +68,11 @@ GAME_MAP_DATA = {
 		"aliases": ["hp71", "hp7p1"],
 		"platforms": ["ps3", "xbox", "wii", "x360", "pc", "ds"],
 		"slugs": {
-			"hp7p1": ["hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"],
-			"hp7p1ds": ["hp7.1_ds"]
+			"hp7p1": [
+				"hp71_ps3", "hp71_xbox", "hp71_pc", "hp71_wii", "hp7p1_ps3", "hp7p1_xbox",
+				"hp7p1_pc", "hp7p1_wii", "hp7.1_ps3", "hp7.1_xbox", "hp7.1_pc", "hp7.1_wii"
+			],
+			"hp7p1ds": ["hp7.1_ds", "hp71_ds", "hp7p1_ds"]
 		}
 	},
 	"hp7.2": {
@@ -138,7 +141,7 @@ GAME_MAP_DATA = {
 	},
 	"hm": {
 		"name": "Hannah Montana",
-		"aliases": ["hm", "montana", "hannahmontana"],
+		"aliases": ["montana", "hannahmontana"],
 		"platforms": ["ds"],
 		"slugs": {
 			"hannah_montana": ["hm_ds", "montana_ds", "hannahmontana_ds", "hannah_montana_ds"]
@@ -151,6 +154,14 @@ GAME_MAP_DATA = {
 		"slugs": {
 			"shrek_2": ["shrek2_pc", "s2_pc"],
 			"shrek_2_c": ["shrek2_ps2", "shrek2_gcn", "shrek2_xbox", "s2_ps2", "s2_gcn", "s2_xbox"]
+		}
+	},
+	"shrek2rm": {
+		"name": "Shrek 2 Remastered",
+		"aliases": ["s2rm", "shrek2remastered", "s2remastered"],
+		"platforms": ["pc", "switch", "ps5", "xbss", "xbsx"],
+		"slugs": {
+			"Shrek_2_Remastered": []
 		}
 	},
 	"traod": {

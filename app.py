@@ -118,7 +118,13 @@ multirun = multi.MultiRun(
 	lb_config=lb_config.LEADERBOARD_CONFIG,
 	utils=utils
 )
-per_best = pb.PersonalBest(api=api, utils=utils)
+per_best = pb.PersonalBest(
+	api=api,
+	category_map=config.CATEGORY_MAP,
+	platform_map=config.PLATFORM_MAP,
+	md_aliases=config.METADATA_ALIASES,
+	utils=utils
+)
 
 
 # Resolve the player, in case we just want to check for the channel owner.
@@ -147,7 +153,7 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	flags = {
 		"emulator": False, "world_record": False, "player": None,
 		"ce_board": None, "cc_board": None, "mr_board": None,
-		"place_num": -1, "lego_md": {}, "additional_metadata": {}
+		"lego_board": None, "place_num": -1, "additional_metadata": {}
 	}
 	key_num = 1
 
@@ -197,6 +203,13 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		if mr_match:
 			continue
 
+		# Check if the token is a string connected to LEGO boards
+		# At the moment, this is a fairly restricted list, but plan
+		# is to make this handler better in the future.
+		if game == "lego" and token in ["solo", "co-op", "coop"]:
+			flags["lego_board"] = token
+			continue
+
 		# Check if the token starts with --player= or its alias --p=.
 		if token.startswith(("--player=", "--p=")):
 			_, _, p_name = token.partition("=")
@@ -222,18 +235,6 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# for the current world record run.
 		if token in ["--world-record", "--wr"]:
 			flags["world_record"] = True
-			continue
-
-		# Check if the token is a string connected to LEGO boards
-		# At the moment, this is a fairly restricted list, but plan
-		# is to make this handler better in the future.
-		if game == "lego" and token in ["solo", "co-op", "coop", "nocut5", "n0cut5", "standard"]:
-			# Check which token it matched.
-			match token:
-				case _ if token in ["solo", "co-op", "coop"]:
-					flags["lego_md"]["main_sub_category"] = token
-				case _ if token in ["nocut5", "n0cut5", "standard"]:
-					flags["lego_md"]["nocut_mode"] = True if token != "standard" else False
 			continue
 
 		# Nothing was found: simply add an incrementing
@@ -329,7 +330,7 @@ def latest_run(owner, game, platform, board, args):
 			# Due to LEGO games having more sub-categories than regular
 			# main board categories, they're handled separately due to
 			# extra metadata being needed.
-			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_md"], player, flags)
+			result, cat_clean_name, alias_name = lg.process_lego_main_board(platform, board, flags["lego_board"], player, flags)
 			clean_name = f'{games.LEGO_GAME_MAP[platform]["name"]} ({alias_name} - {cat_clean_name})'
 		case _:
 			# This is a normal main board run which didn't meet any of
@@ -365,142 +366,74 @@ def latest_run(owner, game, platform, board, args):
 def personal_best(owner, game, platform, board, args):
 	# I can't imagine that these will be in upper-case,
 	# but just make sure everything is lower-case.
-	channel_owner = owner.strip().lower()
+	player = owner.strip().lower()
 	game = game.strip().lower()
 	platform = platform.strip().lower()
-	board = url_parse.unquote(board.strip().lower())
 
 	# Parse everything in the arguments, if anything is there.
+	# We ignore the flags["player"] key in this route because
+	# this route is only for looking up one persons' data.
 	extras = split_extras(args)
 	flags = extract_flags(game, extras)
-	player = resolve_player(channel_owner, flags["player"])
 
-	# Determine the mode that we are in, derived from game key mapping.
-	# By default, if mode is None, then it is a normal board: otherwise,
-	# other values determine what the relevant mode is.
-	mode = None
-	slug = None
-	alias_table = None
-	clean_name = None
-	lb_cfg = None
-	board_name = None
-	internal_key = f"{game}_{platform}"
-	for key, val in games.NM_GAME_MAP.items():
-		if game == key:
-			# Determine the Slug URL
-			mode = "main"
-			alias_table = config.CATEGORY_MAP.copy()
-			all_slugs = val["slugs"]
-			for slug_url, aliases in all_slugs.items():
-				if internal_key in aliases:
-					slug = slug_url
-					break
+	# Process the game argument and return a Slug URL.
+	# This will then be used to return all PBs the user has for that
+	# game. The other arguments (platform, board, args etc.) are handled
+	# afterward.
+	sub_cat = None
+	match game:
+		case _ if game in ("cc", "custom"):
+			game_name, slug, int_key, ordering_mode = per_best.process_game_arg(games.CC_GAME_MAP, platform)
+			sub_cat = flags["cc_board"]
+		case _ if game in ("ce", "catext"):
+			game_name, slug, int_key, ordering_mode = per_best.process_game_arg(games.CE_GAME_MAP, platform)
+			sub_cat = flags["ce_board"]
+		case _ if game in ("multirun", "multi", "mr"):
+			game_name, slug, int_key, ordering_mode = per_best.process_game_arg(games.MR_GAME_MAP, platform)
+			sub_cat = flags["mr_board"]
+			int_key = f"{platform}_{board}"
+		case "lego":
+			game_name, slug, int_key, ordering_mode = per_best.process_game_arg(games.LEGO_GAME_MAP, platform)
+			board = url_parse.unquote(board.strip().lower())
+			sub_cat = flags["lego_board"]
+			int_key = f"{board}_{sub_cat}"
+		case _:
+			game_name, slug, int_key, ordering_mode = per_best.process_game_arg(games.NM_GAME_MAP, game, platform)
+			board = url_parse.unquote(board.strip().lower())
 
-			# Capture leaderboard data.
-			lb_cfg = utils.resolve_leaderboard_config(slug, internal_key)
-			if lb_cfg:
-				alias_table.update(lb_cfg.get("categories", {}))
+	# Check for PBs with this Slug URL.
+	game_id, game_cats = api.get_game_code(slug)
+	pbs = api.search_pbs(player, game_id)
+	if not pbs:
+		return "No PBs can be found for this criteria."
 
-			# For standard boards, set the board name here.
-			for name, data in alias_table.items():
-				if board in data["aliases"]:
-					board_name = name
-					break
-			break
-	if mode is None:
-		for key, val in games.CE_GAME_MAP.items():
-			if game == val["id"]:
-				# Capture leaderboard data
-				mode = "ce"
-				slug = val["id"]
-				lb_cfg = lb_config.LEADERBOARD_CONFIG.get(game)
-				if lb_cfg:
-					alias_table = lb_cfg["sub_categories"]
-				break
-	if mode is None:
-		for key, val in games.MR_GAME_MAP.items():
-			if game == val["id"]:
-				mode = "mr"
-				slug = val["id"]
-				lb_cfg = lb_config.LEADERBOARD_CONFIG.get(game)
-				alias_table = config.CATEGORY_MAP.copy()
-				break
+	# Using the list of PBs, generate all the arguments needed
+	# to obtain the one we asked for.
+	var_filters, category_id, top_board_name, cat_clean_name = per_best.generate_args(slug, game_cats, ordering_mode, platform, int_key, board, flags, sub_cat_board=sub_cat)
+	valid_pbs = per_best.filter_pbs_by_category(pbs, category_id)
+	valid_pbs = per_best.filter_pbs_by_vars(valid_pbs, var_filters)
+	if not valid_pbs:
+		return "No PBs can be found for this criteria."
 
-	# Parse the board value in both the CE and MR category maps.
-	category_name = None
-	if alias_table is not None:
-		for cat_name, data in alias_table.items():
-			if isinstance(data, list):
-				if board in data:
-					category_name = cat_name
-					break
-			else:
-				if board in data["aliases"]:
-					category_name = cat_name
-					break
-
-	# Check if board is in the category map.
-	# If it's not there, then the run is not valid and should return.
-	if mode is None:
-		raise exc.InvalidCategory(f"Unknown category: {board}. This might be due to an invalid input or this category does not exist.")
-
-	# Switch the mode to set some other missing details.
-	match mode:
-		case "ce":
-			# Check if the platform name is in the alias list.
-			# The platform variable represents the top level board in this instance.
-			alias_found = False
-			for name, data in lb_cfg["categories"].items():
-				if platform in data["aliases"]:
-					board_name = name
-					alias_found = True
-					break
-
-			# If alias_found is False, then the alias is invalid.
-			if not alias_found:
-				raise exc.InvalidCategory("CE alias cannot be found internally: either this is a bug, or you specified an invalid CE alias.")
-
-			# Generate a clean output name.
-			game_name = None
-			for key, val in games.CE_GAME_MAP.items():
-				if val["id"] == game:
-					game_name = val["name"]
-					break
-			clean_name = f"{game_name} ({board_name} - {category_name})"
-		case "mr":
-			# Check if the platform name is in the alias list.
-			alias_found = False
-			for name, data in lb_cfg["categories"].items():
-				if platform in data["aliases"]:
-					board_name = name
-					alias_found = True
-					break
-
-			# If alias_found is False, then the alias is invalid.
-			if not alias_found:
-				raise exc.InvalidCategory("Multi-run alias cannot be found internally: either this is a bug, or you specified an invalid alias.")
-
-			# Generate a clean output name.
-			game_name = None
-			for key, val in games.MR_GAME_MAP.items():
-				if val["id"] == game or game in val.get("aliases", []):
-					game_name = val["name"]
-					break
-			clean_name = f"{game_name} ({board_name} - {category_name})"
-
-	# Query SRDC to find the most recent PB of the player for this game/category.
-	cat_cfg = utils.resolve_category_config(lb_cfg, internal_key, board)
-	result = per_best.lookup_pb(slug, cat_cfg, board_name, player, flags)
-	if not result:
-		return "No PB found for this criteria."
-
-	# If mode is set to "main", derive the clean name here, as we'll use the result data for it.
-	if mode == "main":
-		is_emulator = " (Emulator)" if result.emulator else ""
-		clean_name = f'{games.NM_GAME_MAP[game]["name"]} ({config.PLATFORM_MAP[platform]["name"]} - {category_name}{is_emulator})'
-
-	# Return the standard string to represent this PB.
+	# Almost there, just need to set up the clean_name parameter
+	# based on mode.
+	entry = valid_pbs[0]
+	result = utils.extract_run(entry["run"], player, entry["place"])
+	is_emulator = " (Emulator)" if result.emulator else ""
 	is_current_wr = "👑 " if result.place == 1 else ""
+	match game:
+		case _ if game in ("cc", "custom"):
+			clean_name = f'{games.CC_GAME_MAP[platform]["name"]} ({top_board_name} - {cat_clean_name})'
+		case _ if game in ("ce", "catext"):
+			clean_name = f'{games.CE_GAME_MAP[platform]["name"]} ({top_board_name} - {cat_clean_name})'
+		case _ if game in ("multirun", "multi", "mr"):
+			clean_name = f'{games.MR_GAME_MAP[platform]["name"]} ({top_board_name} - {cat_clean_name})'
+		case "lego":
+			clean_name = f'{games.LEGO_GAME_MAP[platform]["name"]} ({top_board_name} - {cat_clean_name})'
+		case _:
+			clean_name = f'{game_name} ({config.PLATFORM_MAP[platform]["name"]} - {cat_clean_name}){is_emulator}'
+
+	# Return the string for the user.
 	return f"{is_current_wr}The current PB for {player} in {clean_name} is {result.time}, currently placing #{result.place}: {result.link}"
 
 
