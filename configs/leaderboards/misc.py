@@ -220,5 +220,55 @@ LEADERBOARD_DATA = {
 				{"name": "console", "var_id": "jlz56wyl", "value_id": "21g2n48l"}
 			]
 		}
+	},
+	"n100f": {
+		"categories": {
+			"All Bosses": {"aliases": ["allb", "allb", "bosses", "allbosses"], "internal_name": "allb"},
+			"All Monster Tokens": {"aliases": ["amt", "allt", "allmt", "monstertokens", "tokens", "allmonstertokens"], "internal_name": "amt"},
+			"No Levels Early": {"aliases": ["nle", "noearly", "noearlylevels", "nolevelsearly"], "internal_name": "nle"},
+			"Cheat%": {"aliases": ["c", "c%", "cheat", "cheat%"], "internal_name": "cheat"},
+			"Warpless": {"aliases": ["wl", "wless", "warpless"], "internal_name": "warpless"},
+			"Reverse Boss Order": {"aliases": ["rbo", "reverseorder", "reversebosses", "reversebossorder"], "internal_name": "rbo"}
+		},
+		"metadata": {
+			"No Hedge Gate Clip": {"aliases": ["nohgc", "noclip", "nohedge", "nohedgegate", "nohedgegateclip"], "var_key": "nohgc"},
+			"Hedge Gate Clip": {"aliases": ["hgc", "clip", "hedge", "hedgegate", "hedgegateclip"], "var_key": "hgc"}
+		},
+		"any": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "p850joxn", "value_id": "12vp49vq"},
+				{"name": "hgc", "var_id": "p850joxn", "value_id": "1py26ee1"}
+			]
+		},
+		"allb": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "rn16qod8", "value_id": "14op4owq"},
+				{"name": "hgc", "var_id": "rn16qod8", "value_id": "192kdxjq"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "r8rxp3w8", "value_id": "1gn5o9xl"},
+				{"name": "hgc", "var_id": "r8rxp3w8", "value_id": "qzn9yg4q"}
+			]
+		},
+		"amt": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "5lyd46jl", "value_id": "lr396x0l"},
+				{"name": "hgc", "var_id": "5lyd46jl", "value_id": "q75pz2r1"}
+			]
+		},
+		"warpless": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "e8mxkvml", "value_id": "1gn5o9ol"},
+				{"name": "hgc", "var_id": "e8mxkvml", "value_id": "qzn9ygkq"}
+			]
+		},
+		"rbo": {
+			"variables": [
+				{"name": "nohgc", "default": True, "var_id": "dlox1wrl", "value_id": "ln89kenl"},
+				{"name": "hgc", "var_id": "dlox1wrl", "value_id": "10vp96pl"}
+			]
+		}
 	}
 }
