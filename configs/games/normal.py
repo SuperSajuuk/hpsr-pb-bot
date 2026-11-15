@@ -112,7 +112,7 @@ GAME_MAP_DATA = {
 		"platforms": ["ps2", "gcn", "xbox"],
 		"slug": "scooby_doo_mystery_mayhem"
 	},
-	"sdnof100f": {
+	"sdno100f": {
 		"name": "Scooby Doo: Night of 100 Frights",
 		"aliases": ["n100f", "no100f", "no100frights", "nightof100frights", "sdnightof100frights", "scoobydoono100f", "scoobydoonightof100frights"],
 		"platforms": ["ps2", "gcn", "xbox"],

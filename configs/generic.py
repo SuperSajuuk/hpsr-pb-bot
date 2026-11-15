@@ -21,8 +21,9 @@ PLATFORM_MAP = {
 	"gbc": {"name": "GBC", "id": "gde3g9k1"},
 	"ds": {"name": "Nintendo DS", "id": "7g6m8erk"},
 	"3ds": {"name": "Nintendo 3DS", "id": "gz9qx60q"},
-	"sms": {"name": "Sega Master System", "id": "83exwk6l"},
+	"gcn": {"name": "GameCube", "id": "4p9z06rn"},
 	"switch": {"name": "Nintendo Switch", "id": "7m6ylw9p"},
+	"wii": {"name": "Wii", "id": "v06dk3e4"},
 	"xbox": {"name": "Xbox", "id": "jm95zz9o"},
 	"x360": {"name": "Xbox 360", "id": "n568oevp"},
 	"xbone": {"name": "Xbox One", "id": "o7e2mx6w"},
@@ -30,8 +31,7 @@ PLATFORM_MAP = {
 	"xb1x": {"name": "Xbox One X", "id": "4p9z0r6r"},
 	"xbss": {"name": "Xbox Series S", "id": "o7e2xj9w"},
 	"xbsx": {"name": "Xbox Series X", "id": "nzelyv9q"},
-	"gcn": {"name": "GameCube", "id": "4p9z06rn"},
-	"wii": {"name": "Wii", "id": "v06dk3e4"}
+	"sms": {"name": "Sega Master System", "id": "83exwk6l"}
 }
 
 # This is a standard list of generic category boards found on the
@@ -57,8 +57,7 @@ CATEGORY_MAP = {
 METADATA_ALIASES = {
 	"Single Player": {"aliases": ["1p", "sp", "singleplayer"], "var_key": "sp"},
 	"Co-op": {"aliases": ["coop", "co-op"], "var_key": "coop"},
-	"Standard": {"aliases": ["std", "standard"], "var_key": "std"},
-	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches"], "var_key": "nmg"},
+	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "var_key": "nmg"},
 	"Any%": {"aliases": ["any", "any%"], "var_key": "any"},
 	"100%": {"aliases": ["100", "100%", "hundo"], "var_key": "100"},
 	"Glitchless": {"aliases": ["gless", "glitchless"], "var_key": "gless"}
