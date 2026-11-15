@@ -151,9 +151,10 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 	# Set default flag values
 	# These will then be used by the program to decide certain things
 	flags = {
-		"emulator": False, "world_record": False, "player": None,
+		"emulator": False, "world_record": False, "total_runs": False,
+		"player": None, "place_num": -1, "additional_metadata": {},
 		"ce_board": None, "cc_board": None, "mr_board": None,
-		"lego_board": None, "place_num": -1, "additional_metadata": {}
+		"lego_board": None
 	}
 	key_num = 1
 
@@ -235,6 +236,13 @@ def extract_flags(game: str, tokens: list[str]) -> dict:
 		# for the current world record run.
 		if token in ["--world-record", "--wr"]:
 			flags["world_record"] = True
+			continue
+
+		# Check if the token contains either --total-runs or
+		# the alias --tr. This tells the system to give a total
+		# of runs (verified, rejected, obsolete).
+		if token in ["--total-runs", "--tr"]:
+			flags["total_runs"] = True
 			continue
 
 		# Nothing was found: simply add an incrementing
@@ -346,6 +354,13 @@ def latest_run(owner, game, platform, board, args):
 		return "No run found for this criteria."
 
 	# Return the relevant output text to the user, based on the run data.
+	if flags["total_runs"]:
+		emulator_text = " (Emulator)" if result["emulator"] else ""
+		return \
+			f"There are {result['total']} runs for {clean_name}{emulator_text}: " \
+			f"{result['verified']} are verified, {result['obsolete']} are obsolete, {result['rejected']} are rejected and {result['unverified']} are not verified. " \
+			f"The latest verified submission is by {result['latest_run']}."
+
 	emulator_text = " (Emulator)" if result.emulator and result.platform != "8gej2n93" else ""
 	is_current_wr = "👑 " if result.place == 1 else ""
 	if flags["world_record"]:
@@ -405,7 +420,7 @@ def personal_best(owner, game, platform, board, args):
 	game_id, game_cats = api.get_game_code(slug)
 	pbs = api.search_pbs(player, game_id)
 	if not pbs:
-		return "No PBs can be found for this criteria."
+		return f"Player {player} doesn't have any PBs on SRDC or they aren't for the requested game."
 
 	# Using the list of PBs, generate all the arguments needed
 	# to obtain the one we asked for.

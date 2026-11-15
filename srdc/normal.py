@@ -100,12 +100,14 @@ class NormalRun:
 		# Check if the board name is in the category list.
 		not_board = True
 		category_name = None
+		cat_name_aliases = None
 		int_category_id = None
 		int_name = None
 		for board_name, data in category_list.items():
 			if board in data["aliases"]:
 				not_board = False
 				category_name = board_name
+				cat_name_aliases = data.get("cat_name_aliases", [])
 				int_category_id = data.get("board_id")
 				int_name = data["internal_name"]
 				break
@@ -130,7 +132,7 @@ class NormalRun:
 						category_id = cat_id
 						break
 					# If cat_id failed (highly unlikely), use cat_name as fallback.
-					if cat_name == category_name:
+					if cat_name == category_name or cat_name in cat_name_aliases:
 						category_id = cat_id
 						break
 			case "pf":
@@ -182,7 +184,9 @@ class NormalRun:
 
 		# Look for the required run: priority order is world record first,
 		# then position, and then any run if neither flag is set.
-		if flags["world_record"]:
+		if flags["total_runs"]:
+			run = self.utils.calculate_total_runs(game_id, category_id, var_filters, flags["emulator"])
+		elif flags["world_record"]:
 			run = self.wr.lookup_world_record_run(game_id, category_id, var_filters)
 		elif flags["place_num"] > 0:
 			run = self.utils.find_run_at_position(game_id, category_id, flags["place_num"], var_filters)

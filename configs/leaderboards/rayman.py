@@ -38,6 +38,100 @@ LEADERBOARD_DATA = {
 			]
 		}
 	},
+	"r2": {
+		"categories": {
+			"All Masks": {"aliases": ["am", "allm", "masks", "allmasks"], "internal_name": "am"},
+			"All Cages": {"aliases": ["ac", "allc", "cages", "allcages"], "internal_name": "ac"}
+		},
+		"platform_mapping": {
+			"pc": ["pc"],
+			"n64": ["n64", "ds"],
+			"dreamcast": ["dc", "3ds"]
+		},
+		"any": {
+			"variables": [
+				{"name": "pc", "var_id": "ql6r9m7l", "value_id": "klrro3jl"},
+				{"name": "n64", "var_id": "ql6r9m7l", "value_id": "gq76m5nl"},
+				{"name": "dreamcast", "var_id": "ql6r9m7l", "value_id": "q5vv5jvl"}
+			]
+		},
+		"nmg": {
+			"variables": [
+				{"name": "pc", "var_id": "wl3dv4v8", "value_id": "5lm90oy1"},
+				{"name": "n64", "var_id": "wl3dv4v8", "value_id": "0q50jvr1"},
+				{"name": "dreamcast", "var_id": "wl3dv4v8", "value_id": "lx5587g1"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "pc", "var_id": "wlek344l", "value_id": "81wkx491"},
+				{"name": "n64", "var_id": "wlek344l", "value_id": "4lxj75jq"},
+				{"name": "dreamcast", "var_id": "wlek344l", "value_id": "14oov0kq"}
+			]
+		},
+		"am": {
+			"variables": [
+				{"name": "pc", "var_id": "68k7wx3l", "value_id": "zqo76xg1"},
+				{"name": "n64", "var_id": "68k7wx3l", "value_id": "814n0owl"},
+				{"name": "dreamcast", "var_id": "000", "value_id": "000"}
+			]
+		},
+		"ac": {
+			"variables": [
+				{"name": "pc", "var_id": "p855w078", "value_id": "5lew72pl"},
+				{"name": "n64", "var_id": "p855w078", "value_id": "81pgmee1"},
+				{"name": "dreamcast", "var_id": "p855w078", "value_id": "1pyy0mn1"}
+			]
+		}
+	},
+	"r2r": {
+		"categories": {
+			"All Masks": {"aliases": ["am", "allm", "masks", "allmasks"], "internal_name": "am"},
+			"Any% No Memory Card": {
+				"aliases": [
+					"nmc", "nocard", "nomemory", "anynmc", "anynocard", "anynomemory",
+					"anynomemorycard", "any%nmc", "any%nocard", "any%nomemory", "any%nomemorycard"
+				], "internal_name": "nmc"
+			},
+			"All Teensies": {"aliases": ["at", "allt", "allteensies"], "internal_name": "allt"}
+		},
+		"any": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		},
+		"am": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		},
+		"nmc": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		},
+		"allt": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		},
+		"100": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		},
+		"gless": {
+			"variables": [
+				{"name": "console", "default": True, "var_id": "jlzx4782", "value_id": "81p9nnq7"},
+				{"name": "emulator", "var_id": "jlzx4782", "value_id": "xqkv84l9"}
+			]
+		}
+	},
 	"r3": {
 		"categories": {
 			"Glitched": {"aliases": ["glitched"], "internal_name": "glitched"},

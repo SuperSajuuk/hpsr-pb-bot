@@ -57,6 +57,49 @@ class Utilities:
 		player = self.api.get_srdc_user(run["run"]["players"][0]["id"], arg_type="user_id")
 		return self.extract_run(run["run"], player, run["place"])
 
+	def calculate_total_runs(self, game_id: str, category_id: str, var_filters: list, emulator_flag: bool):
+		"""
+		Using the game_id, category_id and optional var_filters, calculate the total
+		number of runs on the board, split by verified, obsolete, rejected and listed
+		runs (ie on the leaderboard).
+
+		Returns a dictionary with each run stored in it.
+		"""
+		# Download the list of current listed runs on the board.
+		# This is used to identify runs which were verified but are
+		# now obsolete.
+		listed_runs = self.api.get_leaderboard(game_id, category_id, variables=var_filters)
+		if not listed_runs:
+			return None
+
+		# Now download all runs for this board, including rejected/obsolete runs.
+		run_ids = [x["run"]["id"] for x in listed_runs["runs"]]
+		listed_runs["runs"].sort(key=lambda rx: rx["run"]["submitted"], reverse=True)
+		latest_run = listed_runs["runs"][0]["run"]
+		lr_runner = self.api.get_srdc_user(latest_run["players"][0]["id"], arg_type="user_id")
+		run_q = f"runs?game={game_id}&category={category_id}&embed=variables"
+		all_runs = self.api.search_runs(game_id, category_id, None, var_filters, base_query=run_q)
+
+		# Process all returned runs and add the counts to the dictionary.
+		run_counts = {
+			"total": len(all_runs), "verified": 0, "obsolete": 0, "rejected": 0, "unverified": 0,
+			"emulator": emulator_flag, "latest_run": f"{lr_runner}: {latest_run['weblink']}"
+		}
+		for run in all_runs:
+			if run["id"] in run_ids:
+				run_counts["verified"] += 1
+				continue
+			if run["status"]["status"] == "verified" and run["id"] not in run_ids:
+				run_counts["obsolete"] += 1
+				continue
+			if run["status"]["status"] == "rejected":
+				run_counts["rejected"] += 1
+				continue
+			run_counts["unverified"] += 1
+
+		# Return the dictionary of run counts.
+		return run_counts
+
 	def resolve_leaderboard_config(self, game_key: str, internal_key: str) -> dict | None:
 		"""
 		Resolves the relevant leaderboard config block, based on game_key

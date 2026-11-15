@@ -20,6 +20,7 @@ PLATFORM_MAP = {
 	"gba": {"name": "GBA", "id": "3167d6q2"},
 	"gbc": {"name": "GBC", "id": "gde3g9k1"},
 	"ds": {"name": "Nintendo DS", "id": "7g6m8erk"},
+	"3ds": {"name": "Nintendo 3DS", "id": "gz9qx60q"},
 	"sms": {"name": "Sega Master System", "id": "83exwk6l"},
 	"switch": {"name": "Nintendo Switch", "id": "7m6ylw9p"},
 	"xbox": {"name": "Xbox", "id": "jm95zz9o"},
@@ -41,7 +42,11 @@ CATEGORY_MAP = {
 	"100%": {"aliases": ["100", "hundo", "100%"], "internal_name": "100"},
 	"Glitchless": {"aliases": ["gless", "glitchless"], "internal_name": "gless"},
 	"No Major Skips": {"aliases": ["nms", "nomajorskips", "any%nms", "any%nomajorskips"], "internal_name": "nms"},
-	"No Major Glitches": {"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"], "internal_name": "nmg"},
+	"No Major Glitches": {
+		"aliases": ["nmg", "nomajorglitches", "any%nmg", "any%nomajorglitches"],
+		"cat_name_aliases": ["Any% NMG"],
+		"internal_name": "nmg"
+	},
 	"NG+": {"aliases": ["ng", "ngplus", "newgameplus", "ng+"], "internal_name": "ng"}
 }
 
