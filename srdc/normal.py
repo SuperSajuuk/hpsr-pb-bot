@@ -56,7 +56,8 @@ class NormalRun:
 				no_game = False
 				game_int_name = key_name
 				game_name = data["name"]
-				board_slugs = data["slugs"]
+				slug = data.get("slug")
+				board_slugs = data.get("slugs")
 				supported_platforms = data.get("platforms", [])
 				is_unsupported = data.get("unsupported", False)
 				ordering_mode = data.get("ordering", "cf")
@@ -87,8 +88,6 @@ class NormalRun:
 				if internal_key in aliases:
 					slug = slug_url
 					break
-		else:
-			slug = board_slugs
 
 		# Capture the category data for the game, if any specific ones exist.
 		# Also bundles in the required levels of metadata if requested.
