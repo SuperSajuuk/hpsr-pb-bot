@@ -13,8 +13,7 @@ GAME_MAP_DATA = {
 			"hp1pc": ["hp1_pc"],
 			"hp1_6th_gen": ["hp1_ps2", "hp1_xbox", "hp1_gcn"],
 			"hp1gba": ["hp1_gba"],
-			"hp1gbc": ["hp1_gbc"],
-			"hpcc": ["hp1_cc"]
+			"hp1gbc": ["hp1_gbc"]
 		}
 	},
 	"hp2": {
@@ -26,8 +25,7 @@ GAME_MAP_DATA = {
 			"hp2ps2": ["hp2_ps2"],
 			"hp2_6th_gen": ["hp2_xbox", "hp2_gcn"],
 			"hp2gba": ["hp2_gba"],
-			"hp2gbc": ["hp2_gbc"],
-			"hpcc": ["hp2_cc"]
+			"hp2gbc": ["hp2_gbc"]
 		}
 	},
 	"hp3": {

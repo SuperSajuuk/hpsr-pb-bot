@@ -22,7 +22,7 @@ import os
 
 # Import the config data.
 import configs.game_maps as games
-import configs.ils as il_config
+import configs.ils as ils
 import configs.leaderboard as lb_config
 import configs.generic as config
 
@@ -86,9 +86,9 @@ il = ind_lvl.IndividualLevel(
 	srdc_api=srdc_api,
 	api=api,
 	game_map=games.NM_GAME_MAP,
-	levels_map=il_config.LEVELS_MAP,
+	normal_levels_map=ils.NM_LEVELS_MAP,
+	misc_levels_map=ils.MISC_LEVELS_MAP,
 	category_map=config.CATEGORY_MAP,
-	ik_mapping=il_config.INTERNAL_KEY_MAPPING,
 	utils=utils
 )
 lg = lego.LEGONormalRun(
@@ -279,15 +279,14 @@ def individual_level(owner, game, platform, level, category, args):
 
 	# Hand over results processing to the processor. This will either
 	# return a SpeedRun object or None, if nothing was found.
-	result, il_cat_name, game_name = il.process_il(game, platform, level, category, player, flags["world_record"])
+	result, il_cat_name, game_name = il.process_il(game, platform, level, category, player, flags)
 	if not result:
 		return "No individual level submission could be found with these parameters."
 
 	# Output the relevant text, after minor processing.
 	# Note that the output will be dependent on the flag "--world-record".
 	# platform_repl is a bodge to support a specific set of ILs.
-	platform_repl = platform.replace("cc", "pc")
-	clean_name = f'{game_name} ({config.PLATFORM_MAP[platform_repl]["name"]} - {il_cat_name})'
+	clean_name = f'{game_name} ({config.PLATFORM_MAP[platform]["name"]} - {il_cat_name})'
 	if flags["world_record"]:
 		return f"The current IL world record for {clean_name} is held by {result.player} with a time of {result.time}: {result.link}"
 	return f"The most recent IL run for {player} in {clean_name} is {result.time} (#{result.place}): {result.link}"
@@ -359,7 +358,7 @@ def latest_run(owner, game, platform, board, args):
 		return \
 			f"There are {result['total']} runs for {clean_name}{emulator_text}: " \
 			f"{result['verified']} are verified, {result['obsolete']} are obsolete, {result['rejected']} are rejected and {result['unverified']} are not verified. " \
-			f"The latest verified submission is by {result['latest_run']}."
+			f"The latest verified submission is by {result['latest_run']}"
 
 	emulator_text = " (Emulator)" if result.emulator and result.platform != "8gej2n93" else ""
 	is_current_wr = "👑 " if result.place == 1 else ""

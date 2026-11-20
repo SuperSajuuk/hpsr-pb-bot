@@ -223,6 +223,15 @@ class Utilities:
 
 	@staticmethod
 	def generate_var_filters(var_list, flags, platform=None, platform_vars=None, extra_md=None, def_cat=None):
+		"""
+		Takes a list of variables and flags to determine which var/value
+		pairs need to be given to speedrun.com. Optionally can take a
+		platform name, platform variables, extra metadata and a defined
+		category to improve search accuracy.
+
+		Returns a list of dictionaries containing the requested var/value
+		pairs.
+		"""
 		# Pull in all flags (where flag item is True or its in additional metadata).
 		selected_tokens = set()
 		platform_tokens = set()

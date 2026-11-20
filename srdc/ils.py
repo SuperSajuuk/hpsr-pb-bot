@@ -6,6 +6,7 @@
 # individual levels. As a consequence, some parts will be
 # the same as normal.py, but will poll IL boards instead.
 from utils.model import SpeedRun
+from utils.exceptions import InvalidGame, InvalidCategory, MissingInternalData
 
 
 # IndividualLevel
@@ -13,13 +14,13 @@ from utils.model import SpeedRun
 # API for an individual level submission. This is
 # used by !run only.
 class IndividualLevel:
-	def __init__(self, srdc_api, api, game_map, levels_map, category_map, ik_mapping, utils):
+	def __init__(self, srdc_api, api, game_map, normal_levels_map, misc_levels_map, category_map, utils):
 		self.srdc = srdc_api
 		self.api = api
 		self.game_map = game_map
-		self.levels_map = levels_map
+		self.normal_levels = normal_levels_map
+		self.misc_levels = misc_levels_map
 		self.category_map = category_map
-		self.ik_mapping = ik_mapping
 		self.utils = utils
 
 	def search_il_wrs(self, game_id: str):
@@ -53,55 +54,75 @@ class IndividualLevel:
 		# Return the full list.
 		return all_runs
 
-	def process_il(self, game, platform, level, category, player, is_wr):
+	def process_il(self, game, platform, level, category, player, flags):
 		"""
 		This method will capture all the requirements of finding an IL, which is
 		then passed over to lookup_il to find it.
 
 		Returns a SpeedRun object or None.
 		"""
-		# Normalise the internal key, in case game/platform
-		# is for a different platform. If this key isn't in
-		# the alias list, we just use it as is.
-		internal_key = f"{game}_{platform}"
-		il_internal_key = None
-		for ik, aliases in self.ik_mapping.items():
-			if internal_key in aliases:
-				il_internal_key = ik
-				break
-
 		# Find the relevant game entry: this is necessary to capture
 		# the relevant board slug for later.
+		no_game = True
+		slug = None
 		board_slugs = None
 		game_name = None
+		game_int_name = None
 		for key_name, data in self.game_map.items():
 			if game == key_name or game in data.get("aliases", []):
+				no_game = False
 				game_name = data["name"]
-				board_slugs = data["slugs"]
+				game_int_name = key_name
+				slug = data.get("slug")
+				board_slugs = data.get("slugs")
 				break
 
+		# Return if game doesn't map to anything.
+		if no_game:
+			raise InvalidGame(f"Unknown game: '{game}'.")
+
+		# Obtain the slug URL based on the internal key variable.
+		# Only done if the board_slugs is not None
+		internal_key = f"{game_int_name}_{platform}"
+		if board_slugs is not None:
+			for slug_url, aliases in board_slugs.items():
+				if internal_key in aliases:
+					slug = slug_url
+					break
+
 		# Check if this internal key is in the aliases map.
-		level_aliases = self.levels_map.get(il_internal_key or internal_key)
-		if not level_aliases:
-			raise ValueError("This combination of game and platform does not map to any configuration. Perhaps this game isn't supported in config yet, or it doesn't have any ILs supported.")
+		nm_levels_map = self.normal_levels.get(internal_key)
+		misc_levels_map = self.misc_levels.get(internal_key)
+		if not nm_levels_map and not misc_levels_map:
+			raise MissingInternalData("This combination of game and platform does not map to any configuration. Perhaps this game isn't supported in config yet, or it doesn't have any ILs supported.")
 
 		# Check if the category alias is in the alias table.
+		level_maps = [nm_levels_map, misc_levels_map]
 		variables = None
 		ind_level_id = None
 		ind_level_name = None
-		for level_name, data in level_aliases.items():
-			if level in data["aliases"]:
-				ind_level_id = data["level_id"]
-				ind_level_name = level_name
-				variables = data.get("variables", [])
+		for level_map in level_maps:
+			if not level_map:
+				continue
+			for level_name, data in level_map.items():
+				if level_name == "slug_override":
+					continue
+				if level in data["aliases"]:
+					ind_level_id = data["level_id"]
+					ind_level_name = level_name
+					slug = level_map.get("slug_override", slug)
+					variables = data.get("variables", [])
+					break
+			if ind_level_name:
 				break
 
 		# If none, then this IL does not exist.
 		if not ind_level_name:
-			raise ValueError(f"No individual level was found internally for level name `{ind_level_name}`. Check your spelling and try again.")
+			raise MissingInternalData(f"No individual level was found internally for level name `{ind_level_name}`. Check your spelling and try again.")
 
 		# Check that the category actually exists for this IL.
 		# Obtain the relevant category name from the category map.
+
 		cat_name = None
 		for category_name, data in self.category_map.items():
 			if category in data["aliases"]:
@@ -110,19 +131,12 @@ class IndividualLevel:
 
 		# If nothing found, just raise an error.
 		if not cat_name:
-			raise ValueError("The category you have requested could not be found for this IL. Check your spelling and try again. If this persists, it might be a bug.")
-
-		# Obtain the slug URL based on the internal key variable.
-		slug = None
-		for slug_url, aliases in board_slugs.items():
-			if internal_key in aliases:
-				slug = slug_url
-				break
+			raise InvalidCategory("The category you have requested could not be found for this IL. Check your spelling and try again. If this persists, it might be a bug.")
 
 		# If the flag "world_record" has been set, lookup only the WR on these parameters.
 		# Otherwise, look up the users' specific IL submission.
 		var_filters = self.utils.generate_var_filters(variables, None)
-		if is_wr:
+		if flags["world_record"]:
 			run = self.lookup_il_world_record(slug, ind_level_id, cat_name)
 		else:
 			run = self.lookup_il(slug, ind_level_id, cat_name, player, var_filters)
