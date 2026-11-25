@@ -95,6 +95,7 @@ class CustomContent:
 			raise InvalidCategory("No board token could be found for this category. This could be an issue with your input, or no alias data exists to create a mapping.")
 
 		# Generate the variable filters and set the category ID.
+		flags["cc_board"] = board_token
 		all_metadata = self.md_aliases.copy()
 		all_metadata.update(cfg.get("metadata", {}))
 		cat_alias_name, _, resolved_md, _ = self.utils.process_additional_md(flags["additional_metadata"], all_metadata, cat_alias_name)
